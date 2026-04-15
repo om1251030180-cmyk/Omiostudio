@@ -101,6 +101,13 @@ const OrderSchema = new mongoose.Schema({
   assignmentUpdatedAt: String,
   estimatedPrice:String,
   deliveryFiles: [String],
+  workflowStage: { type: String, default: 'awaiting_company_acceptance' },
+  workflowRules: [String],
+  companyAccepted: { type: Boolean, default: false },
+  acceptance: { type: mongoose.Schema.Types.Mixed, default: {} },
+  payment: { type: mongoose.Schema.Types.Mixed, default: {} },
+  revisionPolicy: { type: mongoose.Schema.Types.Mixed, default: {} },
+  tracking: { type: [mongoose.Schema.Types.Mixed], default: [] },
 }, { timestamps: true });
 
 const AppSettingSchema = new mongoose.Schema({
@@ -178,6 +185,132 @@ function violatesContentPolicy(text = '') {
   const lowered = String(text || '').toLowerCase();
   const blocked = ['hack', 'exploit', 'pirated', 'leak', 'steal', 'malware', '<script'];
   return blocked.some((term) => lowered.includes(term));
+}
+
+function toMoney(value) {
+  const raw = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  if (!Number.isFinite(raw) || raw < 0) return 0;
+  return Math.round(raw * 100) / 100;
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function makeTrackingEvent(stage, label, note, actorName = 'Omio System', actorRole = 'system') {
+  return {
+    stage,
+    label,
+    note: sanitizeText(note || '', 280),
+    actorName: sanitizeText(actorName || 'Omio System', 80),
+    actorRole: sanitizeText(actorRole || 'system', 30),
+    at: nowIso()
+  };
+}
+
+function orderPolicyRules() {
+  return [
+    'Company must accept and quote the project before development starts.',
+    'Client must pay 50% advance before the team starts implementation.',
+    'Paid revision requests are billed separately and start after revision payment.',
+    'Remaining payment is due before final handover and production release.'
+  ];
+}
+
+function defaultRevisionPolicy() {
+  return {
+    freeIncluded: 1,
+    freeUsed: 0,
+    paidRevisionCount: 0,
+    totalRevisionCharges: 0,
+    requests: []
+  };
+}
+
+function deriveQuotedTotal(order = {}) {
+  const fromEstimate = toMoney(order.estimatedPrice);
+  if (fromEstimate > 0) return fromEstimate;
+  const fromBudget = toMoney(order.budget);
+  if (fromBudget > 0) return fromBudget;
+  return 0;
+}
+
+function defaultPaymentState(order = {}) {
+  const quotedTotal = deriveQuotedTotal(order);
+  const advanceRequiredAmount = Math.round(quotedTotal * 0.5 * 100) / 100;
+  return {
+    currency: 'INR',
+    quotedTotal,
+    advanceRequiredPercent: 50,
+    advanceRequiredAmount,
+    advancePaidAmount: 0,
+    advancePaidAt: '',
+    remainingAmount: quotedTotal,
+    remainingPaidAmount: 0,
+    remainingPaidAt: '',
+    fullyPaid: false,
+    transactions: []
+  };
+}
+
+function ensureOrderWorkflow(order = {}) {
+  const safe = { ...order };
+
+  safe.workflowRules = Array.isArray(safe.workflowRules) && safe.workflowRules.length
+    ? safe.workflowRules
+    : orderPolicyRules();
+
+  safe.workflowStage = safe.workflowStage || 'awaiting_company_acceptance';
+  safe.companyAccepted = !!safe.companyAccepted;
+
+  const payment = {
+    ...defaultPaymentState(safe),
+    ...(safe.payment && typeof safe.payment === 'object' ? safe.payment : {})
+  };
+
+  payment.quotedTotal = toMoney(payment.quotedTotal);
+  payment.advanceRequiredPercent = 50;
+  payment.advanceRequiredAmount = Math.round(payment.quotedTotal * 0.5 * 100) / 100;
+  payment.advancePaidAmount = toMoney(payment.advancePaidAmount);
+  payment.remainingPaidAmount = toMoney(payment.remainingPaidAmount);
+  payment.remainingAmount = Math.max(0, Math.round((payment.quotedTotal - payment.remainingPaidAmount) * 100) / 100);
+  payment.transactions = Array.isArray(payment.transactions) ? payment.transactions : [];
+  payment.fullyPaid = payment.remainingAmount <= 0;
+  safe.payment = payment;
+
+  const revisionPolicy = {
+    ...defaultRevisionPolicy(),
+    ...(safe.revisionPolicy && typeof safe.revisionPolicy === 'object' ? safe.revisionPolicy : {})
+  };
+  revisionPolicy.requests = Array.isArray(revisionPolicy.requests) ? revisionPolicy.requests : [];
+  safe.revisionPolicy = revisionPolicy;
+
+  safe.acceptance = safe.acceptance && typeof safe.acceptance === 'object' ? safe.acceptance : {};
+  safe.tracking = Array.isArray(safe.tracking) ? safe.tracking : [];
+  if (!safe.tracking.length) {
+    safe.tracking = [
+      makeTrackingEvent('order_placed', 'Order Placed', 'Client submitted the project request.', safe.userName || 'Client', 'client'),
+      makeTrackingEvent('awaiting_company_acceptance', 'Awaiting Company Acceptance', 'Company team will review and share quotation.', 'Omio System', 'system')
+    ];
+  }
+
+  return safe;
+}
+
+function pushOrderTracking(order = {}, event = null) {
+  if (!event) return order;
+  const safe = ensureOrderWorkflow(order);
+  safe.tracking = [...safe.tracking, event];
+  safe.workflowStage = event.stage || safe.workflowStage;
+  return safe;
+}
+
+function newTxnId() {
+  return `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+}
+
+function newRevisionId() {
+  return `REV-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 }
 
 async function getManagementPricingSetting() {
@@ -577,7 +710,7 @@ app.post('/api/orders', auth, upload.array('files', 10), async (req, res) => {
 
     const files = req.files ? req.files.map(f => f.filename) : [];
 
-    const orderData = {
+    const baseOrderData = {
       userId:      req.user.id,
       userName:    req.user.name,
       userEmail:   req.user.email,
@@ -605,6 +738,7 @@ app.post('/api/orders', auth, upload.array('files', 10), async (req, res) => {
       files, estimatedPrice,
       status:      'pending',
     };
+    const orderData = ensureOrderWorkflow(baseOrderData);
 
     let savedOrder;
     if (isMongoConnected()) {
@@ -630,10 +764,10 @@ app.get('/api/orders/my', auth, async (req, res) => {
   try {
     if (isMongoConnected()) {
       const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
-      return res.json(orders);
+      return res.json(orders.map((o) => ensureOrderWorkflow(o.toObject ? o.toObject() : o)));
     }
     const db = getDB();
-    const orders = db.orders.filter(o => o.userId === req.user.id).reverse();
+    const orders = db.orders.filter(o => o.userId === req.user.id).map((o) => ensureOrderWorkflow(o)).reverse();
     res.json(orders);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -645,12 +779,13 @@ app.get('/api/orders/:id', auth, async (req, res) => {
       const order = await Order.findById(req.params.id);
       if (!order) return res.status(404).json({ error: 'Order not found' });
       if (order.userId.toString() !== req.user.id && req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
-      return res.json(order);
+      return res.json(ensureOrderWorkflow(order.toObject ? order.toObject() : order));
     }
     const db = getDB();
     const order = db.orders.find(o => o.id === req.params.id);
     if (!order) return res.status(404).json({ error: 'Order not found' });
-    res.json(order);
+    if (order.userId !== req.user.id && req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+    res.json(ensureOrderWorkflow(order));
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -924,10 +1059,10 @@ app.get('/api/admin/orders', adminAuth, async (req, res) => {
     if (isMongoConnected()) {
       const filter = status && status !== 'all' ? { status } : {};
       const orders = await Order.find(filter).sort({ createdAt: -1 });
-      return res.json(orders);
+      return res.json(orders.map((o) => ensureOrderWorkflow(o.toObject ? o.toObject() : o)));
     }
     const db = getDB();
-    let orders = db.orders.reverse();
+    let orders = db.orders.map((o) => ensureOrderWorkflow(o)).reverse();
     if (status && status !== 'all') orders = orders.filter(o => o.status === status);
     res.json(orders);
   } catch(e) { res.status(500).json({ error: e.message }); }
@@ -937,18 +1072,86 @@ app.get('/api/admin/orders', adminAuth, async (req, res) => {
 app.put('/api/admin/orders/:id', adminAuth, async (req, res) => {
   try {
     const { status, adminNotes, estimatedPrice } = req.body;
-    let updatedOrder;
+    let updatedOrder = null;
+    const statusLabels = { pending:'Pending',in_progress:'In Progress',review:'Under Review',completed:'Completed',cancelled:'Cancelled' };
 
     if (isMongoConnected()) {
-      updatedOrder = await Order.findByIdAndUpdate(req.params.id, { status, adminNotes, estimatedPrice, updatedAt: new Date() }, { new: true });
+      const orderDoc = await Order.findById(req.params.id);
+      if (!orderDoc) return res.status(404).json({ error: 'Order not found' });
+
+      let safe = ensureOrderWorkflow(orderDoc.toObject());
+      const nextStatus = status || safe.status;
+      if (nextStatus === 'in_progress' && safe.payment.advancePaidAmount < safe.payment.advanceRequiredAmount) {
+        return res.status(400).json({ error: 'Cannot start work before 50% advance payment is received.' });
+      }
+
+      safe.status = nextStatus;
+      safe.adminNotes = sanitizeText(adminNotes || safe.adminNotes || '', 900);
+      safe.estimatedPrice = estimatedPrice || safe.estimatedPrice;
+      const quoted = deriveQuotedTotal({ ...safe, estimatedPrice: safe.estimatedPrice });
+      safe.payment.quotedTotal = quoted;
+      safe.payment.advanceRequiredAmount = Math.round(quoted * 0.5 * 100) / 100;
+      safe.payment.remainingAmount = Math.max(0, Math.round((quoted - safe.payment.remainingPaidAmount) * 100) / 100);
+
+      safe = pushOrderTracking(safe, makeTrackingEvent(
+        `status_${nextStatus}`,
+        `Status Changed: ${statusLabels[nextStatus] || nextStatus}`,
+        safe.adminNotes || 'Status updated by company team.',
+        req.user.name,
+        'admin'
+      ));
+
+      orderDoc.set({
+        status: safe.status,
+        adminNotes: safe.adminNotes,
+        estimatedPrice: safe.estimatedPrice,
+        workflowStage: safe.workflowStage,
+        workflowRules: safe.workflowRules,
+        companyAccepted: safe.companyAccepted,
+        acceptance: safe.acceptance,
+        payment: safe.payment,
+        revisionPolicy: safe.revisionPolicy,
+        tracking: safe.tracking,
+        updatedAt: nowIso()
+      });
+      orderDoc.markModified('payment');
+      orderDoc.markModified('acceptance');
+      orderDoc.markModified('revisionPolicy');
+      orderDoc.markModified('tracking');
+      await orderDoc.save();
+      updatedOrder = orderDoc.toObject();
     } else {
       const db = getDB();
       const idx = db.orders.findIndex(o => o.id === req.params.id);
-      if (idx > -1) { db.orders[idx] = { ...db.orders[idx], status, adminNotes, estimatedPrice, updatedAt: new Date().toISOString() }; saveDB(db); updatedOrder = db.orders[idx]; }
+      if (idx > -1) {
+        let safe = ensureOrderWorkflow(db.orders[idx]);
+        const nextStatus = status || safe.status;
+        if (nextStatus === 'in_progress' && safe.payment.advancePaidAmount < safe.payment.advanceRequiredAmount) {
+          return res.status(400).json({ error: 'Cannot start work before 50% advance payment is received.' });
+        }
+
+        safe.status = nextStatus;
+        safe.adminNotes = sanitizeText(adminNotes || safe.adminNotes || '', 900);
+        safe.estimatedPrice = estimatedPrice || safe.estimatedPrice;
+        const quoted = deriveQuotedTotal({ ...safe, estimatedPrice: safe.estimatedPrice });
+        safe.payment.quotedTotal = quoted;
+        safe.payment.advanceRequiredAmount = Math.round(quoted * 0.5 * 100) / 100;
+        safe.payment.remainingAmount = Math.max(0, Math.round((quoted - safe.payment.remainingPaidAmount) * 100) / 100);
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          `status_${nextStatus}`,
+          `Status Changed: ${statusLabels[nextStatus] || nextStatus}`,
+          safe.adminNotes || 'Status updated by company team.',
+          req.user.name,
+          'admin'
+        ));
+        safe.updatedAt = nowIso();
+        db.orders[idx] = safe;
+        saveDB(db);
+        updatedOrder = safe;
+      }
     }
 
     if (updatedOrder) {
-      const statusLabels = { pending:'Pending',in_progress:'In Progress',review:'Under Review',completed:'Completed',cancelled:'Cancelled' };
       await sendMail(updatedOrder.userEmail, `📬 Order Update — ${statusLabels[status]||status}`,
         `<div style="font-family:sans-serif;padding:40px;background:#0a0a1a;color:#f0eeff;border-radius:16px">
           <h1 style="color:#a78bfa">Order Status Updated</h1>

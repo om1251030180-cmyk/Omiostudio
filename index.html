@@ -504,6 +504,11 @@
       width: 22px;
       height: 22px;
       flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 3px;
+      background: #111;
+      filter: invert(1);
+      transition: filter var(--ease);
     }
 
     .rail-toggle:hover,
@@ -778,8 +783,8 @@
       width: 34px;
       height: 34px;
       border-radius: 12px;
-      background: #e7e7e7;
-      border: 1px solid rgba(17, 18, 18, 0.2);
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.32);
       display: grid;
       place-items: center;
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
@@ -790,6 +795,8 @@
       width: 22px;
       height: 22px;
       display: block;
+      filter: invert(1);
+      transition: filter var(--ease);
     }
 
     .nav-links {
@@ -2791,6 +2798,82 @@
       box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2) !important;
     }
 
+    :root[data-theme='dark'] .logo-mark img,
+    :root[data-theme='dark'] .rail-logo img {
+      filter: invert(0) !important;
+    }
+
+    :root[data-theme='dark'] .logo-mark {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 18, 0.28) !important;
+    }
+
+    :root[data-theme='dark'] .rail-logo img {
+      background: #ffffff !important;
+    }
+
+    :root[data-theme='dark'] .saved-card,
+    :root[data-theme='dark'] .activity-list,
+    :root[data-theme='dark'] .activity-item {
+      background: #121212 !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress {
+      border-top-color: rgba(255, 255, 255, 0.22) !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress::before {
+      background: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress button {
+      background: #161616 !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.28) !important;
+      box-shadow: none !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress button::before {
+      background: rgba(255, 255, 255, 0.48) !important;
+      box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.08) !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress button.active {
+      background: linear-gradient(130deg, rgba(111, 99, 255, 0.42), rgba(102, 224, 210, 0.4)) !important;
+      color: #ffffff !important;
+      border-color: rgba(141, 160, 255, 0.62) !important;
+      box-shadow: 0 8px 20px rgba(102, 224, 210, 0.2) !important;
+    }
+
+    :root[data-theme='dark'] .rail-nav button.active {
+      background: linear-gradient(130deg, rgba(111, 99, 255, 0.42), rgba(102, 224, 210, 0.4)) !important;
+      color: #ffffff !important;
+      border-color: rgba(141, 160, 255, 0.62) !important;
+      box-shadow: 0 8px 20px rgba(102, 224, 210, 0.2) !important;
+    }
+
+    :root[data-theme='dark'] .rail-progress button.active::before {
+      background: #ffffff !important;
+      box-shadow: 0 0 0 6px rgba(111, 99, 255, 0.2) !important;
+    }
+
+    :root[data-theme='dark'] .app,
+    :root[data-theme='dark'] .view,
+    :root[data-theme='dark'] #view-landing,
+    :root[data-theme='dark'] #view-dashboard,
+    :root[data-theme='dark'] #view-admin {
+      background: #000000 !important;
+    }
+
+    :root[data-theme='dark'] .top-chip {
+      background: #1a1a1a !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.28) !important;
+    }
+
     :root[data-theme='dark'] .stat-tile,
     :root[data-theme='dark'] .card-stat,
     :root[data-theme='dark'] .service-tag,
@@ -2812,6 +2895,73 @@
     :root[data-theme='dark'] .card-stat,
     :root[data-theme='dark'] .service-tag,
     :root[data-theme='dark'] .soft-chip {
+      color: #ffffff !important;
+    }
+
+    :root[data-theme='dark'] .side-menu button,
+    :root[data-theme='dark'] .lane,
+    :root[data-theme='dark'] .task-card,
+    :root[data-theme='dark'] .workspace-activity,
+    :root[data-theme='dark'] .profile-card,
+    :root[data-theme='dark'] .management-box,
+    :root[data-theme='dark'] .pricing-row,
+    :root[data-theme='dark'] .work-card,
+    :root[data-theme='dark'] .message-thread,
+    :root[data-theme='dark'] .message-item,
+    :root[data-theme='dark'] .smart-item,
+    :root[data-theme='dark'] .ai-block,
+    :root[data-theme='dark'] .ai-suggest-item,
+    :root[data-theme='dark'] .ai-metric,
+    :root[data-theme='dark'] .activity-line,
+    :root[data-theme='dark'] .workspace-board .lane,
+    :root[data-theme='dark'] .panel,
+    :root[data-theme='dark'] .table-wrap {
+      background: #121212 !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    :root[data-theme='dark'] .side-menu button.active,
+    :root[data-theme='dark'] .side-menu button:hover {
+      background: linear-gradient(130deg, rgba(111, 99, 255, 0.42), rgba(102, 224, 210, 0.4)) !important;
+      color: #ffffff !important;
+      border-color: rgba(141, 160, 255, 0.62) !important;
+      box-shadow: 0 8px 20px rgba(102, 224, 210, 0.2) !important;
+    }
+
+    :root[data-theme='dark'] .lane-head span,
+    :root[data-theme='dark'] .badge,
+    :root[data-theme='dark'] .chip,
+    :root[data-theme='dark'] .pill {
+      background: #1a1a1a !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    :root[data-theme='dark'] .task-card p,
+    :root[data-theme='dark'] .activity-line,
+    :root[data-theme='dark'] .work-contact,
+    :root[data-theme='dark'] .message-item .head,
+    :root[data-theme='dark'] .panel-head p,
+    :root[data-theme='dark'] .muted-note,
+    :root[data-theme='dark'] .drag-hint,
+    :root[data-theme='dark'] .setting-row small,
+    :root[data-theme='dark'] .ai-suggest-item span,
+    :root[data-theme='dark'] .smart-item span,
+    :root[data-theme='dark'] .ai-metric span {
+      color: #d6d6d6 !important;
+    }
+
+    :root[data-theme='dark'] .task-card h5,
+    :root[data-theme='dark'] .lane-head strong,
+    :root[data-theme='dark'] .work-card h4,
+    :root[data-theme='dark'] .message-item p,
+    :root[data-theme='dark'] .profile-card h4,
+    :root[data-theme='dark'] .panel-head h3,
+    :root[data-theme='dark'] .ai-block h4,
+    :root[data-theme='dark'] .ai-metric strong,
+    :root[data-theme='dark'] .setting-row strong {
       color: #ffffff !important;
     }
 
@@ -3156,11 +3306,6 @@
             <div id="quickSearchList" class="quick-search-list"></div>
           </div>
           <div class="nav-links">
-            <button data-topnav="insights" onclick="goTo('#insights')">Insights</button>
-            <button data-topnav="services" onclick="goTo('#services')">Services</button>
-            <button data-topnav="portfolio" onclick="goTo('#portfolio')">Portfolio</button>
-            <button data-topnav="process" onclick="goTo('#process')">Process</button>
-            <button data-topnav="testimonials" onclick="goTo('#testimonials')">Reviews</button>
             <button onclick="navigateToPage('services.html')">Services Page</button>
             <button onclick="navigateToPage('portfolio.html')">Portfolio Page</button>
             <button onclick="navigateToPage('about.html')">About</button>

@@ -114,6 +114,73 @@
     .ok { background: rgba(80,190,130,0.2); border: 1px solid rgba(80,190,130,0.42); color: #194425; }
     .err { background: rgba(230,90,110,0.18); border: 1px solid rgba(230,90,110,0.42); color: #731f2f; }
 
+    :root[data-theme='dark'] .top,
+    :root[data-theme='dark'] .card {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(145, 173, 255, 0.34);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+    }
+
+    :root[data-theme='dark'] .field label,
+    :root[data-theme='dark'] .muted {
+      color: #b8c7ea;
+    }
+
+    :root[data-theme='dark'] .input,
+    :root[data-theme='dark'] .select,
+    :root[data-theme='dark'] .textarea {
+      background: #111a2f;
+      color: #f0f6ff;
+      border-color: rgba(145, 173, 255, 0.34);
+    }
+
+    :root[data-theme='dark'] .input::placeholder,
+    :root[data-theme='dark'] .textarea::placeholder {
+      color: #8ea2d1;
+    }
+
+    :root[data-theme='dark'] .input:focus,
+    :root[data-theme='dark'] .select:focus,
+    :root[data-theme='dark'] .textarea:focus {
+      outline: none;
+      border-color: rgba(102, 224, 210, 0.78);
+      box-shadow: 0 0 0 4px rgba(102, 224, 210, 0.16);
+    }
+
+    :root[data-theme='dark'] .check {
+      background: #121d35;
+      border-color: rgba(145, 173, 255, 0.3);
+      color: #e7efff;
+    }
+
+    :root[data-theme='dark'] .chip {
+      color: #dfe8ff;
+      background: #121d35;
+      border-color: rgba(145, 173, 255, 0.36);
+    }
+
+    :root[data-theme='dark'] .btn-ghost {
+      background: #121d35;
+      color: #f0f6ff;
+      border-color: rgba(145, 173, 255, 0.36);
+    }
+
+    :root[data-theme='dark'] .btn-ghost:hover {
+      background: #162442;
+    }
+
+    :root[data-theme='dark'] .ok {
+      background: rgba(72, 176, 124, 0.24);
+      color: #bdf3cf;
+      border-color: rgba(72, 176, 124, 0.44);
+    }
+
+    :root[data-theme='dark'] .err {
+      background: rgba(226, 85, 106, 0.22);
+      color: #ffd4dc;
+      border-color: rgba(226, 85, 106, 0.42);
+    }
+
     @media (max-width: 860px) {
       .grid-2, .grid-3, .checks { grid-template-columns: 1fr; }
     }
