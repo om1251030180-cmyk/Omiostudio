@@ -22,6 +22,15 @@
       --blue: #6e89ff;
     }
 
+    :root[data-theme='light'] {
+      --bg: #eef3ff;
+      --card: rgba(255, 255, 255, 0.9);
+      --card-2: rgba(247, 250, 255, 0.95);
+      --stroke: rgba(126, 141, 209, 0.24);
+      --text: #1a1f44;
+      --muted: #5f688f;
+    }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -59,6 +68,12 @@
     .btn-ghost { background: rgba(16, 28, 54, 0.85); }
     .btn-danger { background: var(--danger); }
     .btn-warn { background: var(--warn); }
+
+    :root[data-theme='light'] .btn,
+    :root[data-theme='light'] .btn-ghost {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.9);
+    }
 
     .grid { display: grid; gap: 10px; }
     .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -119,6 +134,7 @@
         <div class="muted">Dedicated admin workspace for clients, projects, scheduling and operations.</div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-ghost" id="themeToggleBtn" onclick="toggleTheme()">Light Theme</button>
         <button class="btn-ghost" onclick="window.location.href='index.html'">Open Main Site</button>
         <button class="btn" onclick="loadAll()">Refresh</button>
         <button class="btn-danger" onclick="logout()">Logout</button>
@@ -187,8 +203,27 @@
   <script>
     const API = `${window.location.origin}/api`;
     const TOKEN_KEY = 'omio_token';
+    const THEME_KEY = 'omio_theme';
 
     let state = { user: null, orders: [], users: [], messages: [] };
+
+    function applyTheme(theme) {
+      const next = theme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(THEME_KEY, next);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = next === 'dark' ? 'Light Theme' : 'Dark Theme';
+    }
+
+    function initTheme() {
+      const saved = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+      applyTheme(saved === 'light' || saved === 'dark' ? saved : 'dark');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
 
     function token() { return localStorage.getItem(TOKEN_KEY) || ''; }
     function headers(json = false) {
@@ -364,6 +399,7 @@
       window.location.href = 'index.html';
     }
 
+    initTheme();
     loadAll().catch((e) => { alert(e.message || 'Unable to load admin page'); });
   </script>
 </body>

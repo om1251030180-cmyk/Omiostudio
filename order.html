@@ -19,12 +19,24 @@
       --cyan: #66e0d2;
       --orange: #ff985f;
     }
+
+    :root[data-theme='dark'] {
+      --bg: #0d1530;
+      --ink: #ecf2ff;
+      --muted: #b5c5ea;
+      --card: rgba(18, 31, 58, 0.88);
+      --stroke: rgba(118, 149, 233, 0.32);
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Plus Jakarta Sans", sans-serif;
       color: var(--ink);
       background: radial-gradient(circle at 8% 12%, #dce9ff, transparent 35%), radial-gradient(circle at 86% 14%, #e6fffb, transparent 36%), var(--bg);
+    }
+
+    :root[data-theme='dark'] body {
+      background: radial-gradient(circle at 8% 12%, rgba(79, 117, 232, 0.24), transparent 35%), radial-gradient(circle at 86% 14%, rgba(44, 163, 180, 0.22), transparent 36%), var(--bg);
     }
     .wrap { width: min(1120px, 94vw); margin: 22px auto 34px; display: grid; gap: 12px; }
     .top {
@@ -115,6 +127,7 @@
         <div class="muted">Detailed Fiverr-style requirements form for complete project planning.</div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-ghost" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
         <button class="btn-ghost" onclick="window.location.href='index.html'">Back</button>
       </div>
     </section>
@@ -245,6 +258,7 @@
     const API = `${window.location.origin}/api`;
     const TOKEN_KEY = 'omio_token';
     const USER_KEY = 'omio_user';
+    const THEME_KEY = 'omio_theme';
 
     const services = [
       ['web_basic', 'Website Development - Basic'],
@@ -264,6 +278,27 @@
       const n = document.getElementById('formNotice');
       n.className = `notice show ${type}`;
       n.textContent = msg;
+    }
+    function applyTheme(theme) {
+      const next = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(THEME_KEY, next);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = next === 'dark' ? 'Light Theme' : 'Dark Theme';
+    }
+
+    function initTheme() {
+      const saved = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+      if (saved === 'dark' || saved === 'light') {
+        applyTheme(saved);
+        return;
+      }
+      applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
     }
 
     function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
@@ -388,6 +423,7 @@
       }
     }
 
+    initTheme();
     initForm();
     ensureClientAccess();
   </script>

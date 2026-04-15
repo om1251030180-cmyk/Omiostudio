@@ -31,6 +31,18 @@
       --ease: 0.4s cubic-bezier(.22, 1, .36, 1);
     }
 
+    :root[data-theme='dark'] {
+      --bg: #0d1530;
+      --ink: #ecf2ff;
+      --ink-soft: #b5c5ea;
+      --stroke: rgba(118, 149, 233, 0.3);
+      --card: rgba(16, 29, 54, 0.86);
+      --glass: rgba(12, 24, 46, 0.82);
+      --glass-strong: rgba(15, 28, 52, 0.9);
+      --shadow-soft: 0 12px 26px rgba(5, 12, 28, 0.42), 0 3px 9px rgba(10, 20, 40, 0.32);
+      --shadow-mid: 0 16px 34px rgba(3, 9, 22, 0.55), 0 5px 14px rgba(7, 17, 36, 0.38);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
@@ -42,6 +54,13 @@
       background: radial-gradient(circle at 15% 10%, #dbe8ff, transparent 34%),
           radial-gradient(circle at 80% 12%, #e8fffb, transparent 35%),
           radial-gradient(circle at 80% 82%, #ffe7d9, transparent 38%),
+                  var(--bg);
+    }
+
+    :root[data-theme='dark'] body {
+      background: radial-gradient(circle at 15% 10%, rgba(76, 116, 227, 0.24), transparent 34%),
+          radial-gradient(circle at 80% 12%, rgba(44, 163, 180, 0.2), transparent 35%),
+          radial-gradient(circle at 80% 82%, rgba(148, 93, 52, 0.2), transparent 38%),
                   var(--bg);
     }
 
@@ -3665,6 +3684,7 @@
     const MGMT_PRICING_KEY = 'omio_mgmt_pricing';
     const WORKS_KEY = 'omio_client_works';
     const MESSAGES_KEY = 'omio_client_messages';
+    const THEME_KEY = 'omio_theme';
 
     const state = {
       apiReady: false,
@@ -3838,6 +3858,34 @@
 
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+    function getStoredTheme() {
+      const value = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+      return value === 'dark' || value === 'light' ? value : '';
+    }
+
+    function applyTheme(theme, persist = true) {
+      const next = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      if (persist) localStorage.setItem(THEME_KEY, next);
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if (themeBtn) themeBtn.textContent = next === 'dark' ? 'Light Theme' : 'Dark Theme';
+    }
+
+    function initTheme() {
+      const saved = getStoredTheme();
+      if (saved) {
+        applyTheme(saved);
+        return;
+      }
+      const fallback = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      applyTheme(fallback, false);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
     function getToken() {
       return localStorage.getItem(TOKEN_KEY) || '';
     }
@@ -3852,6 +3900,10 @@
 
     function setUser(user) {
       state.user = user || null;
+      const hasSavedTheme = !!getStoredTheme();
+      if (state.user?.role === 'admin' && !hasSavedTheme) {
+        applyTheme('dark');
+      }
       if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
       else localStorage.removeItem(USER_KEY);
       renderNav();
@@ -4599,19 +4651,27 @@
       const nav = document.getElementById('navRight');
       if (!state.user) {
         nav.innerHTML = `
+          <button class="ghost-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
           <button class="ghost-btn" onclick="openAuthModal('login')">Login</button>
           <button class="brand-btn" onclick="openAuthModal('register')">Get Started</button>
         `;
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
         return;
       }
 
       const first = state.user.name?.split(' ')[0] || 'User';
       const isAdmin = state.user.role === 'admin';
       nav.innerHTML = `
+        <button class="ghost-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
         <span style="font-size:0.8rem; color:var(--ink-soft); font-weight:700;">Hi, ${first}</span>
         <button class="ghost-btn" onclick="showView('dashboard')">Dashboard</button>
         ${isAdmin ? '<button class="brand-btn" onclick="showView(\'admin\')">Admin</button>' : '<button class="brand-btn" onclick="openOrderModal()">Order</button>'}
       `;
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
     }
 
     function badgeClass(status) {
@@ -6546,6 +6606,7 @@
     }
 
     async function boot() {
+      initTheme();
       seedLocalAdminIfNeeded();
       loadManagementPricing();
       syncRoleAccessUI();

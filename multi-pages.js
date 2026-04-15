@@ -1,6 +1,51 @@
 (function () {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let isPointerFine = window.matchMedia('(pointer:fine)').matches;
+  const THEME_KEY = 'omio_theme';
+
+  const getStoredTheme = () => {
+    try {
+      const value = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+      return value === 'dark' || value === 'light' ? value : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const getPreferredTheme = () => {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    return 'light';
+  };
+
+  const applyTheme = (theme) => {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {}
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) btn.textContent = next === 'dark' ? 'Light Theme' : 'Dark Theme';
+  };
+
+  const initTheme = () => {
+    applyTheme(getStoredTheme() || getPreferredTheme());
+  };
+
+  const wireThemeToggle = () => {
+    const topbar = document.querySelector('.topbar-inner');
+    if (!topbar || document.getElementById('themeToggleBtn')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'themeToggleBtn';
+    btn.className = 'link-btn theme-toggle';
+    btn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+    topbar.appendChild(btn);
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    btn.textContent = current === 'dark' ? 'Light Theme' : 'Dark Theme';
+  };
 
   window.toggleSideRail = function toggleSideRail() {
     if (window.innerWidth <= 960) {
@@ -201,6 +246,8 @@
   });
 
   revealItems();
+  initTheme();
+  wireThemeToggle();
   wireTransitions();
   setActiveRailLink();
   wireCardTilt();
