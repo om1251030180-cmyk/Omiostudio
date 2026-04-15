@@ -10,8 +10,8 @@
   --glass: rgba(255, 255, 255, 0.68);
   --glass-strong: rgba(255, 255, 255, 0.84);
   --font-brand: 'DM Serif Display', serif;
-  --soft-shadow: 0 16px 30px rgba(44, 64, 140, 0.22), 0 4px 12px rgba(73, 96, 176, 0.16), 0 -1px 0 rgba(255, 255, 255, 0.8);
-  --mid-shadow: 0 24px 44px rgba(34, 53, 127, 0.3), 0 9px 20px rgba(63, 87, 168, 0.2), 0 -1px 0 rgba(255, 255, 255, 0.82);
+  --soft-shadow: 0 6px 14px rgba(45, 63, 128, 0.16), 0 1px 3px rgba(65, 86, 158, 0.12);
+  --mid-shadow: 0 12px 24px rgba(34, 53, 127, 0.22), 0 3px 8px rgba(63, 87, 168, 0.15);
   --ease: 0.36s cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -22,8 +22,8 @@
   --stroke: rgba(118, 149, 233, 0.32);
   --glass: rgba(16, 28, 54, 0.74);
   --glass-strong: rgba(18, 31, 58, 0.9);
-  --soft-shadow: 0 10px 24px rgba(3, 9, 24, 0.42), 0 2px 8px rgba(8, 20, 41, 0.32);
-  --mid-shadow: 0 16px 34px rgba(1, 7, 20, 0.55), 0 5px 14px rgba(7, 17, 36, 0.4);
+  --soft-shadow: 0 8px 16px rgba(2, 7, 20, 0.44), 0 2px 5px rgba(8, 18, 38, 0.34);
+  --mid-shadow: 0 14px 24px rgba(1, 7, 20, 0.56), 0 4px 10px rgba(7, 17, 36, 0.42);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,7 +72,7 @@ html, body {
 .blob {
   position: fixed;
   border-radius: 50%;
-  filter: blur(74px);
+  filter: blur(42px);
   pointer-events: none;
   z-index: 0;
   transform: translate3d(0, var(--parallax-y, 0px), 0);
@@ -111,7 +111,7 @@ body.side-collapsed .layout { padding-left: 90px; }
   border: 1px solid rgba(255, 255, 255, 0.72);
   background: var(--glass-strong);
   box-shadow: var(--mid-shadow);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(2px);
   transition: width var(--ease), transform var(--ease), padding var(--ease);
   z-index: 95;
 }
@@ -125,7 +125,7 @@ body.side-collapsed .side-rail { width: 74px; padding: 12px 10px; }
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid var(--stroke);
-  box-shadow: var(--soft-shadow);
+  box-shadow: 0 3px 8px rgba(49, 68, 134, 0.12), 0 1px 2px rgba(62, 84, 154, 0.1);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -141,7 +141,7 @@ body.side-collapsed .side-rail { width: 74px; padding: 12px 10px; }
 .rail-btn.active {
   background: linear-gradient(130deg, rgba(111, 99, 255, 0.18), rgba(102, 224, 210, 0.2));
   border-color: rgba(109, 125, 208, 0.48);
-  box-shadow: inset 3px 3px 8px rgba(157, 174, 236, 0.45), inset -3px -3px 8px rgba(255, 255, 255, 0.88);
+  box-shadow: inset 1px 1px 3px rgba(132, 150, 217, 0.28), inset -1px -1px 3px rgba(255, 255, 255, 0.58);
   color: #3b4ca7;
 }
 
@@ -164,7 +164,7 @@ body.side-collapsed .rail-logo span { display: none; }
   border: 1px solid rgba(255, 255, 255, 0.84);
   background: var(--glass-strong);
   box-shadow: var(--soft-shadow);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(2px);
   overflow: hidden;
   position: relative;
 }
@@ -410,7 +410,7 @@ body.side-collapsed .rail-logo span { display: none; }
 }
 
 :root[data-theme='dark'] body::before {
-  opacity: 0.04;
+  opacity: 0.01;
   mix-blend-mode: normal;
 }
 
@@ -425,7 +425,7 @@ body.side-collapsed .rail-logo span { display: none; }
   background: rgba(19, 34, 63, 0.88);
   border-color: rgba(120, 152, 235, 0.34);
   color: var(--ink);
-  box-shadow: 0 12px 24px rgba(3, 8, 23, 0.5), 0 3px 8px rgba(7, 15, 35, 0.4), inset 0 1px 0 rgba(183, 206, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(3, 8, 23, 0.38), 0 1px 3px rgba(7, 15, 35, 0.28), inset 0 1px 0 rgba(183, 206, 255, 0.06);
 }
 
 :root[data-theme='dark'] .rail-btn:hover,
@@ -437,7 +437,7 @@ body.side-collapsed .rail-logo span { display: none; }
   color: #e7efff;
   border-color: rgba(116, 150, 238, 0.5);
   background: linear-gradient(132deg, rgba(111, 99, 255, 0.34), rgba(102, 224, 210, 0.26));
-  box-shadow: inset 2px 2px 7px rgba(8, 16, 40, 0.62), inset -2px -2px 7px rgba(146, 175, 244, 0.16);
+  box-shadow: inset 1px 1px 4px rgba(8, 16, 40, 0.48), inset -1px -1px 4px rgba(146, 175, 244, 0.12);
 }
 
 :root[data-theme='dark'] .search {
@@ -544,7 +544,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.08;
+  opacity: 0.02;
   background-image: radial-gradient(rgba(85, 102, 186, 0.12) 0.6px, transparent 0.7px);
   background-size: 16px 16px;
   mix-blend-mode: soft-light;
@@ -561,7 +561,7 @@ body::before {
 .search,
 .link-btn,
 .pill {
-  backdrop-filter: blur(6px) saturate(1.12);
+  backdrop-filter: none;
 }
 
 .card {
