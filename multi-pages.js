@@ -95,6 +95,12 @@
     });
   };
 
+  const resetBodyTransitionState = () => {
+    document.body.style.opacity = '';
+    document.body.style.transform = '';
+    document.body.style.transition = '';
+  };
+
   const setActiveRailLink = () => {
     const current = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
     document.querySelectorAll('.rail-nav a.rail-btn').forEach((a) => {
@@ -244,6 +250,10 @@
       document.body.classList.remove('side-open');
     }
   });
+
+  window.addEventListener('pageshow', resetBodyTransitionState);
+  window.addEventListener('focus', resetBodyTransitionState);
+  setTimeout(resetBodyTransitionState, 420);
 
   revealItems();
   initTheme();
