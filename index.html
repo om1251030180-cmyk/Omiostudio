@@ -1405,6 +1405,429 @@
     .portfolio-card:nth-child(4n+1) { grid-column: span 5; }
     .portfolio-card:nth-child(4n+2) { grid-column: span 3; }
 
+    .website-preview-shell {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: clamp(16px, 3vw, 26px);
+      border: 1px solid rgba(17, 18, 18, 0.12);
+      background:
+        radial-gradient(circle at 9% 14%, rgba(235, 97, 37, 0.12), transparent 40%),
+        radial-gradient(circle at 88% 86%, rgba(30, 184, 167, 0.14), transparent 46%),
+        linear-gradient(150deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.48));
+      box-shadow: 0 18px 44px rgba(17, 18, 18, 0.12);
+    }
+
+    .website-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .website-preview-card {
+      grid-column: span 4;
+      border-radius: 24px;
+      padding: 12px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.56));
+      display: grid;
+      gap: 10px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
+      box-shadow: 0 12px 24px rgba(17, 18, 18, 0.13);
+    }
+
+    .website-preview-card:hover {
+      transform: translateY(-5px) rotateX(1.5deg) rotateY(-1.5deg);
+      box-shadow: 0 18px 34px rgba(17, 18, 18, 0.22);
+      border-color: rgba(17, 18, 18, 0.24);
+    }
+
+    .website-preview-card.spotlight {
+      border-color: rgba(30, 184, 167, 0.66);
+      box-shadow: 0 0 0 1px rgba(30, 184, 167, 0.35), 0 22px 42px rgba(7, 116, 106, 0.3);
+      animation: previewPulse 2.4s ease-in-out;
+    }
+
+    .preview-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .preview-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(17, 18, 18, 0.18);
+      padding: 5px 10px;
+      font-size: 0.66rem;
+      letter-spacing: 0.09em;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .preview-live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #1eb8a7;
+      box-shadow: 0 0 0 0 rgba(30, 184, 167, 0.55);
+      animation: previewBlink 1.8s infinite;
+    }
+
+    .preview-mini-window {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(17, 18, 18, 0.15);
+      background: #fff;
+      min-height: 172px;
+      position: relative;
+    }
+
+    .mini-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      background: rgba(17, 18, 18, 0.08);
+      border-bottom: 1px solid rgba(17, 18, 18, 0.1);
+    }
+
+    .mini-dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .mini-dots i {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      display: block;
+      background: rgba(17, 18, 18, 0.28);
+    }
+
+    .mini-address {
+      font-size: 0.6rem;
+      color: var(--ink-soft);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .mini-layout {
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      animation: miniFloat 4.8s ease-in-out infinite;
+    }
+
+    .mini-hero {
+      border-radius: 11px;
+      min-height: 48px;
+      position: relative;
+      overflow: hidden;
+      background: var(--mini-grad, linear-gradient(120deg, #2f2f67, #eb5f22));
+    }
+
+    .mini-hero::after {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.34) 50%, transparent 70%);
+      transform: translateX(-65%);
+      animation: miniShimmer 2.8s linear infinite;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .mini-stat {
+      border-radius: 9px;
+      min-height: 24px;
+      background: rgba(17, 18, 18, 0.1);
+    }
+
+    .mini-cards {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 7px;
+    }
+
+    .mini-card {
+      border-radius: 9px;
+      min-height: 36px;
+      background: rgba(17, 18, 18, 0.11);
+    }
+
+    .preview-info {
+      display: grid;
+      gap: 4px;
+    }
+
+    .preview-info h4 {
+      margin: 0;
+      font-family: Syne, sans-serif;
+      font-size: 1.06rem;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-info p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .preview-tags {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .preview-tags span {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      background: rgba(17, 18, 18, 0.08);
+      color: var(--ink-soft);
+    }
+
+    .preview-open-btn {
+      border-radius: 11px;
+      background: #111212;
+      color: #ffffff;
+      padding: 8px 11px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      border: 1px solid rgba(17, 18, 18, 0.2);
+    }
+
+    .modal.demo-modal {
+      width: min(1080px, 96vw);
+      padding: clamp(14px, 2.6vw, 22px);
+    }
+
+    .demo-modal-shell {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .demo-info-pane,
+    .demo-stage-pane {
+      border-radius: 20px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.56));
+      padding: 14px;
+    }
+
+    .demo-info-pane h3 {
+      margin: 0;
+      font-family: Syne, sans-serif;
+      font-size: clamp(1.34rem, 2.4vw, 1.9rem);
+      line-height: 1.06;
+    }
+
+    .demo-info-pane p {
+      margin: 9px 0 0;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      line-height: 1.54;
+    }
+
+    .demo-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .demo-badges span {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border: 1px solid rgba(17, 18, 18, 0.16);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .demo-miniature {
+      border-radius: 16px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      overflow: hidden;
+      background: #fff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .miniature-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(17, 18, 18, 0.1);
+      background: rgba(17, 18, 18, 0.05);
+    }
+
+    .miniature-nav strong {
+      font-family: Syne, sans-serif;
+      font-size: 0.84rem;
+      letter-spacing: 0.02em;
+    }
+
+    .miniature-nav small {
+      color: var(--ink-soft);
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .miniature-body {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 318px;
+    }
+
+    .miniature-hero {
+      border-radius: 12px;
+      min-height: 92px;
+      padding: 10px;
+      color: #fff;
+      display: grid;
+      align-content: end;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+      background: var(--demo-grad, linear-gradient(122deg, #2f2f67, #eb5f22));
+    }
+
+    .miniature-hero::before {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 999px;
+      right: -48px;
+      top: -70px;
+      background: rgba(255, 255, 255, 0.2);
+      animation: orbDrift 7s ease-in-out infinite;
+    }
+
+    .miniature-hero strong {
+      position: relative;
+      z-index: 1;
+      font-size: 0.92rem;
+      line-height: 1.2;
+    }
+
+    .miniature-hero span {
+      position: relative;
+      z-index: 1;
+      font-size: 0.7rem;
+      opacity: 0.92;
+    }
+
+    .miniature-panels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .miniature-panel {
+      border-radius: 10px;
+      min-height: 42px;
+      background: rgba(17, 18, 18, 0.09);
+      animation: panelWave 4.5s ease-in-out infinite;
+    }
+
+    .miniature-panel:nth-child(2) { animation-delay: 0.4s; }
+    .miniature-panel:nth-child(3) { animation-delay: 0.8s; }
+
+    .miniature-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 8px;
+    }
+
+    .miniature-card {
+      border-radius: 12px;
+      min-height: 78px;
+      background: rgba(17, 18, 18, 0.11);
+    }
+
+    .miniature-card.alt {
+      background: rgba(17, 18, 18, 0.17);
+    }
+
+    .demo-cta {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .demo-cta button {
+      border-radius: 11px;
+      padding: 9px 12px;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .demo-cta .primary {
+      background: #111212;
+      color: #fff;
+    }
+
+    .demo-cta .secondary {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      color: var(--ink-soft);
+    }
+
+    @keyframes previewBlink {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(30, 184, 167, 0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(30, 184, 167, 0); }
+    }
+
+    @keyframes miniFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes miniShimmer {
+      to { transform: translateX(95%); }
+    }
+
+    @keyframes previewPulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    @keyframes orbDrift {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(-16px) translateY(12px); }
+    }
+
+    @keyframes panelWave {
+      0%, 100% { transform: translateY(0); opacity: 0.86; }
+      50% { transform: translateY(-3px); opacity: 1; }
+    }
+
     .port-bg {
       position: absolute;
       inset: 0;
@@ -2405,6 +2828,86 @@
     .modal-tabs button.active {
       background: linear-gradient(120deg, #eb6125, #1eb8a7);
       color: #fff;
+    }
+
+    :root[data-theme='dark'] .website-preview-shell {
+      border-color: rgba(255, 255, 255, 0.24);
+      background:
+        radial-gradient(circle at 9% 14%, rgba(235, 97, 37, 0.2), transparent 42%),
+        radial-gradient(circle at 88% 86%, rgba(30, 184, 167, 0.22), transparent 46%),
+        linear-gradient(150deg, rgba(18, 18, 18, 0.95), rgba(10, 10, 10, 0.94));
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    :root[data-theme='dark'] .website-preview-card,
+    :root[data-theme='dark'] .demo-info-pane,
+    :root[data-theme='dark'] .demo-stage-pane {
+      background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(15, 15, 15, 0.9));
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    :root[data-theme='dark'] .preview-chip,
+    :root[data-theme='dark'] .demo-badges span,
+    :root[data-theme='dark'] .preview-tags span {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #d8d8d8;
+    }
+
+    :root[data-theme='dark'] .preview-mini-window,
+    :root[data-theme='dark'] .demo-miniature {
+      background: #121212;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    :root[data-theme='dark'] .mini-topbar,
+    :root[data-theme='dark'] .miniature-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border-bottom-color: rgba(255, 255, 255, 0.16);
+    }
+
+    :root[data-theme='dark'] .mini-dots i,
+    :root[data-theme='dark'] .mini-stat,
+    :root[data-theme='dark'] .mini-card,
+    :root[data-theme='dark'] .miniature-card,
+    :root[data-theme='dark'] .miniature-panel {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    :root[data-theme='dark'] .preview-info h4,
+    :root[data-theme='dark'] .demo-info-pane h3,
+    :root[data-theme='dark'] .miniature-nav strong {
+      color: #fff;
+    }
+
+    :root[data-theme='dark'] .preview-info p,
+    :root[data-theme='dark'] .mini-address,
+    :root[data-theme='dark'] .demo-info-pane p,
+    :root[data-theme='dark'] .miniature-nav small {
+      color: #d4d4d4;
+    }
+
+    :root[data-theme='dark'] .preview-open-btn,
+    :root[data-theme='dark'] .demo-cta .primary {
+      background: linear-gradient(128deg, #eb6125, #1eb8a7);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    :root[data-theme='dark'] .demo-cta .secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    @media (max-width: 1180px) {
+      .website-preview-card { grid-column: span 6; }
+      .demo-modal-shell { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .website-preview-card { grid-column: span 12; }
+      .modal.demo-modal { width: min(96vw, 96vw); }
     }
 
     .drop {
@@ -3417,6 +3920,16 @@
         <div id="portfolioGrid" class="portfolio-grid"></div>
       </div>
 
+      <div class="container section" id="website-previews">
+        <div class="section-head">
+          <h2 class="reveal">Website Preview Gallery</h2>
+          <p class="reveal">Interactive miniature demos in a rounded animated grid. Click any card to open a full on-page demo view for clients.</p>
+        </div>
+        <section class="website-preview-shell reveal">
+          <div id="websitePreviewGrid" class="website-preview-grid"></div>
+        </section>
+      </div>
+
       <div class="container section" id="process">
         <div class="section-head">
           <h2 class="reveal">Build Flow</h2>
@@ -3914,6 +4427,13 @@
     </div>
   </div>
 
+  <div class="modal-layer" id="websiteDemoLayer">
+    <div class="modal demo-modal neo-card">
+      <button class="modal-close" onclick="closeModal('websiteDemoLayer')">x</button>
+      <div id="websiteDemoStage"></div>
+    </div>
+  </div>
+
   <div id="toasts" class="toasts"></div>
 
   <script>
@@ -4041,6 +4561,63 @@
       { id: 4, cat: 'branding', title: 'Nexa Salon Kit', info: 'Cards + Social', grad: 'port-grad-4' },
       { id: 5, cat: 'website', title: 'Lumen Interior', info: 'Premium Portfolio', grad: 'port-grad-2' },
       { id: 6, cat: 'uiux', title: 'Orbit Finance UX', info: 'UX Prototype', grad: 'port-grad-1' }
+    ];
+
+    const websiteShowcase = [
+      {
+        id: 'luxora-estate',
+        type: 'Real Estate',
+        title: 'Luxora Estate Landing',
+        desc: 'High-ticket property showcase with instant inquiry funnel and elegant hero motion.',
+        gradient: 'linear-gradient(125deg, #173b8f, #1eb8a7)',
+        domain: 'luxora-demo.omio',
+        tags: ['Lead Form', 'Map View', 'Premium UI']
+      },
+      {
+        id: 'fitmodo-gym',
+        type: 'Fitness',
+        title: 'FitModo Club Website',
+        desc: 'Membership-focused conversion page with trainer stories and dynamic class calendar.',
+        gradient: 'linear-gradient(125deg, #5f1d50, #ff7f32)',
+        domain: 'fitmodo-demo.omio',
+        tags: ['Membership', 'Timetable', 'Mobile First']
+      },
+      {
+        id: 'zenbite-cafe',
+        type: 'Restaurant',
+        title: 'ZenBite Cafe Experience',
+        desc: 'Food visuals, reservation path, and event booking flow tuned for local discovery.',
+        gradient: 'linear-gradient(125deg, #3e2f0a, #d9871f)',
+        domain: 'zenbite-demo.omio',
+        tags: ['Bookings', 'Menu UX', 'Event Blocks']
+      },
+      {
+        id: 'medivance-care',
+        type: 'Healthcare',
+        title: 'MediVance Care Portal',
+        desc: 'Clinic-oriented website with appointment slots, services catalog, and trust section.',
+        gradient: 'linear-gradient(125deg, #114c5f, #2e95c8)',
+        domain: 'medivance-demo.omio',
+        tags: ['Appointments', 'Service Finder', 'Trust Signals']
+      },
+      {
+        id: 'nexora-saas',
+        type: 'SaaS',
+        title: 'Nexora Product Site',
+        desc: 'B2B software landing with onboarding narrative, pricing grid, and case study stack.',
+        gradient: 'linear-gradient(125deg, #2f2f67, #eb5f22)',
+        domain: 'nexora-demo.omio',
+        tags: ['Case Studies', 'Pricing', 'Product Tour']
+      },
+      {
+        id: 'atelier-bloom',
+        type: 'Fashion',
+        title: 'Atelier Bloom Storefront',
+        desc: 'Boutique collection site with lookbook style blocks and conversion-ready product CTA.',
+        gradient: 'linear-gradient(125deg, #5b1733, #c94683)',
+        domain: 'atelier-demo.omio',
+        tags: ['Lookbook', 'Collections', 'Smart CTA']
+      }
     ];
 
     const processData = [
@@ -5585,6 +6162,109 @@
       `).join('');
     }
 
+    function renderWebsitePreviewGrid() {
+      const grid = document.getElementById('websitePreviewGrid');
+      if (!grid) return;
+      grid.innerHTML = websiteShowcase.map((item) => `
+        <article class="website-preview-card" data-demo-id="${item.id}" onclick="openWebsiteDemo('${item.id}')">
+          <div class="preview-card-head">
+            <span class="preview-chip">${item.type}</span>
+            <span class="preview-live-dot" aria-hidden="true"></span>
+          </div>
+          <div class="preview-mini-window">
+            <div class="mini-topbar">
+              <span class="mini-dots"><i></i><i></i><i></i></span>
+              <span class="mini-address">${item.domain}</span>
+            </div>
+            <div class="mini-layout" style="--mini-grad:${item.gradient};">
+              <div class="mini-hero"></div>
+              <div class="mini-stats">
+                <div class="mini-stat"></div>
+                <div class="mini-stat"></div>
+                <div class="mini-stat"></div>
+              </div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-info">
+            <h4>${item.title}</h4>
+            <p>${item.desc}</p>
+          </div>
+          <div class="preview-actions">
+            <div class="preview-tags">${item.tags.slice(0, 2).map((tag) => `<span>${tag}</span>`).join('')}</div>
+            <button class="preview-open-btn" onclick="event.stopPropagation(); openWebsiteDemo('${item.id}')">Open Demo</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function startWebsitePreviewSpotlight() {
+      const cards = [...document.querySelectorAll('.website-preview-card')];
+      if (!cards.length) return;
+      let index = 0;
+
+      const activate = () => {
+        cards.forEach((card, i) => card.classList.toggle('spotlight', i === index));
+      };
+
+      activate();
+      setInterval(() => {
+        index = (index + 1) % cards.length;
+        activate();
+      }, 2600);
+    }
+
+    function openWebsiteDemo(id) {
+      const item = websiteShowcase.find((entry) => entry.id === id);
+      const stage = document.getElementById('websiteDemoStage');
+      if (!item || !stage) return;
+
+      stage.innerHTML = `
+        <div class="demo-modal-shell">
+          <article class="demo-info-pane">
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+            <div class="demo-badges">
+              <span>${item.type}</span>
+              ${item.tags.map((tag) => `<span>${tag}</span>`).join('')}
+            </div>
+            <div class="demo-cta">
+              <button class="primary" onclick="openOrderModal('web_business')">Get Similar Website</button>
+              <button class="secondary" onclick="closeModal('websiteDemoLayer'); goTo('#services');">See Website Packages</button>
+            </div>
+          </article>
+          <article class="demo-stage-pane">
+            <div class="demo-miniature" style="--demo-grad:${item.gradient};">
+              <div class="miniature-nav">
+                <strong>${item.domain}</strong>
+                <small>Live Demo Layout</small>
+              </div>
+              <div class="miniature-body">
+                <div class="miniature-hero">
+                  <strong>${item.title}</strong>
+                  <span>Miniature full-page concept to help clients visualize the final output.</span>
+                </div>
+                <div class="miniature-panels">
+                  <div class="miniature-panel"></div>
+                  <div class="miniature-panel"></div>
+                  <div class="miniature-panel"></div>
+                </div>
+                <div class="miniature-grid">
+                  <div class="miniature-card"></div>
+                  <div class="miniature-card alt"></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      `;
+
+      openModal('websiteDemoLayer');
+    }
+
     function renderProcess() {
       const box = document.getElementById('processGrid');
       box.innerHTML = processData.map((p) => `
@@ -6864,11 +7544,13 @@
       renderSavedServices();
       renderPortfolioFilters();
       renderPortfolio();
+      renderWebsitePreviewGrid();
       renderProcess();
       renderTestimonial();
       wireModalClose();
       wireOrderDropzone();
       wireQuickSearch();
+      startWebsitePreviewSpotlight();
       autoTestimonial();
 
       await detectApiMode();
