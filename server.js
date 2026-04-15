@@ -17,7 +17,8 @@ const path       = require('path');
 const fs         = require('fs');
 
 const app  = express();
-const PORT = process.env.PORT || 4000;
+let PORT = Number(process.env.PORT) || 4000;
+const MAX_PORT_ATTEMPTS = 10;
 
 /* ─── MIDDLEWARE ─── */
 app.use(cors({ origin: '*', credentials: true }));
@@ -1375,11 +1376,11 @@ app.get('*', (req, res) => {
 });
 
 /* ─── START ─── */
-app.listen(PORT, () => {
+const printStartupInfo = (activePort) => {
   console.log('\n✦ ════════════════════════════════════ ✦');
   console.log('  OMIO STUDIO SERVER STARTED');
-  console.log(`  URL:      http://localhost:${PORT}`);
-  console.log(`  API:      http://localhost:${PORT}/api`);
+  console.log(`  URL:      http://localhost:${activePort}`);
+  console.log(`  API:      http://localhost:${activePort}/api`);
   console.log(`  Database: ${MONGO_URI}`);
   console.log(`  Mode:     ${process.env.NODE_ENV || 'development'}`);
   console.log('✦ ════════════════════════════════════ ✦\n');
@@ -1393,4 +1394,23 @@ app.listen(PORT, () => {
   console.log(`  From:     ${getMailerFromAddress()}`);
   console.log(`  Leader:   ${getCompanyLeaderEmail()}`);
   console.log('  ⚡ Tip: Fill in .env for email notifications\n');
-});
+};
+
+const startServer = (attempt = 0) => {
+  const server = app.listen(PORT, () => {
+    printStartupInfo(PORT);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE' && attempt < MAX_PORT_ATTEMPTS) {
+      console.warn(`⚠ Port ${PORT} is busy. Retrying on port ${PORT + 1}...`);
+      PORT += 1;
+      return startServer(attempt + 1);
+    }
+
+    console.error('❌ Failed to start server:', err.message);
+    process.exit(1);
+  });
+};
+
+startServer();
