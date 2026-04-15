@@ -1525,10 +1525,16 @@
 
     .mini-hero {
       border-radius: 11px;
-      min-height: 48px;
+      min-height: 58px;
+      padding: 8px;
       position: relative;
       overflow: hidden;
       background: var(--mini-grad, linear-gradient(120deg, #2f2f67, #eb5f22));
+      display: grid;
+      align-content: end;
+      gap: 2px;
+      color: #fff;
+      z-index: 0;
     }
 
     .mini-hero::after {
@@ -1538,6 +1544,23 @@
       background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.34) 50%, transparent 70%);
       transform: translateX(-65%);
       animation: miniShimmer 2.8s linear infinite;
+    }
+
+    .mini-hero strong,
+    .mini-hero small {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-hero strong {
+      font-size: 0.63rem;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+
+    .mini-hero small {
+      font-size: 0.55rem;
+      opacity: 0.92;
     }
 
     .mini-stats {
@@ -1550,6 +1573,13 @@
       border-radius: 9px;
       min-height: 24px;
       background: rgba(17, 18, 18, 0.1);
+      padding: 4px 5px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--ink-soft);
     }
 
     .mini-cards {
@@ -1562,6 +1592,27 @@
       border-radius: 9px;
       min-height: 36px;
       background: rgba(17, 18, 18, 0.11);
+      padding: 5px;
+      display: grid;
+      gap: 3px;
+      align-content: center;
+    }
+
+    .mini-card span {
+      display: block;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(17, 18, 18, 0.22);
+    }
+
+    .mini-mode-btn {
+      border-radius: 9px;
+      border: 1px solid rgba(17, 18, 18, 0.2);
+      background: rgba(255, 255, 255, 0.85);
+      font-size: 0.54rem;
+      padding: 4px 6px;
+      font-weight: 800;
+      color: #111;
     }
 
     .preview-info {
@@ -1702,6 +1753,39 @@
       min-height: 318px;
     }
 
+    .miniature-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(17, 18, 18, 0.1);
+      background: rgba(17, 18, 18, 0.03);
+    }
+
+    .miniature-tabs button {
+      border-radius: 999px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink-soft);
+      padding: 5px 9px;
+      font-size: 0.66rem;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+
+    .miniature-tabs button.active {
+      background: #111212;
+      color: #fff;
+      border-color: #111212;
+    }
+
+    .miniature-screen {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 256px;
+    }
+
     .miniature-hero {
       border-radius: 12px;
       min-height: 92px;
@@ -1773,6 +1857,160 @@
       background: rgba(17, 18, 18, 0.17);
     }
 
+    .miniature-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .miniature-kpi {
+      border-radius: 10px;
+      border: 1px solid rgba(17, 18, 18, 0.12);
+      background: rgba(17, 18, 18, 0.05);
+      padding: 7px;
+      display: grid;
+      gap: 2px;
+    }
+
+    .miniature-kpi strong {
+      font-size: 0.78rem;
+      font-family: Syne, sans-serif;
+      line-height: 1.1;
+    }
+
+    .miniature-kpi span {
+      font-size: 0.62rem;
+      color: var(--ink-soft);
+      line-height: 1.2;
+    }
+
+    .miniature-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .miniature-list button {
+      text-align: left;
+      border-radius: 11px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      background: rgba(17, 18, 18, 0.06);
+      padding: 8px;
+      display: grid;
+      gap: 2px;
+      font-size: 0.7rem;
+      color: var(--ink-soft);
+    }
+
+    .miniature-list button strong {
+      color: var(--ink);
+      font-size: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .miniature-list button.active {
+      border-color: rgba(30, 184, 167, 0.62);
+      background: rgba(30, 184, 167, 0.12);
+      color: #094f47;
+    }
+
+    .miniature-note {
+      border-radius: 11px;
+      border: 1px dashed rgba(17, 18, 18, 0.26);
+      background: rgba(17, 18, 18, 0.04);
+      padding: 8px;
+      font-size: 0.71rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+
+    .miniature-form {
+      display: grid;
+      gap: 7px;
+    }
+
+    .miniature-form input,
+    .miniature-form select {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(17, 18, 18, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 0.68rem;
+      padding: 7px 8px;
+      color: #111;
+    }
+
+    .miniature-form button {
+      border-radius: 9px;
+      border: 1px solid #111;
+      background: #111;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 8px;
+    }
+
+    .miniature-success {
+      border-radius: 10px;
+      border: 1px solid rgba(77, 203, 145, 0.42);
+      background: rgba(77, 203, 145, 0.16);
+      color: #1d5a3c;
+      font-size: 0.68rem;
+      padding: 8px;
+      line-height: 1.35;
+    }
+
+    .miniature-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .miniature-dark .miniature-nav,
+    .miniature-dark .miniature-tabs {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .miniature-dark .miniature-nav small,
+    .miniature-dark .miniature-kpi span,
+    .miniature-dark .miniature-note,
+    .miniature-dark .miniature-list button,
+    .miniature-dark .miniature-list button strong {
+      color: #dedede;
+    }
+
+    .miniature-dark .miniature-tabs button,
+    .miniature-dark .miniature-kpi,
+    .miniature-dark .miniature-list button,
+    .miniature-dark .miniature-form input,
+    .miniature-dark .miniature-form select,
+    .miniature-dark .miniature-note {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .miniature-dark .miniature-tabs button.active,
+    .miniature-dark .miniature-form button {
+      background: linear-gradient(120deg, #eb6125, #1eb8a7);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    .miniature-dark .miniature-list button.active {
+      background: rgba(30, 184, 167, 0.2);
+      color: #f2ffff;
+    }
+
+    .mini-theme-toggle {
+      border-radius: 8px;
+      border: 1px solid rgba(17, 18, 18, 0.18);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink-soft);
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 5px 8px;
+    }
+
     .demo-cta {
       margin-top: 12px;
       display: flex;
@@ -1826,6 +2064,143 @@
     @keyframes panelWave {
       0%, 100% { transform: translateY(0); opacity: 0.86; }
       50% { transform: translateY(-3px); opacity: 1; }
+    }
+
+    @keyframes demoFadeIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes demoSlideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .miniature-screen {
+      animation: demoSlideUp 0.4s ease-out;
+    }
+
+    .miniature-demo-item {
+      animation: demoFadeIn 0.3s ease-out;
+    }
+
+    .modal.demo-modal {
+      animation: demoFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .demo-property-card {
+      border-radius: 12px;
+      border: 1px solid rgba(17, 18, 18, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .demo-property-image {
+      border-radius: 10px;
+      min-height: 68px;
+      background: linear-gradient(135deg, #e8b4a8, #d4a5a5);
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      font-size: 1.8rem;
+    }
+
+    .demo-property-title { font-weight: 800; font-size: 0.76rem; line-height: 1.15; }
+    .demo-property-meta { display: flex; gap: 6px; font-size: 0.64rem; color: var(--ink-soft); }
+
+    .demo-class-slot {
+      border-radius: 10px;
+      border: 1px solid rgba(17, 18, 18, 0.12);
+      background: rgba(17, 18, 18, 0.06);
+      padding: 7px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .demo-class-title { font-weight: 800; font-size: 0.72rem; }
+    .demo-class-time { font-size: 0.62rem; color: var(--ink-soft); }
+
+    .demo-menu-item {
+      border-radius: 10px;
+      border: 1px solid rgba(17, 18, 18, 0.12);
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.8);
+      display: grid;
+      gap: 4px;
+    }
+
+    .demo-menu-name { font-weight: 800; font-size: 0.74rem; }
+    .demo-menu-price { font-size: 0.68rem; color: #1eb8a7; font-weight: 700; }
+
+    .demo-appointment-slot {
+      border-radius: 9px;
+      border: 1px solid rgba(17, 18, 18, 0.14);
+      background: rgba(30, 184, 167, 0.12);
+      padding: 7px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #094f47;
+      text-align: center;
+    }
+
+    .demo-feature-bullet {
+      display: flex;
+      gap: 5px;
+      font-size: 0.68rem;
+      line-height: 1.35;
+      align-items: flex-start;
+    }
+
+    .demo-feature-bullet span {
+      min-width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #1eb8a7;
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      color: #fff;
+      font-size: 0.5rem;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .demo-pricing-tier {
+      border-radius: 10px;
+      border: 1px solid rgba(17, 18, 18, 0.12);
+      background: rgba(17, 18, 18, 0.05);
+      padding: 8px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .demo-pricing-name { font-weight: 800; font-size: 0.72rem; }
+    .demo-pricing-value { font-family: Syne, sans-serif; font-size: 0.88rem; font-weight: 900; }
+
+    .demo-product-showcase {
+      border-radius: 11px;
+      min-height: 72px;
+      background: linear-gradient(125deg, #c94683, #8b4c7d);
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      color: #fff;
+      font-size: 2.4rem;
+    }
+
+    .demo-booking-button {
+      border-radius: 8px;
+      border: 1px solid rgba(17, 18, 18, 0.18);
+      background: linear-gradient(120deg, #eb6125, #1eb8a7);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 6px 8px;
+      text-align: center;
+      width: 100%;
+      display: block;
     }
 
     .port-bg {
@@ -2873,6 +3248,13 @@
     :root[data-theme='dark'] .miniature-card,
     :root[data-theme='dark'] .miniature-panel {
       background: rgba(255, 255, 255, 0.15);
+    }
+
+    :root[data-theme='dark'] .mini-mode-btn,
+    :root[data-theme='dark'] .mini-theme-toggle {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.26);
+      color: #fff;
     }
 
     :root[data-theme='dark'] .preview-info h4,
@@ -4473,7 +4855,15 @@
       messagesCache: [],
       pendingDeleteOrderId: '',
       pendingDeleteOrderTitle: '',
-      managementPricing: {}
+      managementPricing: {},
+      previewCardModes: {},
+      websiteDemo: {
+        id: '',
+        section: 'home',
+        selectedService: 0,
+        submitted: false,
+        theme: 'light'
+      }
     };
 
     const services = [
@@ -6175,17 +6565,21 @@
             <div class="mini-topbar">
               <span class="mini-dots"><i></i><i></i><i></i></span>
               <span class="mini-address">${item.domain}</span>
+              <button class="mini-mode-btn" onclick="cyclePreviewCardView('${item.id}', event)">Switch View</button>
             </div>
             <div class="mini-layout" style="--mini-grad:${item.gradient};">
-              <div class="mini-hero"></div>
+              <div class="mini-hero">
+                <strong id="miniHeadline-${item.id}">${item.title}</strong>
+                <small id="miniSub-${item.id}">Homepage interaction</small>
+              </div>
               <div class="mini-stats">
-                <div class="mini-stat"></div>
-                <div class="mini-stat"></div>
-                <div class="mini-stat"></div>
+                <div class="mini-stat" id="miniStatA-${item.id}">Home</div>
+                <div class="mini-stat" id="miniStatB-${item.id}">Cards</div>
+                <div class="mini-stat" id="miniStatC-${item.id}">CTA</div>
               </div>
               <div class="mini-cards">
-                <div class="mini-card"></div>
-                <div class="mini-card"></div>
+                <div class="mini-card"><span></span><span></span><span></span></div>
+                <div class="mini-card"><span></span><span></span><span></span></div>
               </div>
             </div>
           </div>
@@ -6199,6 +6593,44 @@
           </div>
         </article>
       `).join('');
+
+      websiteShowcase.forEach((item) => applyPreviewCardMode(item.id));
+    }
+
+    function getPreviewModes(item) {
+      return [
+        { headline: item.title, sub: 'Homepage interaction', stats: ['Home', 'Cards', 'CTA'] },
+        { headline: `${item.type} services`, sub: `Focus: ${item.tags[0] || 'Core'}`, stats: ['Plans', 'Proof', 'Action'] },
+        { headline: `${item.type} contact flow`, sub: 'Mini lead form', stats: ['Form', 'Time', 'Submit'] }
+      ];
+    }
+
+    function applyPreviewCardMode(id) {
+      const item = websiteShowcase.find((entry) => entry.id === id);
+      if (!item) return;
+      const modes = getPreviewModes(item);
+      const index = state.previewCardModes[id] || 0;
+      const mode = modes[index % modes.length];
+      const headline = document.getElementById(`miniHeadline-${id}`);
+      const sub = document.getElementById(`miniSub-${id}`);
+      const statA = document.getElementById(`miniStatA-${id}`);
+      const statB = document.getElementById(`miniStatB-${id}`);
+      const statC = document.getElementById(`miniStatC-${id}`);
+      if (headline) headline.textContent = mode.headline;
+      if (sub) sub.textContent = mode.sub;
+      if (statA) statA.textContent = mode.stats[0];
+      if (statB) statB.textContent = mode.stats[1];
+      if (statC) statC.textContent = mode.stats[2];
+    }
+
+    function cyclePreviewCardView(id, event) {
+      if (event) event.stopPropagation();
+      const item = websiteShowcase.find((entry) => entry.id === id);
+      if (!item) return;
+      const modes = getPreviewModes(item);
+      const next = ((state.previewCardModes[id] || 0) + 1) % modes.length;
+      state.previewCardModes[id] = next;
+      applyPreviewCardMode(id);
     }
 
     function startWebsitePreviewSpotlight() {
@@ -6222,6 +6654,15 @@
       const stage = document.getElementById('websiteDemoStage');
       if (!item || !stage) return;
 
+      state.websiteDemo.id = id;
+      state.websiteDemo.section = 'home';
+      state.websiteDemo.selectedService = 0;
+      state.websiteDemo.submitted = false;
+      state.websiteDemo.theme = 'light';
+
+      const demoModal = document.getElementById('websiteDemoLayer');
+      if (demoModal) demoModal.style.animation = 'demoFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
       stage.innerHTML = `
         <div class="demo-modal-shell">
           <article class="demo-info-pane">
@@ -6237,32 +6678,342 @@
             </div>
           </article>
           <article class="demo-stage-pane">
-            <div class="demo-miniature" style="--demo-grad:${item.gradient};">
+            <div class="demo-miniature" id="activeDemoMiniature" style="--demo-grad:${item.gradient};">
               <div class="miniature-nav">
                 <strong>${item.domain}</strong>
-                <small>Live Demo Layout</small>
-              </div>
-              <div class="miniature-body">
-                <div class="miniature-hero">
-                  <strong>${item.title}</strong>
-                  <span>Miniature full-page concept to help clients visualize the final output.</span>
-                </div>
-                <div class="miniature-panels">
-                  <div class="miniature-panel"></div>
-                  <div class="miniature-panel"></div>
-                  <div class="miniature-panel"></div>
-                </div>
-                <div class="miniature-grid">
-                  <div class="miniature-card"></div>
-                  <div class="miniature-card alt"></div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <small>Live Demo Layout</small>
+                  <button class="mini-theme-toggle" onclick="toggleWebsiteDemoTheme()">Theme</button>
                 </div>
               </div>
+              <div class="miniature-tabs" id="websiteDemoTabs">
+                <button onclick="setWebsiteDemoSection('home')" data-demo-tab="home">home</button>
+                <button onclick="setWebsiteDemoSection('services')" data-demo-tab="services">services</button>
+                <button onclick="setWebsiteDemoSection('reviews')" data-demo-tab="reviews">reviews</button>
+                <button onclick="setWebsiteDemoSection('contact')" data-demo-tab="contact">contact</button>
+              </div>
+              <div class="miniature-screen" id="websiteDemoScreen"></div>
             </div>
           </article>
         </div>
       `;
 
       openModal('websiteDemoLayer');
+      renderWebsiteDemoScreen();
+    }
+
+    function getDomainSpecificDemo(id, section) {
+      const item = websiteShowcase.find((entry) => entry.id === id);
+      if (!item) return '';
+
+      if (id === 'luxora-estate') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>Premium Properties in Your City</strong>
+              <span>Luxury homes, commercial, and investment properties with instant inquiry.</span>
+            </div>
+            <div class="miniature-demo-item">
+              <div class="demo-property-card">
+                <div class="demo-property-image">🏡</div>
+                <div class="demo-property-title">Sunset Villa</div>
+                <div class="demo-property-meta"><span>4 BHK</span><span>₹5.2Cr</span></div>
+              </div>
+              <div class="demo-property-card">
+                <div class="demo-property-image">🏢</div>
+                <div class="demo-property-title">Plaza Downtown</div>
+                <div class="demo-property-meta"><span>Commercial</span><span>₹2.8Cr</span></div>
+              </div>
+            </div>
+            <button class="demo-booking-button">Schedule Virtual Tour</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-note"><strong>Our Services</strong><br>Property search, legal docs, financing help, and inspection coordination.</div>
+            <div class="miniature-list">
+              <button class="active"><strong>🔍 Property Search</strong><span>Find by location, price, type</span></button>
+              <button><strong>📄 Legal Support</strong><span>Title verification, contracts</span></button>
+              <button><strong>💰 Financing</strong><span>Loan guidance & rates</span></button>
+            </div>
+          `;
+        }
+        return `
+          <div class="miniature-note">Ready to find your dream property?</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Full name" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Phone" required>
+            <button type="submit">Request Property List</button>
+          </form>
+        `;
+      }
+
+      if (id === 'fitmodo-gym') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>Join FitModo Community</strong>
+              <span>State-of-art gym, expert trainers, and flexible membership plans.</span>
+            </div>
+            <div class="miniature-note"><strong>Today's Classes</strong></div>
+            <div class="miniature-demo-item">
+              <div class="demo-class-slot">
+                <div class="demo-class-title">💪 Strength Training</div>
+                <div class="demo-class-time">09:00 AM • 60 min</div>
+              </div>
+              <div class="demo-class-slot">
+                <div class="demo-class-title">🧘 Yoga & Flexibility</div>
+                <div class="demo-class-time">10:30 AM • 45 min</div>
+              </div>
+              <div class="demo-class-slot">
+                <div class="demo-class-title">🏃 HIIT Cardio</div>
+                <div class="demo-class-time">06:00 PM • 50 min</div>
+              </div>
+            </div>
+            <button class="demo-booking-button">Book Class Now</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-note"><strong>Membership Plans</strong></div>
+            <div class="miniature-demo-item">
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Bronze</div><div class="demo-pricing-value">₹2,999/mo</div></div>
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Silver ⭐</div><div class="demo-pricing-value">₹4,499/mo</div></div>
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Gold</div><div class="demo-pricing-value">₹6,999/mo</div></div>
+            </div>
+            <button class="demo-booking-button">Start Free Trial</button>
+          `;
+        }
+        return `
+          <div class="miniature-note">Get personalized fitness coaching from certified trainers.</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <select required><option>Select membership</option><option>Bronze</option><option>Silver</option><option>Gold</option></select>
+            <button type="submit">Enroll Today</button>
+          </form>
+        `;
+      }
+
+      if (id === 'zenbite-cafe') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>ZenBite Café</strong>
+              <span>Artisanal coffee, fresh food, and peaceful ambiance. Reserve your table.</span>
+            </div>
+            <div class="miniature-note"><strong>Today's Specials</strong></div>
+            <div class="miniature-demo-item">
+              <div class="demo-menu-item"><div class="demo-menu-name">☕ Cold Brew Combo</div><div class="demo-menu-price">₹249</div></div>
+              <div class="demo-menu-item"><div class="demo-menu-name">🥗 Green Salad Bowl</div><div class="demo-menu-price">₹329</div></div>
+              <div class="demo-menu-item"><div class="demo-menu-name">🍰 Brownies & Latte</div><div class="demo-menu-price">₹199</div></div>
+            </div>
+            <button class="demo-booking-button">Order Delivery</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-list">
+              <button class="active"><strong>📍 Dine In</strong><span>Reserve table, full menu</span></button>
+              <button><strong>🏃 Takeout</strong><span>Quick pickup 15 min</span></button>
+              <button><strong>🚴 Delivery</strong><span>Home delivery 45 min</span></button>
+              <button><strong>🎉 Events</strong><span>Private bookings</span></button>
+            </div>
+            <button class="demo-booking-button" style="margin-top:8px;">Reserve Table</button>
+          `;
+        }
+        return `
+          <div class="miniature-note">Book a table for a peaceful coffee date or business meeting.</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <input type="text" placeholder="Date & time" required>
+            <button type="submit">Confirm Booking</button>
+          </form>
+        `;
+      }
+
+      if (id === 'medivance-care') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>MediVance Care Clinic</strong>
+              <span>Expert doctors, modern facilities, and instant appointment booking.</span>
+            </div>
+            <div class="miniature-note"><strong>Available Appointment Slots</strong></div>
+            <div class="miniature-demo-item">
+              <div class="demo-appointment-slot">Today • 10:30 AM</div>
+              <div class="demo-appointment-slot">Today • 02:00 PM</div>
+              <div class="demo-appointment-slot">Tomorrow • 09:00 AM</div>
+            </div>
+            <button class="demo-booking-button">Book Appointment</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-list">
+              <button class="active"><strong>🩺 General Checkup</strong><span>₹500 • 30 min</span></button>
+              <button><strong>🧬 Blood Tests</strong><span>Home sample collection</span></button>
+              <button><strong>💊 Prescriptions</strong><span>Digital delivery available</span></button>
+              <button><strong>🚑 Emergency</strong><span>24/7 available</span></button>
+            </div>
+          `;
+        }
+        return `
+          <div class="miniature-note">Schedule your health checkup with experienced medical professionals.</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <select required><option>Select service</option><option>Checkup</option><option>Tests</option></select>
+            <button type="submit">Book Now</button>
+          </form>
+        `;
+      }
+
+      if (id === 'nexora-saas') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>Nexora Dashboard Platform</strong>
+              <span>Automate workflows, track metrics, collaborate in real-time.</span>
+            </div>
+            <div class="miniature-demo-item">
+              <div class="demo-feature-bullet"><span>✓</span><div>Real-time sync across teams and devices</div></div>
+              <div class="demo-feature-bullet"><span>✓</span><div>Advanced analytics and custom reports</div></div>
+              <div class="demo-feature-bullet"><span>✓</span><div>99.9% uptime SLA guarantee</div></div>
+            </div>
+            <button class="demo-booking-button">Start 14-Day Trial</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-demo-item">
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Starter</div><div class="demo-pricing-value">$49/mo</div></div>
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Pro ⭐</div><div class="demo-pricing-value">$149/mo</div></div>
+              <div class="demo-pricing-tier"><div class="demo-pricing-name">Enterprise</div><div class="demo-pricing-value">Custom</div></div>
+            </div>
+          `;
+        }
+        return `
+          <div class="miniature-note">Join 5000+ teams already using Nexora to streamline operations.</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Company name" required>
+            <input type="email" placeholder="Work email" required>
+            <button type="submit">Get Free Access</button>
+          </form>
+        `;
+      }
+
+      if (id === 'atelier-bloom') {
+        if (section === 'home') {
+          return `
+            <div class="miniature-hero">
+              <strong>Atelier Bloom Collections</strong>
+              <span>Exclusive handcrafted pieces. Limited editions. Premium quality.</span>
+            </div>
+            <div class="miniature-demo-item">
+              <div class="demo-product-showcase">👗</div>
+              <div class="demo-product-showcase">👜</div>
+              <div class="demo-product-showcase">✨</div>
+            </div>
+            <button class="demo-booking-button">Shop New Collection</button>
+          `;
+        }
+        if (section === 'services') {
+          return `
+            <div class="miniature-list">
+              <button class="active"><strong>👗 Spring Collection</strong><span>12 new pieces • In stock</span></button>
+              <button><strong>👜 Accessories</strong><span>Handpicked items</span></button>
+              <button><strong>💎 Limited Edition</strong><span>Only 5 pieces each</span></button>
+              <button><strong>🎁 Gift Cards</strong><span>Perfect gift option</span></button>
+            </div>
+            <button class="demo-booking-button" style="margin-top:8px;">View All Products</button>
+          `;
+        }
+        return `
+          <div class="miniature-note">Sign up for early access to new collections and exclusive member sales.</div>
+          <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <button type="submit">Join VIP List</button>
+          </form>
+        `;
+      }
+
+      return '';
+    }
+
+    function setWebsiteDemoSection(section) {
+      state.websiteDemo.section = section;
+      renderWebsiteDemoScreen();
+    }
+
+    function toggleWebsiteDemoTheme() {
+      state.websiteDemo.theme = state.websiteDemo.theme === 'dark' ? 'light' : 'dark';
+      renderWebsiteDemoScreen();
+    }
+
+    function selectWebsiteDemoService(index) {
+      state.websiteDemo.selectedService = index;
+      renderWebsiteDemoScreen();
+    }
+
+    function submitWebsiteDemoLead(event) {
+      if (event) event.preventDefault();
+      state.websiteDemo.submitted = true;
+      renderWebsiteDemoScreen();
+    }
+
+    function getWebsiteDemoSections(item) {
+      return {
+        home: {
+          title: `${item.type} conversion home`,
+          copy: `Hero, trust blocks, and CTA sequence tuned for ${item.type.toLowerCase()} audiences.`,
+          kpis: [
+            { value: '+42%', label: 'lead growth' },
+            { value: '2.1s', label: 'load target' },
+            { value: '92', label: 'SEO score' }
+          ]
+        },
+        services: {
+          title: 'Service section that works',
+          copy: 'Click each card to see focused microcopy and CTA treatment.',
+          cards: [
+            { title: item.tags[0] || 'Lead Funnel', desc: 'Primary section with clear intent path and trust anchoring.' },
+            { title: item.tags[1] || 'Proof Section', desc: 'Mid-page block with results, testimonials, and quick action.' },
+            { title: item.tags[2] || 'Conversion CTA', desc: 'Bottom CTA with contact options and urgency framing.' }
+          ]
+        },
+        reviews: {
+          title: 'Social proof strip',
+          copy: 'Review cards, star metrics, and case snapshots keep credibility visible.',
+          quote: 'The demo helped us visualize the full website before final build and reduced revision rounds by 50%.'
+        },
+        contact: {
+          title: 'Interactive inquiry form',
+          copy: 'This mini form behaves like a real lead capture block on production pages.'
+        }
+      };
+    }
+
+    function renderWebsiteDemoScreen() {
+      const item = websiteShowcase.find((entry) => entry.id === state.websiteDemo.id);
+      const screen = document.getElementById('websiteDemoScreen');
+      const tabs = document.querySelectorAll('[data-demo-tab]');
+      const miniature = document.getElementById('activeDemoMiniature');
+      if (!item || !screen) return;
+
+      const sectionKey = state.websiteDemo.section;
+      tabs.forEach((tab) => tab.classList.toggle('active', tab.getAttribute('data-demo-tab') === sectionKey));
+      if (miniature) miniature.classList.toggle('miniature-dark', state.websiteDemo.theme === 'dark');
+
+      const domainContent = getDomainSpecificDemo(state.websiteDemo.id, sectionKey);
+      if (state.websiteDemo.submitted) {
+        screen.innerHTML = '<div class="miniature-success">✓ Demo inquiry submitted successfully. Our team will contact you shortly.</div>';
+      } else {
+        screen.innerHTML = domainContent;
+      }
     }
 
     function renderProcess() {
