@@ -3,7 +3,7 @@ services:
     name: omio-studio
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install --no-cache
     startCommand: npm start
     autoDeploy: true
     envVars:
