@@ -9,6 +9,73 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="multi-pages.css" />
+  <style>
+    .service-card { cursor: pointer; transition: all 0.3s ease; }
+    .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+    .service-modal { 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); 
+      display: none; align-items: center; justify-content: center; 
+      z-index: 9999; animation: fadeIn 0.3s ease;
+    }
+    .service-modal.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .service-modal-content {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .service-modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.1); border: none;
+      border-radius: 50%; width: 40px; height: 40px;
+      cursor: pointer; color: #fff; font-size: 24px;
+      transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .service-modal-close:hover { background: rgba(255,100,100,0.3); }
+
+    .service-demo { color: #fff; }
+    .service-demo h2 {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      background: linear-gradient(120deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .service-meta { display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap; }
+    .service-meta span { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
+
+    .service-section { margin: 28px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+    .service-section h3 { font-size: 1.3rem; margin-bottom: 12px; color: #4ecdc4; }
+    .service-section p { color: rgba(255,255,255,0.8); line-height: 1.6; }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature { background: rgba(255,255,255,0.08); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+    .feature strong { color: #ffd700; display: block; margin-bottom: 6px; }
+
+    .demo-preview { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px dashed rgba(255,255,255,0.2); min-height: 200px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .price-box { background: rgba(76,204,196,0.1); border: 2px solid #4ecdc4; padding: 20px; border-radius: 12px; text-align: center; margin: 16px 0; }
+    .price-box .amount { font-size: 2.5rem; color: #ffd700; font-weight: bold; }
+    .price-box .duration { color: rgba(255,255,255,0.7); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 16px; }
+    .stat-item { background: rgba(255,255,255,0.08); padding: 20px; text-align: center; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+    .stat-item .number { font-size: 2rem; color: #ffd700; font-weight: bold; }
+    .stat-item .label { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 6px; }
+  </style>
 </head>
 <body class="page" data-parallax-preset="medium">
   <div class="mesh parallax-layer" data-parallax-speed="0.08"></div>
@@ -74,10 +141,10 @@
       </section>
 
       <section class="grid">
-        <article class="card span-4 fade-up tilt-left" data-tilt><h3>Website Development</h3><p>From landing pages to scalable multi-page websites with optimized content architecture.</p><span class="stat">₹3,000+</span></article>
-        <article class="card span-4 fade-up"><h3>App Development</h3><p>Modern, responsive app interfaces and production implementation for mobile and web.</p><span class="stat">₹25,000+</span></article>
-        <article class="card span-4 fade-up tilt-right" data-tilt><h3>Logo & Identity</h3><p>Logo systems, usage guides, and style directions crafted for long-term brand recall.</p><span class="stat">₹800+</span></article>
-        <article class="card span-6 fade-up" data-tilt>
+        <article class="card span-4 fade-up tilt-left service-card" data-tilt onclick="openServiceDemo('web')"><h3>Website Development</h3><p>From landing pages to scalable multi-page websites with optimized content architecture.</p><span class="stat">₹3,000+</span></article>
+        <article class="card span-4 fade-up service-card" onclick="openServiceDemo('app')"><h3>App Development</h3><p>Modern, responsive app interfaces and production implementation for mobile and web.</p><span class="stat">₹25,000+</span></article>
+        <article class="card span-4 fade-up tilt-right service-card" data-tilt onclick="openServiceDemo('branding')"><h3>Logo & Identity</h3><p>Logo systems, usage guides, and style directions crafted for long-term brand recall.</p><span class="stat">₹800+</span></article>
+        <article class="card span-6 fade-up service-card" data-tilt onclick="openServiceDemo('uiux')">
           <h3>UI/UX Systems</h3>
           <p>Design tokens, reusable components, and prototyping with handoff-ready specs for developers.</p>
           <svg class="sparkline" viewBox="0 0 340 80" aria-hidden="true">
@@ -92,7 +159,7 @@
           </svg>
           <span class="stat">Design system mode</span>
         </article>
-        <article class="card span-6 fade-up" data-tilt><h3>Branding Kits</h3><p>Social templates, pitch decks, ad creatives, and campaign visuals in one unified kit.</p><span class="stat">Cross-channel assets</span></article>
+        <article class="card span-6 fade-up service-card" data-tilt onclick="openServiceDemo('kit')"><h3>Branding Kits</h3><p>Social templates, pitch decks, ad creatives, and campaign visuals in one unified kit.</p><span class="stat">Cross-channel assets</span></article>
       </section>
 
       <section class="grid">
@@ -133,6 +200,42 @@
     </main>
   </div>
 
+  <!-- Service Demo Modal -->
+  <div class="service-modal" id="serviceModal" onclick="if(event.target.id==='serviceModal') closeServiceDemo()">
+    <div class="service-modal-content">
+      <button class="service-modal-close" onclick="closeServiceDemo()">✕</button>
+      <div class="service-demo" id="serviceDemoContent"></div>
+    </div>
+  </div>
+
   <script src="multi-pages.js"></script>
+  <script>
+    function openServiceDemo(type) {
+      const content = getServiceDemoContent(type);
+      document.getElementById('serviceDemoContent').innerHTML = content;
+      document.getElementById('serviceModal').classList.add('active');
+    }
+
+    function closeServiceDemo() {
+      document.getElementById('serviceModal').classList.remove('active');
+    }
+
+    function getServiceDemoContent(type) {
+      const services = {
+        web: '<h2>💻 Website Development Service</h2><p>Custom-built websites from landing pages to scalable multi-page platforms with conversion-first architecture.</p><div class="service-meta"><span>⚡ Fast Delivery</span><span>📱 Mobile Optimized</span><span>✓ SEO Ready</span><span>🚀 Performance Focused</span></div><div class="service-section"><h3>What\'s Included</h3><div class="feature-grid"><div class="feature"><strong>🎨 Custom Design</strong><p>Unique layouts tailored to your brand</p></div><div class="feature"><strong>⚙️ Development</strong><p>Clean, optimized, production-ready code</p></div><div class="feature"><strong>🔍 SEO Setup</strong><p>Structured data, meta tags, sitemap</p></div><div class="feature"><strong>📊 Analytics</strong><p>Google Analytics & conversion tracking</p></div><div class="feature"><strong>🎯 CMS Integration</strong><p>Easy-to-update content management</p></div><div class="feature"><strong>🔒 Security</strong><p>SSL, backup, and regular updates</p></div></div></div><div class="demo-preview">🌐 Website Demo</div><div class="service-section"><h3>Timeline & Pricing</h3><div class="price-box"><div class="amount">₹3,000</div><div class="duration">Starting price • 10-15 days delivery</div></div><p style="text-align:center; color: rgba(255,255,255,0.7);">Multi-page sites, e-commerce, and complex features available. Get a custom quote for your project.</p></div><div class="service-section"><h3>Why Choose Us</h3><div class="feature-grid"><div class="feature"><strong>✓ Performance First</strong><p>Pages load in under 2 seconds on average</p></div><div class="feature"><strong>✓ Mobile Responsive</strong><p>Perfect on phones, tablets, and desktops</p></div><div class="feature"><strong>✓ Conversion Optimized</strong><p>Designed to convert visitors to customers</p></div><div class="feature"><strong>✓ Post-Launch Support</strong><p>3 months of free updates & optimization</p></div></div></div>',
+        app: '<h2>📱 App Development Service</h2><p>Native and responsive web applications with modern interfaces, real-time sync, and enterprise-grade performance.</p><div class="service-meta"><span>iOS & Android</span><span>✓ 50K+ Users</span><span>⚡ Real-time Sync</span><span>🎯 User-Centric</span></div><div class="service-section"><h3>What\'s Included</h3><div class="feature-grid"><div class="feature"><strong>🎨 UI/UX Design</strong><p>Intuitive interfaces with smooth animations</p></div><div class="feature"><strong>⚙️ Full Development</strong><p>Backend, API, and database setup</p></div><div class="feature"><strong>🔄 Sync Engine</strong><p>Real-time updates across devices</p></div><div class="feature"><strong>🔔 Push Notifications</strong><p>Smart alerts and user engagement</p></div><div class="feature"><strong>📊 Analytics Dashboard</strong><p>User behavior and app performance tracking</p></div><div class="feature"><strong>🚀 App Store Ready</strong><p>Submission support for App Store & Play Store</p></div></div></div><div class="demo-preview">📲 App Interface</div><div class="service-section"><h3>Timeline & Pricing</h3><div class="price-box"><div class="amount">₹25,000</div><div class="duration">Starting price • 4-6 weeks delivery</div></div><p style="text-align:center; color: rgba(255,255,255,0.7);">Complex features, backend systems, and AI integration available. Connect with us for detailed planning.</p></div><div class="stats-grid"><div class="stat-item"><div class="number">50K+</div><div class="label">Users Managed</div></div><div class="stat-item"><div class="number">4.8★</div><div class="label">Avg Rating</div></div><div class="stat-item"><div class="number">92%</div><div class="label">Retention</div></div><div class="stat-item"><div class="number">2.1s</div><div class="label">Load Time</div></div></div>',
+        branding: '<h2>🎨 Logo & Identity Service</h2><p>Complete brand systems including logos, color palettes, typography guides, and professional brand standards.</p><div class="service-meta"><span>🎯 Complete System</span><span>✓ Unlimited Revisions</span><span>📋 Brand Guidelines</span><span>💾 All Files Included</span></div><div class="service-section"><h3>What\'s Included</h3><div class="feature-grid"><div class="feature"><strong>📌 Logo Design</strong><p>Primary, secondary & icon variations</p></div><div class="feature"><strong>🎨 Color System</strong><p>Primary, secondary, accent palette + swatches</p></div><div class="feature"><strong>✍️ Typography</strong><p>Font selection with usage guidelines</p></div><div class="feature"><strong>📐 Visual Elements</strong><p>Patterns, icons, illustrations, graphics</p></div><div class="feature"><strong>📖 Brand Guide</strong><p>30+ page comprehensive documentation</p></div><div class="feature"><strong>📦 All Formats</strong><p>AI, EPS, SVG, PNG, PDF, Figma files</p></div></div></div><div class="demo-preview">☕ Brand System</div><div class="service-section"><h3>Timeline & Pricing</h3><div class="price-box"><div class="amount">₹800</div><div class="duration">Starting price • 5-10 days delivery</div></div><p style="text-align:center; color: rgba(255,255,255,0.7);">Premium packages with extended guidelines and asset creation available. Discuss your specific needs with our team.</p></div><div class="stats-grid"><div class="stat-item"><div class="number">500+</div><div class="label">Brands Created</div></div><div class="stat-item"><div class="number">98%</div><div class="label">Client Satisfaction</div></div><div class="stat-item"><div class="number">4.9★</div><div class="label">Avg Rating</div></div><div class="stat-item"><div class="number">Lifetime</div><div class="label">Usage Rights</div></div></div>',
+        uiux: '<h2>🎯 UI/UX Systems Service</h2><p>Complete design systems with reusable components, design tokens, and developer handoff documentation.</p><div class="service-meta"><span>⚙️ Design Tokens</span><span>✓ Component Library</span><span>👨‍💻 Dev Handoff</span><span>📱 Responsive</span></div><div class="service-section"><h3>What\'s Included</h3><div class="feature-grid"><div class="feature"><strong>🎨 Design Tokens</strong><p>Colors, typography, spacing, shadows</p></div><div class="feature"><strong>📦 Components</strong><p>50+ reusable UI components</p></div><div class="feature"><strong>🎭 Patterns</strong><p>Forms, layouts, navigation patterns</p></div><div class="feature"><strong>📋 Specifications</strong><p>Detailed specs for each component</p></div><div class="feature"><strong>🔧 Figma File</strong><p>Organized, linked, and documented</p></div><div class="feature"><strong>📖 Style Guide</strong><p>30+ page implementation guide</p></div></div></div><div class="demo-preview">🎯 Design System</div><div class="service-section"><h3>Timeline & Pricing</h3><div class="price-box"><div class="amount">₹8,000</div><div class="duration">Starting price • 2-3 weeks delivery</div></div><p style="text-align:center; color: rgba(255,255,255,0.7);">Enterprise systems with custom components and extended documentation available.</p></div><div class="stats-grid"><div class="stat-item"><div class="number">100+</div><div class="label">Design Systems</div></div><div class="stat-item"><div class="number">50+</div><div class="label">Components Each</div></div><div class="stat-item"><div class="number">60%</div><div class="label">Dev Time Saved</div></div><div class="stat-item"><div class="number">5 Years</div><div class="label">System Lifespan</div></div></div>',
+        kit: '<h2>📦 Branding Kits Service</h2><p>Complete campaign-ready asset packages with social templates, pitch decks, ad creatives, and marketing materials.</p><div class="service-meta"><span>📱 Social Ready</span><span>✓ 120+ Assets</span><span>🎯 Multi-Channel</span><span>🎬 Video Included</span></div><div class="service-section"><h3>What\'s Included</h3><div class="feature-grid"><div class="feature"><strong>📱 Social Templates</strong><p>Instagram, Facebook, TikTok, LinkedIn</p></div><div class="feature"><strong>🎨 Ad Creatives</strong><p>Carousel ads, video ads, banner ads</p></div><div class="feature"><strong>📊 Pitch Decks</strong><p>Professional presentation templates</p></div><div class="feature"><strong>📝 Email Templates</strong><p>Newsletters and campaign emails</p></div><div class="feature"><strong>🎬 Video Assets</strong><p>Motion graphics and video templates</p></div><div class="feature"><strong>📋 Content Calendar</strong><p>3-month posting strategy guide</p></div></div></div><div class="demo-preview">🎨 Assets Kit</div><div class="service-section"><h3>Timeline & Pricing</h3><div class="price-box"><div class="amount">₹5,000</div><div class="duration">Starting price • 10-15 days delivery</div></div><p style="text-align:center; color: rgba(255,255,255,0.7);">Custom kits with extended asset libraries and continuous content support available.</p></div><div class="stats-grid"><div class="stat-item"><div class="number">120+</div><div class="label">Total Assets</div></div><div class="stat-item"><div class="number">70%</div><div class="label">Engagement ↑</div></div><div class="stat-item"><div class="number">6mo</div><div class="label">Campaign Duration</div></div><div class="stat-item"><div class="number">∞</div><div class="label">Usage Rights</div></div></div>'
+      };
+
+      return services[type] || '<p>Service demo not found</p>';
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeServiceDemo();
+    });
+  </script>
 </body>
 </html>
