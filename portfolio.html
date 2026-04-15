@@ -55,10 +55,10 @@
       </section>
 
       <section class="grid">
-        <article class="card span-5 fade-up tilt-left" data-tilt><h3>Aurora Dental Care</h3><p>Conversion-first healthcare website redesign with appointment-focused UX.</p><span class="stat">Website</span></article>
-        <article class="card span-3 fade-up"><h3>TaskWave</h3><p>Mobile productivity app cards and flows.</p><span class="stat">App</span></article>
-        <article class="card span-4 fade-up tilt-right" data-tilt><h3>Brewline Coffee</h3><p>Logo family and packaging identity.</p><span class="stat">Brand</span></article>
-        <article class="card span-4 fade-up" data-tilt>
+        <article class="card span-5 fade-up tilt-left portfolio-work" data-tilt onclick="openProjectDemo('website')" style="cursor:pointer;"><h3>Aurora Dental Care</h3><p>Conversion-first healthcare website redesign with appointment-focused UX.</p><span class="stat">Website</span></article>
+        <article class="card span-3 fade-up portfolio-work" onclick="openProjectDemo('app')" style="cursor:pointer;"><h3>TaskWave</h3><p>Mobile productivity app cards and flows.</p><span class="stat">App</span></article>
+        <article class="card span-4 fade-up tilt-right portfolio-work" data-tilt onclick="openProjectDemo('brand')" style="cursor:pointer;"><h3>Brewline Coffee</h3><p>Logo family and packaging identity.</p><span class="stat">Brand</span></article>
+        <article class="card span-4 fade-up portfolio-work" data-tilt onclick="openProjectDemo('graphics')" style="cursor:pointer;">
           <h3>Nexa Salon</h3>
           <p>Social post systems and ad creatives.</p>
           <div class="ring-wrap">
@@ -68,7 +68,7 @@
           </div>
           <span class="stat">Graphics</span>
         </article>
-        <article class="card span-8 fade-up" data-tilt>
+        <article class="card span-8 fade-up portfolio-work" data-tilt onclick="openProjectDemo('dashboard')" style="cursor:pointer;">
           <h3>Orbit Finance Dashboard</h3>
           <p>Neumorphic dashboard redesign with KPI cards, chart-first layout, and modular analytics sections.</p>
           <div class="bar-wrap">
@@ -128,6 +128,470 @@
     </main>
   </div>
 
+  <style>
+    .portfolio-work { cursor: pointer; transition: all 0.3s ease; }
+    .portfolio-work:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+    .project-modal { 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); 
+      display: none; align-items: center; justify-content: center; 
+      z-index: 9999; animation: fadeIn 0.3s ease;
+    }
+    .project-modal.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .project-modal-content {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .project-modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.1); border: none;
+      border-radius: 50%; width: 40px; height: 40px;
+      cursor: pointer; color: #fff; font-size: 24px;
+      transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .project-modal-close:hover { background: rgba(255,100,100,0.3); }
+
+    .project-demo { color: #fff; }
+    .project-demo h2 {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      background: linear-gradient(120deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .project-meta {
+      display: flex; gap: 16px; margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    .project-meta span {
+      background: rgba(255,255,255,0.1); padding: 8px 16px;
+      border-radius: 20px; font-size: 0.9rem;
+    }
+
+    .project-section {
+      margin: 28px 0; padding: 20px;
+      background: rgba(255,255,255,0.05); border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .project-section h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #4ecdc4;
+    }
+
+    .project-section p {
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+
+    .project-feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-top: 16px;
+    }
+
+    .project-feature {
+      background: rgba(255,255,255,0.08); padding: 16px;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .project-feature strong {
+      color: #ffd700;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .project-demo-preview {
+      background: rgba(0,0,0,0.3); border-radius: 12px;
+      padding: 20px; margin: 20px 0;
+      border: 1px dashed rgba(255,255,255,0.2);
+      min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+
+    .project-testimonial {
+      background: rgba(76,204,196,0.1); border-left: 4px solid #4ecdc4;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+
+    .project-testimonial p {
+      font-style: italic;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .project-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px; margin-top: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.08); padding: 20px; text-align: center;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-box .number {
+      font-size: 2rem; color: #ffd700; font-weight: bold;
+    }
+
+    .stat-box .label {
+      color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 6px;
+    }
+  </style>
+
+  <!-- Project Demo Modal -->
+  <div class="project-modal" id="projectModal" onclick="if(event.target.id==='projectModal') closeProjectDemo()">
+    <div class="project-modal-content">
+      <button class="project-modal-close" onclick="closeProjectDemo()">✕</button>
+      <div class="project-demo" id="projectDemoContent"></div>
+    </div>
+  </div>
+
   <script src="multi-pages.js"></script>
+  <script>
+    function openProjectDemo(type) {
+      const content = getProjectDemoContent(type);
+      document.getElementById('projectDemoContent').innerHTML = content;
+      document.getElementById('projectModal').classList.add('active');
+    }
+
+    function closeProjectDemo() {
+      document.getElementById('projectModal').classList.remove('active');
+    }
+
+    function getProjectDemoContent(type) {
+      const demos = {
+        website: `
+          <h2>🌐 Aurora Dental Care Website</h2>
+          <p>Conversion-focused healthcare website redesign with appointment booking and patient education.</p>
+          <div class="project-meta">
+            <span>💻 Healthcare</span>
+            <span>✓ Live</span>
+            <span>📈 +45% Conversions</span>
+          </div>
+          
+          <div class="project-section">
+            <h3>Challenge</h3>
+            <p>The previous website had outdated design, poor mobile experience, and complex appointment booking flow resulting in only 18% booking completion rate.</p>
+          </div>
+
+          <div class="project-demo-preview">🏥 Website Preview</div>
+
+          <div class="project-section">
+            <h3>Solution</h3>
+            <div class="project-feature-grid">
+              <div class="project-feature">
+                <strong>📅 Appointment System</strong>
+                <p>Streamlined 3-step booking with real-time availability</p>
+              </div>
+              <div class="project-feature">
+                <strong>📱 Mobile First</strong>
+                <p>70% of traffic is mobile - optimized for all devices</p>
+              </div>
+              <div class="project-feature">
+                <strong>🎯 Patient Forms</strong>
+                <p>Auto-filled forms reduced time by 60%</p>
+              </div>
+              <div class="project-feature">
+                <strong>🔍 SEO Optimized</strong>
+                <p>Ranked #1 for local dental searches</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-testimonial">
+            <p>"Since the redesign, our monthly appointments increased by 340 and our patient satisfaction score went from 3.8 to 4.7 stars." - Dr. Sarah Mitchell, Aurora Dental</p>
+          </div>
+
+          <div class="project-stats">
+            <div class="stat-box">
+              <div class="number">+45%</div>
+              <div class="label">Conversion Lift</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">3.2s</div>
+              <div class="label">Load Time</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">98%</div>
+              <div class="label">Mobile Score</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">+340</div>
+              <div class="label">Monthly Bookings</div>
+            </div>
+          </div>
+        `,
+        app: `
+          <h2>📱 TaskWave Mobile App</h2>
+          <p>Productivity app with smart task management, team collaboration, and AI-powered scheduling.</p>
+          <div class="project-meta">
+            <span>📲 iOS & Android</span>
+            <span>✓ 50K+ Downloads</span>
+            <span>⭐ 4.8 Rating</span>
+          </div>
+
+          <div class="project-section">
+            <h3>Challenge</h3>
+            <p>Existing task managers were cluttered and overwhelming. Users needed a simpler way to manage tasks with team collaboration and real-time sync.</p>
+          </div>
+
+          <div class="project-demo-preview">📲 App Interface</div>
+
+          <div class="project-section">
+            <h3>Solution</h3>
+            <div class="project-feature-grid">
+              <div class="project-feature">
+                <strong>✅ Smart Lists</strong>
+                <p>AI suggests task priorities automatically</p>
+              </div>
+              <div class="project-feature">
+                <strong>👥 Team Sync</strong>
+                <p>Real-time collaboration with 5+ team members</p>
+              </div>
+              <div class="project-feature">
+                <strong>⏰ Time Tracking</strong>
+                <p>Automatic task duration tracking</p>
+              </div>
+              <div class="project-feature">
+                <strong>🔔 Smart Reminders</strong>
+                <p>Context-aware notifications at perfect timing</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-testimonial">
+            <p>"TaskWave saved our team 8 hours per week. The interface is so clean and intuitive!" - Alex Chen, Product Manager</p>
+          </div>
+
+          <div class="project-stats">
+            <div class="stat-box">
+              <div class="number">50K+</div>
+              <div class="label">Active Users</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">4.8★</div>
+              <div class="label">App Store Rating</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">8h</div>
+              <div class="label">Weekly Time Saved</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">92%</div>
+              <div class="label">Retention Rate</div>
+            </div>
+          </div>
+        `,
+        brand: `
+          <h2>☕ Brewline Coffee Brand Identity</h2>
+          <p>Complete brand ecosystem including logo system, packaging, and visual guidelines for premium coffee roastery.</p>
+          <div class="project-meta">
+            <span>🎨 Branding</span>
+            <span>✓ Full System</span>
+            <span>📦 Packaging Design</span>
+          </div>
+
+          <div class="project-section">
+            <h3>Challenge</h3>
+            <p>Brewline needed a distinctive brand identity to stand out in competitive specialty coffee market while maintaining premium positioning.</p>
+          </div>
+
+          <div class="project-demo-preview">☕ Brand Guidelines</div>
+
+          <div class="project-section">
+            <h3>Solution</h3>
+            <div class="project-feature-grid">
+              <div class="project-feature">
+                <strong>🎯 Logo System</strong>
+                <p>Primary, secondary, and icon mark variations</p>
+              </div>
+              <div class="project-feature">
+                <strong>🎨 Color Palette</strong>
+                <p>5 core colors + extended palette for accessibility</p>
+              </div>
+              <div class="project-feature">
+                <strong>📦 Packaging</strong>
+                <p>Coffee bags, boxes, and promotional materials</p>
+              </div>
+              <div class="project-feature">
+                <strong>📋 Guidelines</strong>
+                <p>60-page brand book with usage rules</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-testimonial">
+            <p>"The brand identity completely transformed how customers perceive us. We've seen a 230% increase in Instagram engagement." - Marcus Lee, Brewline Owner</p>
+          </div>
+
+          <div class="project-stats">
+            <div class="stat-box">
+              <div class="number">230%</div>
+              <div class="label">Social Engagement ↑</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">5</div>
+              <div class="label">Color System</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">60+</div>
+              <div class="label">Brand Assets</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">18mo</div>
+              <div class="label">Design Lifespan</div>
+            </div>
+          </div>
+        `,
+        graphics: `
+          <h2>🎨 Nexa Salon Social Campaign</h2>
+          <p>Integrated social media creative system with 120+ branded assets for Instagram, TikTok, and Facebook campaigns.</p>
+          <div class="project-meta">
+            <span>📱 Social Media</span>
+            <span>✓ 120+ Assets</span>
+            <span>📈 +67% Engagement</span>
+          </div>
+
+          <div class="project-section">
+            <h3>Challenge</h3>
+            <p>Nexa Salon's social presence was inconsistent and underperforming. They needed a cohesive visual system for multiple platforms with high engagement.</p>
+          </div>
+
+          <div class="project-demo-preview">🎨 Graphics Portfolio</div>
+
+          <div class="project-section">
+            <h3>Solution</h3>
+            <div class="project-feature-grid">
+              <div class="project-feature">
+                <strong>📸 Content Series</strong>
+                <p>Before/after, styling tips, behind-the-scenes content</p>
+              </div>
+              <div class="project-feature">
+                <strong>🎬 Video Content</strong>
+                <p>30-second TikTok reels and Instagram Reels</p>
+              </div>
+              <div class="project-feature">
+                <strong>🎯 Ad Creative</strong>
+                <p>Facebook & Instagram ads with proven CTR</p>
+              </div>
+              <div class="project-feature">
+                <strong>📅 Content Calendar</strong>
+                <p>3-month posting strategy with engagement hooks</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-testimonial">
+            <p>"Our Instagram went from 2K to 45K followers in 6 months. The graphics look so professional and on-brand!" - Zara Patel, Nexa Salon</p>
+          </div>
+
+          <div class="project-stats">
+            <div class="stat-box">
+              <div class="number">120+</div>
+              <div class="label">Total Assets</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">67%</div>
+              <div class="label">Engagement Lift</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">45K</div>
+              <div class="label">Followers Gained</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">6mo</div>
+              <div class="label">Campaign Duration</div>
+            </div>
+          </div>
+        `,
+        dashboard: `
+          <h2>📊 Orbit Finance Dashboard</h2>
+          <p>Enterprise financial analytics dashboard with real-time KPIs, portfolio tracking, and predictive insights.</p>
+          <div class="project-meta">
+            <span>💼 Enterprise</span>
+            <span>✓ 500+ Users</span>
+            <span>📈 Real-time Data</span>
+          </div>
+
+          <div class="project-section">
+            <h3>Challenge</h3>
+            <p>Financial advisors struggled with fragmented data sources. They needed a unified dashboard to access all client portfolios, performance metrics, and alerts in one place.</p>
+          </div>
+
+          <div class="project-demo-preview">📊 Dashboard Interface</div>
+
+          <div class="project-section">
+            <h3>Solution</h3>
+            <div class="project-feature-grid">
+              <div class="project-feature">
+                <strong>📈 Live Charts</strong>
+                <p>Real-time market data with 5-second refresh</p>
+              </div>
+              <div class="project-feature">
+                <strong>🎯 KPI Cards</strong>
+                <p>Custom metrics and performance indicators</p>
+              </div>
+              <div class="project-feature">
+                <strong>🔔 Smart Alerts</strong>
+                <p>Automatic alerts for portfolio changes</p>
+              </div>
+              <div class="project-feature">
+                <strong>📋 Reports</strong>
+                <p>Auto-generated client reports and insights</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-testimonial">
+            <p>"This dashboard cut our reporting time in half. We can now provide better insights to 40% more clients." - Jennifer Walsh, Orbit Finance CTO</p>
+          </div>
+
+          <div class="project-stats">
+            <div class="stat-box">
+              <div class="number">500+</div>
+              <div class="label">Daily Active Users</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">99.9%</div>
+              <div class="label">Uptime</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">50%</div>
+              <div class="label">Time Saved</div>
+            </div>
+            <div class="stat-box">
+              <div class="number">$2.3M</div>
+              <div class="label">Portfolio Managed</div>
+            </div>
+          </div>
+        `
+      };
+
+      return demos[type] || '<p>Demo not found</p>';
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeProjectDemo();
+    });
+  </script>
 </body>
 </html>
