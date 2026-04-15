@@ -79,6 +79,25 @@ html, body {
   will-change: transform;
 }
 
+.sequence-parallax-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sequence-parallax-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+body.sequence-parallax-active .mesh,
+body.sequence-parallax-active .blob {
+  opacity: 0 !important;
+}
+
 .b1 { width: 32vw; height: 32vw; background: rgba(102, 224, 210, 0.3); top: -10vw; left: -8vw; }
 .b2 { width: 36vw; height: 36vw; background: rgba(111, 99, 255, 0.2); right: -10vw; bottom: -12vw; animation-delay: -3s; }
 .b3 { width: 22vw; height: 22vw; background: rgba(255, 157, 104, 0.26); left: 44vw; top: 56vh; animation-delay: -6s; }
