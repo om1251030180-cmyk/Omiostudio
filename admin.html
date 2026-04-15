@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omio Studio Admin Command</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #091225;
+      --card: rgba(15, 28, 54, 0.94);
+      --card-2: rgba(11, 22, 45, 0.96);
+      --stroke: rgba(112, 151, 245, 0.26);
+      --text: #f1f6ff;
+      --muted: #c1d1f2;
+      --ok: #15b887;
+      --warn: #d59d1e;
+      --danger: #c63a5e;
+      --blue: #6e89ff;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: radial-gradient(circle at 8% 10%, rgba(91, 128, 220, 0.2), transparent 32%),
+                  radial-gradient(circle at 85% 14%, rgba(73, 187, 201, 0.22), transparent 34%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .wrap { width: min(1300px, 94vw); margin: 20px auto 34px; display: grid; gap: 12px; }
+    .head {
+      border: 1px solid var(--stroke);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .head h1 { margin: 0; font-size: 1.3rem; color: var(--text); }
+    .muted { color: var(--muted); font-size: 0.84rem; }
+
+    .btn, .btn-ghost, .btn-danger, .btn-warn {
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      color: #fff;
+      cursor: pointer;
+      background: #1a2e56;
+    }
+    .btn-ghost { background: rgba(16, 28, 54, 0.85); }
+    .btn-danger { background: var(--danger); }
+    .btn-warn { background: var(--warn); }
+
+    .grid { display: grid; gap: 10px; }
+    .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      background: var(--card);
+      padding: 12px;
+    }
+    .card h3, .card strong { color: var(--text); }
+    .kpi strong { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+
+    .cols { grid-template-columns: 1.2fr 1fr; }
+
+    .field { display: grid; gap: 4px; margin-bottom: 8px; }
+    .field label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+    .input, .select, .textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--stroke);
+      background: var(--card-2);
+      color: var(--text);
+      padding: 9px 10px;
+      font: inherit;
+    }
+    .textarea { min-height: 88px; resize: vertical; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th, td { padding: 9px 8px; border-bottom: 1px solid rgba(135, 166, 235, 0.16); font-size: 0.79rem; text-align: left; }
+    td { color: var(--text); }
+    th { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: #cddafd; }
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid rgba(118, 154, 239, 0.22);
+      border-radius: 12px;
+      background: rgba(9, 18, 38, 0.5);
+    }
+    .badge { border-radius: 999px; padding: 3px 9px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+    .active { background: rgba(33, 194, 143, 0.22); color: #85ffd6; }
+    .banned { background: rgba(198, 58, 94, 0.24); color: #ffc0d0; }
+
+    .msg-list { display: grid; gap: 8px; max-height: 340px; overflow: auto; }
+    .msg { border: 1px solid var(--stroke); border-radius: 12px; background: var(--card-2); padding: 9px; }
+    .msg small { color: var(--muted); display: block; margin-bottom: 4px; }
+    a.muted { color: #d5e4ff; font-weight: 600; }
+
+    @media (max-width: 980px) {
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="head">
+      <div>
+        <h1>Admin Command Center</h1>
+        <div class="muted">Dedicated admin workspace for clients, projects, scheduling and operations.</div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-ghost" onclick="window.location.href='index.html'">Open Main Site</button>
+        <button class="btn" onclick="loadAll()">Refresh</button>
+        <button class="btn-danger" onclick="logout()">Logout</button>
+      </div>
+    </section>
+
+    <section id="kpis" class="grid kpis"></section>
+
+    <section class="grid cols">
+      <article class="card">
+        <h3 style="margin:0 0 8px;">Project Assignment & SLA</h3>
+        <form onsubmit="event.preventDefault(); assignOrder();">
+          <div class="field"><label>Order</label><select id="assignOrderId" class="select"></select></div>
+          <div class="field"><label>Owner Name</label><input id="assigneeName" class="input" /></div>
+          <div class="field"><label>Owner Email</label><input id="assigneeEmail" class="input" type="email" /></div>
+          <div class="field"><label>Team</label><input id="teamName" class="input" placeholder="Web Team / Branding Team" /></div>
+          <div class="field"><label>Priority</label>
+            <select id="priority" class="select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="field"><label>SLA Hours</label><input id="slaHours" class="input" type="number" min="0" step="1" value="48" /></div>
+          <div class="field"><label>Assignment Notes</label><textarea id="assignmentNotes" class="textarea"></textarea></div>
+          <button class="btn" type="submit">Apply Assignment</button>
+        </form>
+      </article>
+
+      <article class="card">
+        <h3 style="margin:0 0 8px;">Arrange Call / Video with Client</h3>
+        <form onsubmit="event.preventDefault(); scheduleClientSession();">
+          <div class="field"><label>Client</label><select id="sessionClientId" class="select"></select></div>
+          <div class="field"><label>Session Type</label>
+            <select id="sessionType" class="select">
+              <option value="call_scheduled">Call Scheduled</option>
+              <option value="video_scheduled">Video Scheduled</option>
+              <option value="text">Text Update</option>
+            </select>
+          </div>
+          <div class="field"><label>Session Time</label><input id="sessionTime" class="input" type="datetime-local" /></div>
+          <div class="field"><label>Meeting Link</label><input id="sessionLink" class="input" type="url" placeholder="https://meet.google.com/..." /></div>
+          <div class="field"><label>Message</label><textarea id="sessionMessage" class="textarea" maxlength="900" placeholder="Agenda and expected outcome"></textarea></div>
+          <button class="btn" type="submit">Send to Client</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="card">
+      <h3 style="margin:0 0 8px;">All Projects</h3>
+      <div id="ordersTable" class="table-wrap"></div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin:0 0 8px;">All Clients (Ban / Unban)</h3>
+      <div id="usersTable" class="table-wrap"></div>
+    </section>
+
+    <section class="card">
+      <h3 style="margin:0 0 8px;">Client Communications</h3>
+      <div id="messageList" class="msg-list"></div>
+    </section>
+  </div>
+
+  <script>
+    const API = `${window.location.origin}/api`;
+    const TOKEN_KEY = 'omio_token';
+
+    let state = { user: null, orders: [], users: [], messages: [] };
+
+    function token() { return localStorage.getItem(TOKEN_KEY) || ''; }
+    function headers(json = false) {
+      const h = { Authorization: `Bearer ${token()}` };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    async function req(path, opts = {}) {
+      const res = await fetch(`${API}${path}`, { ...opts, headers: { ...(opts.headers || {}), ...headers() } });
+      const isJson = (res.headers.get('content-type') || '').includes('application/json');
+      const data = isJson ? await res.json() : null;
+      if (!res.ok) throw new Error(data?.error || 'Request failed');
+      return data;
+    }
+
+    function toast(msg) { alert(msg); }
+
+    async function ensureAdmin() {
+      const t = token();
+      if (!t) { window.location.href = 'index.html'; return false; }
+      try {
+        const me = await req('/auth/me');
+        if (!me || me.role !== 'admin') { window.location.href = 'index.html'; return false; }
+        state.user = me;
+        return true;
+      } catch {
+        window.location.href = 'index.html';
+        return false;
+      }
+    }
+
+    function renderKpis(stats) {
+      const box = document.getElementById('kpis');
+      box.innerHTML = [
+        ['Total Orders', stats.totalOrders || 0],
+        ['Pending', stats.pending || 0],
+        ['In Progress', stats.inProgress || 0],
+        ['Completed', stats.completed || 0],
+        ['Clients', stats.totalUsers || 0],
+      ].map(([l, v]) => `<article class="card kpi"><strong>${v}</strong><span class="muted">${l}</span></article>`).join('');
+    }
+
+    function renderOrders() {
+      const box = document.getElementById('ordersTable');
+      if (!state.orders.length) { box.innerHTML = '<div class="muted">No orders found.</div>'; return; }
+      box.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Client</th><th>Service</th><th>Title</th><th>Status</th><th>Owner</th><th>Priority</th><th>SLA</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.orders.map((o) => `
+              <tr>
+                <td>${o._id || o.id || '-'}</td>
+                <td>${o.userName || '-'}<br><small>${o.userEmail || ''}</small></td>
+                <td>${o.serviceType || '-'}</td>
+                <td>${o.title || '-'}</td>
+                <td>${o.status || '-'}</td>
+                <td>${o.assigneeName || '-'}</td>
+                <td>${o.priority || 'medium'}</td>
+                <td>${Number(o.slaHours || 0)}h</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      const orderSelect = document.getElementById('assignOrderId');
+      orderSelect.innerHTML = state.orders.map((o) => `<option value="${o._id || o.id}">${o._id || o.id} · ${o.title || 'Untitled'}</option>`).join('');
+    }
+
+    function renderUsers() {
+      const box = document.getElementById('usersTable');
+      if (!state.users.length) { box.innerHTML = '<div class="muted">No clients found.</div>'; return; }
+      box.innerHTML = `
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            ${state.users.map((u) => `
+              <tr>
+                <td>${u.name || '-'}</td>
+                <td>${u.email || '-'}</td>
+                <td>${u.phone || '-'}</td>
+                <td>${u.company || '-'}</td>
+                <td><span class="badge ${u.isActive === false ? 'banned' : 'active'}">${u.isActive === false ? 'banned' : 'active'}</span></td>
+                <td>${u.isActive === false
+                  ? `<button class="btn" onclick="toggleUser('${u.id || u._id}', true)">Unban</button>`
+                  : `<button class="btn-danger" onclick="toggleUser('${u.id || u._id}', false)">Ban</button>`}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      const clientSelect = document.getElementById('sessionClientId');
+      clientSelect.innerHTML = state.users.map((u) => `<option value="${u.id || u._id}">${u.name || 'Client'} · ${u.email || '-'}</option>`).join('');
+    }
+
+    function renderMessages() {
+      const box = document.getElementById('messageList');
+      if (!state.messages.length) { box.innerHTML = '<div class="msg"><small>Empty</small><div>No communications yet.</div></div>'; return; }
+      box.innerHTML = state.messages.map((m) => `
+        <article class="msg">
+          <small>${m.senderName || '-'} · ${m.type || 'text'} · ${new Date(m.createdAt || Date.now()).toLocaleString()}</small>
+          <div>${m.message || ''}</div>
+          ${m.preferredAt ? `<small>Preferred: ${new Date(m.preferredAt).toLocaleString()}</small>` : ''}
+          ${m.meetingLink ? `<a class="muted" href="${m.meetingLink}" target="_blank" rel="noopener">${m.meetingLink}</a>` : ''}
+        </article>
+      `).join('');
+    }
+
+    async function assignOrder() {
+      const id = document.getElementById('assignOrderId').value;
+      const payload = {
+        assigneeName: document.getElementById('assigneeName').value,
+        assigneeEmail: document.getElementById('assigneeEmail').value,
+        teamName: document.getElementById('teamName').value,
+        priority: document.getElementById('priority').value,
+        slaHours: Number(document.getElementById('slaHours').value || 0),
+        assignmentNotes: document.getElementById('assignmentNotes').value,
+      };
+      await req(`/admin/orders/${id}/assignment`, { method: 'PUT', headers: { ...headers(true) }, body: JSON.stringify(payload) });
+      toast('Assignment updated');
+      await loadAll();
+    }
+
+    async function toggleUser(id, nextState) {
+      await req(`/admin/users/${id}/status`, { method: 'PUT', headers: { ...headers(true) }, body: JSON.stringify({ isActive: nextState }) });
+      await loadAll();
+    }
+
+    async function scheduleClientSession() {
+      const clientId = document.getElementById('sessionClientId').value;
+      const payload = {
+        clientId,
+        type: document.getElementById('sessionType').value,
+        preferredAt: document.getElementById('sessionTime').value,
+        meetingLink: document.getElementById('sessionLink').value,
+        message: document.getElementById('sessionMessage').value,
+      };
+      await req('/messages', { method: 'POST', headers: { ...headers(true) }, body: JSON.stringify(payload) });
+      toast('Client communication sent');
+      document.getElementById('sessionTime').value = '';
+      document.getElementById('sessionLink').value = '';
+      document.getElementById('sessionMessage').value = '';
+      await loadAll();
+    }
+
+    async function loadAll() {
+      const ok = await ensureAdmin();
+      if (!ok) return;
+      const [stats, orders, users, messages] = await Promise.all([
+        req('/admin/stats'),
+        req('/admin/orders'),
+        req('/admin/users'),
+        req('/messages'),
+      ]);
+      state.orders = Array.isArray(orders) ? orders : [];
+      state.users = Array.isArray(users) ? users : [];
+      state.messages = Array.isArray(messages) ? messages : [];
+      renderKpis(stats || {});
+      renderOrders();
+      renderUsers();
+      renderMessages();
+    }
+
+    function logout() {
+      localStorage.removeItem('omio_token');
+      localStorage.removeItem('omio_user');
+      window.location.href = 'index.html';
+    }
+
+    loadAll().catch((e) => { alert(e.message || 'Unable to load admin page'); });
+  </script>
+</body>
+</html>

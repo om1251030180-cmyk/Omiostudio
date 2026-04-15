@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omio Studio | Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="multi-pages.css" />
+</head>
+<body class="page" data-parallax-preset="medium">
+  <div class="mesh parallax-layer" data-parallax-speed="0.08"></div>
+  <div class="blob b1 parallax-layer" data-parallax-speed="0.16"></div>
+  <div class="blob b2 parallax-layer" data-parallax-speed="0.22"></div>
+  <div class="blob b3 parallax-layer" data-parallax-speed="0.12"></div>
+
+  <aside class="side-rail">
+    <button class="rail-btn" onclick="toggleSideRail()"><span class="rail-icon">☰</span><span class="rail-label">Menu</span></button>
+    <a class="rail-logo" href="index.html" data-nav><img src="logo.svg" alt="" decoding="async" /><span>Omio Studio</span></a>
+    <nav class="rail-nav">
+      <a class="rail-btn" href="index.html" data-nav><span class="rail-icon">⌂</span><span class="rail-label">Home</span></a>
+      <a class="rail-btn" href="services.html" data-nav><span class="rail-icon">▦</span><span class="rail-label">Services</span></a>
+      <a class="rail-btn" href="portfolio.html" data-nav><span class="rail-icon">◫</span><span class="rail-label">Portfolio</span></a>
+      <a class="rail-btn" href="about.html" data-nav><span class="rail-icon">◎</span><span class="rail-label">About</span></a>
+    </nav>
+    <div class="rail-foot">
+      <a class="rail-btn" href="index.html" data-nav><span class="rail-icon">✦</span><span class="rail-label">Order Now</span></a>
+    </div>
+  </aside>
+
+  <div class="layout">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="search"><span>⌕</span><input placeholder="Search case studies" /></div>
+        <span class="pill">Portfolio Grid</span>
+        <a class="link-btn" href="index.html" data-nav>Back To App</a>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="grid">
+        <article class="card span-12 fade-up tilt-soft-left" data-tilt>
+          <span class="badge-glow">Case Library</span>
+          <h2>Portfolio Highlights</h2>
+          <p>A multi-card showcase with premium layout rhythm, soft depth, and visual hierarchy inspired by modern dashboard interfaces.</p>
+          <span class="stat">5K+ tracked project interactions</span>
+          <div class="metric-strip">
+            <div class="metric"><strong>140+</strong><span>Creative Assets</span></div>
+            <div class="metric"><strong>52</strong><span>Launch Campaigns</span></div>
+            <div class="metric"><strong>35%</strong><span>Avg. Retention Lift</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-5 fade-up tilt-left" data-tilt><h3>Aurora Dental Care</h3><p>Conversion-first healthcare website redesign with appointment-focused UX.</p><span class="stat">Website</span></article>
+        <article class="card span-3 fade-up"><h3>TaskWave</h3><p>Mobile productivity app cards and flows.</p><span class="stat">App</span></article>
+        <article class="card span-4 fade-up tilt-right" data-tilt><h3>Brewline Coffee</h3><p>Logo family and packaging identity.</p><span class="stat">Brand</span></article>
+        <article class="card span-4 fade-up" data-tilt>
+          <h3>Nexa Salon</h3>
+          <p>Social post systems and ad creatives.</p>
+          <div class="ring-wrap">
+            <div class="ring" style="--p:67">
+              <div class="ring-value">67%</div>
+            </div>
+          </div>
+          <span class="stat">Graphics</span>
+        </article>
+        <article class="card span-8 fade-up" data-tilt>
+          <h3>Orbit Finance Dashboard</h3>
+          <p>Neumorphic dashboard redesign with KPI cards, chart-first layout, and modular analytics sections.</p>
+          <div class="bar-wrap">
+            <div class="bar" style="height:38%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:51%"></div><div class="bar" style="height:58%"></div><div class="bar" style="height:63%"></div><div class="bar" style="height:76%"></div><div class="bar" style="height:88%"></div>
+          </div>
+          <svg class="sparkline" viewBox="0 0 340 80" aria-hidden="true">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#6f63ff" />
+                <stop offset="100%" stop-color="#66e0d2" />
+              </linearGradient>
+            </defs>
+            <path class="track" d="M10 58 C 56 40, 102 66, 146 46 C 195 24, 250 56, 330 18" />
+            <path class="line" d="M10 58 C 56 40, 102 66, 146 46 C 195 24, 250 56, 330 18" />
+          </svg>
+          <span class="stat">↗ 35% better retention</span>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-6 fade-up" data-tilt>
+          <span class="badge-glow">Proof Points</span>
+          <h3>Portfolio Review Framework</h3>
+          <div class="timeline">
+            <div class="timeline-item"><div><strong>Objective</strong><span>Define business KPI and user outcome</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Execution</strong><span>Design, prototype, and implementation</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Validation</strong><span>Usability, performance, conversion checks</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Scale</strong><span>Template and system reuse for future launches</span></div><i class="timeline-dot"></i></div>
+          </div>
+        </article>
+        <article class="card span-6 fade-up" data-tilt>
+          <span class="badge-glow">Interaction Field</span>
+          <h3>Live Motion Identity Sample</h3>
+          <p>Soft orbiting markers and frosted depth reinforce the studio's visual identity while keeping content hierarchy crisp and readable.</p>
+          <div class="orbital" aria-hidden="true">
+            <span class="orb" style="top:50%;left:50%;"></span>
+            <span class="orb two" style="top:50%;left:50%;"></span>
+          </div>
+          <div class="showcase-row">
+            <div class="showcase-card"><h4>Visual Rhythm</h4><p>Alternating card proportions keep the eye moving naturally.</p></div>
+            <div class="showcase-card"><h4>Brand Recall</h4><p>Distinct color gradients and soft depth cues improve memorability.</p></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-12 fade-up" data-tilt>
+          <span class="badge-glow">Outcomes Matrix</span>
+          <h3>Measured Impact Across Sectors</h3>
+          <div class="feature-grid">
+            <div class="feature-item"><strong>Healthcare</strong><p>Appointment-focused UX increased qualified leads and reduced drop-off.</p></div>
+            <div class="feature-item"><strong>Retail</strong><p>Branded creative systems improved campaign consistency and CTR.</p></div>
+            <div class="feature-item"><strong>Fintech</strong><p>Data-first dashboard patterns improved insight discovery and retention.</p></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="multi-pages.js"></script>
+</body>
+</html>

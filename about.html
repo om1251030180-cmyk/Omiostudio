@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omio Studio | About</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="multi-pages.css" />
+</head>
+<body class="page" data-parallax-preset="medium">
+  <div class="mesh parallax-layer" data-parallax-speed="0.08"></div>
+  <div class="blob b1 parallax-layer" data-parallax-speed="0.16"></div>
+  <div class="blob b2 parallax-layer" data-parallax-speed="0.22"></div>
+  <div class="blob b3 parallax-layer" data-parallax-speed="0.12"></div>
+
+  <aside class="side-rail">
+    <button class="rail-btn" onclick="toggleSideRail()"><span class="rail-icon">☰</span><span class="rail-label">Menu</span></button>
+    <a class="rail-logo" href="index.html" data-nav><img src="logo.svg" alt="" decoding="async" /><span>Omio Studio</span></a>
+    <nav class="rail-nav">
+      <a class="rail-btn" href="index.html" data-nav><span class="rail-icon">⌂</span><span class="rail-label">Home</span></a>
+      <a class="rail-btn" href="services.html" data-nav><span class="rail-icon">▦</span><span class="rail-label">Services</span></a>
+      <a class="rail-btn" href="portfolio.html" data-nav><span class="rail-icon">◫</span><span class="rail-label">Portfolio</span></a>
+      <a class="rail-btn" href="about.html" data-nav><span class="rail-icon">◎</span><span class="rail-label">About</span></a>
+    </nav>
+    <div class="rail-foot">
+      <a class="rail-btn" href="index.html" data-nav><span class="rail-icon">✦</span><span class="rail-label">Order Now</span></a>
+    </div>
+  </aside>
+
+  <div class="layout">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="search"><span>⌕</span><input placeholder="Search team, process, contact" /></div>
+        <span class="pill">Studio Profile</span>
+        <a class="link-btn" href="index.html" data-nav>Back To App</a>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="grid">
+        <article class="card span-7 fade-up tilt-soft-left" data-tilt>
+          <span class="badge-glow">Company Profile</span>
+          <h2>We Build Product-Grade Brand Experiences</h2>
+          <p>Omio Studio blends strategy, visual systems, and implementation. Our workflow tracks discovery, scope, design, build, review, and launch in one transparent cycle.</p>
+          <span class="stat">Collaborative, milestone-based delivery</span>
+          <div class="metric-strip">
+            <div class="metric"><strong>120+</strong><span>Projects Delivered</span></div>
+            <div class="metric"><strong>32</strong><span>Industry Verticals</span></div>
+            <div class="metric"><strong>98%</strong><span>On-Time Milestones</span></div>
+          </div>
+          <svg class="sparkline" viewBox="0 0 340 80" aria-hidden="true">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#6f63ff" />
+                <stop offset="100%" stop-color="#66e0d2" />
+              </linearGradient>
+            </defs>
+            <path class="track" d="M10 60 C 58 42, 100 66, 150 43 C 202 19, 254 52, 330 20" />
+            <path class="line" d="M10 60 C 58 42, 100 66, 150 43 C 202 19, 254 52, 330 20" />
+          </svg>
+        </article>
+        <article class="card span-5 fade-up tilt-soft-right" data-tilt>
+          <span class="badge-glow">Contact Desk</span>
+          <h3>Contact</h3>
+          <p>Email: hello@omio.studio<br />Studio: Omio Digital Labs<br />Availability: Mon-Sat</p>
+          <div class="ring-wrap">
+            <div class="ring" style="--p:91">
+              <div class="ring-value">91%</div>
+            </div>
+          </div>
+          <div class="orbital" aria-hidden="true">
+            <span class="orb" style="top:50%;left:50%;"></span>
+            <span class="orb two" style="top:50%;left:50%;"></span>
+          </div>
+          <a class="link-btn" href="index.html" data-nav>Open Order Flow</a>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-4 fade-up tilt-left" data-tilt><h3>Discovery</h3><p>Deep requirements and benchmark alignment.</p><span class="stat">Step 01</span></article>
+        <article class="card span-4 fade-up"><h3>Design Systems</h3><p>Reusable components with consistent motion language.</p><span class="stat">Step 02</span></article>
+        <article class="card span-4 fade-up tilt-right" data-tilt><h3>Build & QA</h3><p>Shipping-ready implementation and quality checks.</p><span class="stat">Step 03</span></article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-12 fade-up" data-tilt>
+          <span class="badge-glow">Core Capabilities</span>
+          <h3>How We Keep Delivery Premium At Scale</h3>
+          <p>Our operating model combines dedicated pods, reusable systems, and measurable quality gates so growth does not compromise craft.</p>
+          <div class="feature-grid">
+            <div class="feature-item"><strong>Design + Dev Pods</strong><p>Cross-functional teams aligned to outcomes, not isolated ticket queues.</p></div>
+            <div class="feature-item"><strong>Quality Framework</strong><p>Review checklists and release criteria ensure visual and technical consistency.</p></div>
+            <div class="feature-item"><strong>Decision Transparency</strong><p>Milestone logs, previews, and versioned updates keep clients fully in sync.</p></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card span-6 fade-up" data-tilt>
+          <span class="badge-glow">Execution Timeline</span>
+          <h3>Structured Weekly Rhythm</h3>
+          <div class="timeline">
+            <div class="timeline-item"><div><strong>Week 1</strong><span>Discovery + Direction</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Week 2</strong><span>Design + Prototype</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Week 3</strong><span>Build + QA</span></div><i class="timeline-dot"></i></div>
+            <div class="timeline-item"><div><strong>Week 4</strong><span>Launch + Optimization</span></div><i class="timeline-dot"></i></div>
+          </div>
+        </article>
+        <article class="card span-6 fade-up" data-tilt>
+          <span class="badge-glow">Snapshot</span>
+          <h3>Studio Performance Indicators</h3>
+          <div class="showcase-row">
+            <div class="showcase-card"><h4>Avg. Response Time</h4><p>Within 2 business hours across active projects.</p></div>
+            <div class="showcase-card"><h4>Revision Efficiency</h4><p>Most tasks resolved in a single iteration cycle.</p></div>
+            <div class="showcase-card"><h4>Client NPS</h4><p>Consistent high satisfaction from startup and SMB partners.</p></div>
+            <div class="showcase-card"><h4>Repeat Engagement</h4><p>Long-term partnerships for product and brand expansion.</p></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="multi-pages.js"></script>
+</body>
+</html>

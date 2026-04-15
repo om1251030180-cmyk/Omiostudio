@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omio Studio | Full Project Brief</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eef3ff;
+      --ink: #1a1f44;
+      --muted: #626a94;
+      --card: rgba(255,255,255,0.78);
+      --stroke: rgba(126, 141, 209, 0.24);
+      --violet: #6f63ff;
+      --cyan: #66e0d2;
+      --orange: #ff985f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 8% 12%, #dce9ff, transparent 35%), radial-gradient(circle at 86% 14%, #e6fffb, transparent 36%), var(--bg);
+    }
+    .wrap { width: min(1120px, 94vw); margin: 22px auto 34px; display: grid; gap: 12px; }
+    .top {
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      background: var(--card);
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .top h1 { margin: 0; font-family: Outfit, sans-serif; font-size: 1.36rem; }
+    .muted { color: var(--muted); font-size: 0.84rem; }
+
+    .btn, .btn-ghost {
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 9px 13px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+    .btn { background: linear-gradient(120deg, var(--violet), var(--cyan)); color: #fff; border: 0; }
+    .btn-ghost { background: rgba(255,255,255,0.8); color: var(--ink); }
+
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
+      background: var(--card);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .card h2 {
+      margin: 0;
+      font-family: Outfit, sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .field { display: grid; gap: 5px; }
+    .field label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+    .input, .select, .textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.86);
+      color: var(--ink);
+      padding: 10px 11px;
+      font: inherit;
+    }
+    .textarea { resize: vertical; min-height: 96px; }
+
+    .checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .check {
+      display: flex;
+      gap: 8px;
+      align-items: start;
+      border: 1px solid var(--stroke);
+      border-radius: 11px;
+      padding: 8px;
+      background: rgba(255,255,255,0.62);
+      font-size: 0.82rem;
+    }
+
+    .chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 999px; border: 1px solid var(--stroke); padding: 5px 9px; color: #4957a2; }
+
+    .notice { border-radius: 12px; padding: 9px 11px; font-size: 0.82rem; display: none; }
+    .notice.show { display: block; }
+    .ok { background: rgba(80,190,130,0.2); border: 1px solid rgba(80,190,130,0.42); color: #194425; }
+    .err { background: rgba(230,90,110,0.18); border: 1px solid rgba(230,90,110,0.42); color: #731f2f; }
+
+    @media (max-width: 860px) {
+      .grid-2, .grid-3, .checks { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="top">
+      <div>
+        <h1>Full Project Brief (Client Intake)</h1>
+        <div class="muted">Detailed Fiverr-style requirements form for complete project planning.</div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-ghost" onclick="window.location.href='index.html'">Back</button>
+      </div>
+    </section>
+
+    <form id="briefForm" class="card" onsubmit="event.preventDefault(); submitBrief();">
+      <div id="formNotice" class="notice"></div>
+
+      <section class="card">
+        <h2>1) Service & Package</h2>
+        <div class="grid-3">
+          <div class="field">
+            <label>Service</label>
+            <select id="serviceType" class="select" required onchange="onServiceChange()"></select>
+          </div>
+          <div class="field">
+            <label>Package</label>
+            <select id="packageTier" class="select">
+              <option value="basic">Basic</option>
+              <option value="standard">Standard</option>
+              <option value="premium">Premium</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Industry / Niche</label>
+            <input id="industry" class="input" placeholder="Healthcare, SaaS, Retail..." required />
+          </div>
+        </div>
+        <div class="field" id="customServiceWrap" style="display:none;">
+          <label>Custom Service Name</label>
+          <input id="customService" class="input" placeholder="Describe custom service" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2) Project Basics</h2>
+        <div class="grid-2">
+          <div class="field"><label>Project Title</label><input id="title" class="input" required /></div>
+          <div class="field"><label>Business Name</label><input id="businessName" class="input" required /></div>
+        </div>
+        <div class="field"><label>Main Objective</label><textarea id="objective" class="textarea" required placeholder="What should this project achieve?"></textarea></div>
+        <div class="field"><label>Detailed Description</label><textarea id="description" class="textarea" required placeholder="Describe your requirements in detail"></textarea></div>
+      </section>
+
+      <section class="card" id="webSection">
+        <h2>3) Website / Web App Scope</h2>
+        <div class="grid-3">
+          <div class="field"><label>Estimated Pages</label><input id="pagesCount" class="input" type="number" min="1" value="5" /></div>
+          <div class="field"><label>CMS Preference</label>
+            <select id="cms" class="select">
+              <option value="custom">Custom Build</option>
+              <option value="wordpress">WordPress</option>
+              <option value="shopify">Shopify</option>
+              <option value="webflow">Webflow</option>
+            </select>
+          </div>
+          <div class="field"><label>Language</label><input id="language" class="input" placeholder="English, Hindi..." /></div>
+        </div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" value="responsive" class="featureCheck" checked /> Responsive (Mobile + Desktop)</label>
+          <label class="check"><input type="checkbox" value="seo" class="featureCheck" /> SEO Setup</label>
+          <label class="check"><input type="checkbox" value="blog" class="featureCheck" /> Blog / CMS</label>
+          <label class="check"><input type="checkbox" value="forms" class="featureCheck" /> Lead Forms + CRM</label>
+          <label class="check"><input type="checkbox" value="analytics" class="featureCheck" /> Analytics & Tracking</label>
+          <label class="check"><input type="checkbox" value="payments" class="featureCheck" /> Payments / Checkout</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>4) Content, References & Branding</h2>
+        <div class="grid-2">
+          <div class="field"><label>Reference Sites / Apps</label><textarea id="references" class="textarea" placeholder="Paste URLs or brand inspirations"></textarea></div>
+          <div class="field"><label>Competitors</label><textarea id="competitors" class="textarea" placeholder="Competitor links"></textarea></div>
+        </div>
+        <div class="grid-3">
+          <div class="field"><label>Content Ready</label>
+            <select id="contentReady" class="select"><option value="yes">Yes</option><option value="no">No</option><option value="partial">Partial</option></select>
+          </div>
+          <div class="field"><label>Brand Assets Ready</label>
+            <select id="brandReady" class="select"><option value="yes">Yes</option><option value="no">No</option><option value="partial">Partial</option></select>
+          </div>
+          <div class="field"><label>Target Audience</label><input id="targetAudience" class="input" placeholder="B2B founders, students, local customers..." /></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>5) Budget, Timeline & Communication</h2>
+        <div class="grid-3">
+          <div class="field"><label>Budget</label><input id="budget" class="input" placeholder="₹25,000" /></div>
+          <div class="field"><label>Deadline</label><input id="deadline" class="input" type="date" /></div>
+          <div class="field"><label>Timeline Flexibility</label>
+            <select id="timelineFlex" class="select"><option value="strict">Strict</option><option value="moderate">Moderate</option><option value="flexible">Flexible</option></select>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="field"><label>Preferred Contact Method</label>
+            <select id="contactMethod" class="select"><option value="email">Email</option><option value="call">Call</option><option value="video">Video Call</option><option value="chat">Chat</option></select>
+          </div>
+          <div class="field"><label>Preferred Contact Time</label><input id="contactTime" class="input" placeholder="Weekdays 3 PM - 6 PM IST" /></div>
+          <div class="field"><label>Support Requirement</label>
+            <select id="supportNeed" class="select"><option value="none">No</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="long_term">Long Term</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>6) File Uploads & Final Notes</h2>
+        <div class="field"><label>Upload Files</label><input id="files" class="input" type="file" multiple /></div>
+        <div class="field"><label>Additional Notes</label><textarea id="notes" class="textarea" maxlength="1500"></textarea></div>
+        <label class="check"><input id="terms" type="checkbox" required /> I confirm the provided details are accurate and I authorize Omio Studio to use these details for project execution.</label>
+      </section>
+
+      <div class="chip-row">
+        <span class="chip">Complete Briefing</span>
+        <span class="chip">Dynamic Requirements</span>
+        <span class="chip">Professional Intake</span>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+        <button class="btn-ghost" type="button" onclick="window.location.href='index.html'">Cancel</button>
+        <button class="btn" type="submit">Submit Full Brief</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API = `${window.location.origin}/api`;
+    const TOKEN_KEY = 'omio_token';
+    const USER_KEY = 'omio_user';
+
+    const services = [
+      ['web_basic', 'Website Development - Basic'],
+      ['web_business', 'Website Development - Business'],
+      ['web_ecommerce', 'Website Development - E-Commerce'],
+      ['app_mobile', 'App Development - Mobile'],
+      ['app_web', 'App Development - Web/SaaS'],
+      ['logo_basic', 'Logo Design - Basic'],
+      ['logo_premium', 'Logo Design - Premium'],
+      ['branding', 'Branding & Graphics'],
+      ['ui_ux', 'UI/UX Design'],
+      ['graphics', 'Graphics Kit'],
+      ['custom', 'Custom Requirement']
+    ];
+
+    function showNotice(type, msg) {
+      const n = document.getElementById('formNotice');
+      n.className = `notice show ${type}`;
+      n.textContent = msg;
+    }
+
+    function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+    function getUser() { try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { return null; } }
+
+    async function req(path, opts = {}) {
+      const headers = opts.headers || {};
+      const t = getToken();
+      if (t) headers.Authorization = `Bearer ${t}`;
+      opts.headers = headers;
+      const res = await fetch(`${API}${path}`, opts);
+      const isJson = (res.headers.get('content-type') || '').includes('application/json');
+      const data = isJson ? await res.json() : null;
+      if (!res.ok) throw new Error(data?.error || 'Request failed');
+      return data;
+    }
+
+    function onServiceChange() {
+      const type = document.getElementById('serviceType').value;
+      document.getElementById('customServiceWrap').style.display = type === 'custom' ? 'grid' : 'none';
+      const webLike = type.startsWith('web_') || type === 'ui_ux' || type === 'app_web';
+      document.getElementById('webSection').style.display = webLike ? 'grid' : 'none';
+    }
+
+    function initForm() {
+      const service = document.getElementById('serviceType');
+      service.innerHTML = '<option value="">Select service</option>' + services.map((s) => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      const params = new URLSearchParams(window.location.search);
+      const pre = params.get('service') || '';
+      if (pre) service.value = pre;
+      onServiceChange();
+    }
+
+    async function ensureClientAccess() {
+      const t = getToken();
+      const u = getUser();
+      if (!t || !u) {
+        window.location.href = 'index.html';
+        return false;
+      }
+      try {
+        const me = await req('/auth/me');
+        if (!me || me.role === 'admin') {
+          window.location.href = 'index.html';
+          return false;
+        }
+      } catch {
+        window.location.href = 'index.html';
+        return false;
+      }
+      return true;
+    }
+
+    function listCheckedValues() {
+      return [...document.querySelectorAll('.featureCheck:checked')].map((el) => el.value);
+    }
+
+    async function submitBrief() {
+      const serviceType = document.getElementById('serviceType').value;
+      const serviceLabel = document.getElementById('serviceType').selectedOptions[0]?.text || '';
+      const customService = document.getElementById('customService').value.trim();
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const budget = document.getElementById('budget').value.trim();
+      const deadline = document.getElementById('deadline').value;
+      const references = document.getElementById('references').value.trim();
+
+      if (!serviceType || !title || !description) {
+        showNotice('err', 'Service, title and description are required.');
+        return;
+      }
+      if (serviceType === 'custom' && !customService) {
+        showNotice('err', 'Please enter custom service name.');
+        return;
+      }
+      if (!document.getElementById('terms').checked) {
+        showNotice('err', 'Please accept the confirmation checkbox.');
+        return;
+      }
+
+      const brief = {
+        packageTier: document.getElementById('packageTier').value,
+        industry: document.getElementById('industry').value.trim(),
+        businessName: document.getElementById('businessName').value.trim(),
+        objective: document.getElementById('objective').value.trim(),
+        pagesCount: document.getElementById('pagesCount').value,
+        cms: document.getElementById('cms').value,
+        language: document.getElementById('language').value.trim(),
+        features: listCheckedValues(),
+        competitors: document.getElementById('competitors').value.trim(),
+        contentReady: document.getElementById('contentReady').value,
+        brandReady: document.getElementById('brandReady').value,
+        targetAudience: document.getElementById('targetAudience').value.trim(),
+        timelineFlexibility: document.getElementById('timelineFlex').value,
+        supportNeed: document.getElementById('supportNeed').value,
+        notes: document.getElementById('notes').value.trim(),
+        customService,
+      };
+
+      try {
+        const form = new FormData();
+        form.append('serviceType', serviceType);
+        form.append('serviceLabel', serviceType === 'custom' && customService ? `${serviceLabel}: ${customService}` : serviceLabel);
+        form.append('customService', customService);
+        form.append('title', title);
+        form.append('description', description);
+        form.append('budget', budget);
+        form.append('deadline', deadline);
+        form.append('references', references);
+        form.append('brief', JSON.stringify(brief));
+        form.append('clientContactMethod', document.getElementById('contactMethod').value);
+        form.append('clientContactTime', document.getElementById('contactTime').value.trim());
+
+        const files = document.getElementById('files').files || [];
+        [...files].forEach((f) => form.append('files', f));
+
+        await req('/orders', { method: 'POST', body: form });
+        showNotice('ok', 'Full brief submitted successfully. Redirecting to dashboard...');
+        setTimeout(() => { window.location.href = 'index.html'; }, 900);
+      } catch (e) {
+        showNotice('err', e.message || 'Unable to submit brief.');
+      }
+    }
+
+    initForm();
+    ensureClientAccess();
+  </script>
+</body>
+</html>
