@@ -32,15 +32,15 @@
     }
 
     :root[data-theme='dark'] {
-      --bg: #0d1530;
-      --ink: #ecf2ff;
-      --ink-soft: #b5c5ea;
-      --stroke: rgba(118, 149, 233, 0.3);
-      --card: rgba(16, 29, 54, 0.86);
-      --glass: rgba(12, 24, 46, 0.82);
-      --glass-strong: rgba(15, 28, 52, 0.9);
-      --shadow-soft: 0 12px 26px rgba(5, 12, 28, 0.42), 0 3px 9px rgba(10, 20, 40, 0.32);
-      --shadow-mid: 0 16px 34px rgba(3, 9, 22, 0.55), 0 5px 14px rgba(7, 17, 36, 0.38);
+      --bg: #000000;
+      --ink: #ffffff;
+      --ink-soft: #d6d6d6;
+      --stroke: rgba(255, 255, 255, 0.24);
+      --card: rgba(12, 12, 12, 0.96);
+      --glass: rgba(10, 10, 10, 0.94);
+      --glass-strong: rgba(16, 16, 16, 0.96);
+      --shadow-soft: 0 12px 26px rgba(0, 0, 0, 0.66), 0 3px 9px rgba(0, 0, 0, 0.52);
+      --shadow-mid: 0 16px 34px rgba(0, 0, 0, 0.78), 0 5px 14px rgba(0, 0, 0, 0.64);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,10 +58,7 @@
     }
 
     :root[data-theme='dark'] body {
-      background: radial-gradient(circle at 15% 10%, rgba(76, 116, 227, 0.24), transparent 34%),
-          radial-gradient(circle at 80% 12%, rgba(44, 163, 180, 0.2), transparent 35%),
-          radial-gradient(circle at 80% 82%, rgba(148, 93, 52, 0.2), transparent 38%),
-                  var(--bg);
+      background: #000000;
     }
 
     body.modal-open { overflow: hidden; }
@@ -292,25 +289,6 @@
       opacity: 0.54;
       transform: translate3d(0, var(--parallax-y, 0px), 0);
       will-change: transform;
-    }
-
-    .sequence-parallax-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .sequence-parallax-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    body.sequence-parallax-active .mesh,
-    body.sequence-parallax-active .blob {
-      opacity: 0 !important;
     }
 
     .b1 { width: 36vw; height: 36vw; background: rgba(49, 214, 197, 0.35); top: -12vw; left: -10vw; }
@@ -2735,6 +2713,84 @@
     .port-grad-3 { background: linear-gradient(130deg, #7959ff, #f2739a) !important; }
     .port-grad-4 { background: linear-gradient(130deg, #ff9f52, #ffdc71) !important; }
 
+    :root[data-theme='dark'] html,
+    :root[data-theme='dark'] body {
+      background: #000 !important;
+      color: #fff !important;
+    }
+
+    :root[data-theme='dark'] .mesh,
+    :root[data-theme='dark'] .blob {
+      opacity: 0.14 !important;
+      filter: none !important;
+    }
+
+    :root[data-theme='dark'] .glass,
+    :root[data-theme='dark'] .hero-card,
+    :root[data-theme='dark'] .services-grid article,
+    :root[data-theme='dark'] .portfolio-card,
+    :root[data-theme='dark'] .process-card,
+    :root[data-theme='dark'] .testimonial,
+    :root[data-theme='dark'] .kpi,
+    :root[data-theme='dark'] .panel,
+    :root[data-theme='dark'] .table-wrap,
+    :root[data-theme='dark'] .modal,
+    :root[data-theme='dark'] .side-menu,
+    :root[data-theme='dark'] .nav-wrap,
+    :root[data-theme='dark'] .nav-links button,
+    :root[data-theme='dark'] .ghost-btn,
+    :root[data-theme='dark'] .api-pill,
+    :root[data-theme='dark'] .demo-list a,
+    :root[data-theme='dark'] .drop,
+    :root[data-theme='dark'] .tier,
+    :root[data-theme='dark'] .status-select,
+    :root[data-theme='dark'] .input,
+    :root[data-theme='dark'] .textarea,
+    :root[data-theme='dark'] .modal-tabs,
+    :root[data-theme='dark'] .modal-close,
+    :root[data-theme='dark'] .side-rail,
+    :root[data-theme='dark'] .rail-toggle,
+    :root[data-theme='dark'] .rail-logo,
+    :root[data-theme='dark'] .rail-nav button,
+    :root[data-theme='dark'] .rail-quick,
+    :root[data-theme='dark'] .top-search {
+      background: #101010 !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.26) !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.64) !important;
+    }
+
+    :root[data-theme='dark'] .top-search input,
+    :root[data-theme='dark'] .quick-search-item,
+    :root[data-theme='dark'] .quick-search-item small,
+    :root[data-theme='dark'] .service-desc,
+    :root[data-theme='dark'] .muted,
+    :root[data-theme='dark'] .meta,
+    :root[data-theme='dark'] .chip,
+    :root[data-theme='dark'] p,
+    :root[data-theme='dark'] span,
+    :root[data-theme='dark'] small,
+    :root[data-theme='dark'] th,
+    :root[data-theme='dark'] td,
+    :root[data-theme='dark'] label {
+      color: #ffffff !important;
+    }
+
+    :root[data-theme='dark'] .brand-btn,
+    :root[data-theme='dark'] .tiny-btn,
+    :root[data-theme='dark'] .status-btn,
+    :root[data-theme='dark'] .filter-btn.active,
+    :root[data-theme='dark'] .chip-btn.active,
+    :root[data-theme='dark'] .tier.active,
+    :root[data-theme='dark'] .modal-tabs button.active,
+    :root[data-theme='dark'] .dot,
+    :root[data-theme='dark'] .rail-nav button.active {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2) !important;
+    }
+
     .ok, .toast.ok,
     .b-completed {
       background: rgba(77, 203, 145, 0.2) !important;
@@ -3024,7 +3080,7 @@
     }
   </style>
 </head>
-<body data-parallax-preset="medium" data-sequence-image="Anim.webp" data-sequence-intensity="subtle" data-sequence-section="#view-landing">
+<body data-parallax-preset="medium">
   <div class="mesh parallax-layer" data-parallax-speed="0.08"></div>
   <div class="blob b1 parallax-layer" data-parallax-speed="0.16"></div>
   <div class="blob b2 parallax-layer" data-parallax-speed="0.22"></div>
@@ -4581,213 +4637,6 @@
         } catch {}
         update();
       };
-    }
-
-    function parseFrameList(value) {
-      if (!value) return [];
-      return String(value)
-        .split(/[|,\n]/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-    }
-
-    function loadImage(url) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = url;
-      });
-    }
-
-    async function loadSequenceConfig() {
-      const inline = window.OMIO_SEQUENCE_PARALLAX || null;
-      const data = document.body?.dataset || {};
-
-      let config = inline ? { ...inline } : {};
-      if (!config.frameUrls?.length && data.sequenceFrames) {
-        config.frameUrls = parseFrameList(data.sequenceFrames);
-      }
-      if (!config.imageUrl && data.sequenceImage) {
-        config.imageUrl = data.sequenceImage;
-      }
-      if (!config.sectionSelector && data.sequenceSection) {
-        config.sectionSelector = data.sequenceSection;
-      }
-      if (!config.intensity && data.sequenceIntensity) {
-        config.intensity = data.sequenceIntensity;
-      }
-
-      const manifestUrl = config.manifestUrl || data.sequenceManifest;
-      if (manifestUrl) {
-        try {
-          const res = await fetch(manifestUrl, { credentials: 'same-origin' });
-          if (res.ok) {
-            const manifest = await res.json();
-            config = { ...manifest, ...config };
-            if (!config.frameUrls?.length && Array.isArray(manifest.frames)) {
-              config.frameUrls = manifest.frames;
-            }
-          }
-        } catch {
-          // Silent fallback when manifest is missing or invalid.
-        }
-      }
-
-      const urls = Array.isArray(config.frameUrls) ? config.frameUrls.filter(Boolean) : [];
-      if (!urls.length && config.imageUrl) {
-        urls.push(config.imageUrl);
-      }
-      if (!urls.length) return null;
-
-      const lowPowerDevice =
-        (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
-
-      return {
-        enabled: config.enabled !== false,
-        frameUrls: urls,
-        sectionSelector: config.sectionSelector || '#view-landing',
-        hideDefaultLayers: config.hideDefaultLayers !== false,
-        intensity: String(config.intensity || (lowPowerDevice ? 'subtle' : 'medium')).toLowerCase(),
-        opacityLight: Number.isFinite(config.opacityLight) ? config.opacityLight : 0.34,
-        opacityDark: Number.isFinite(config.opacityDark) ? config.opacityDark : 0.28,
-        maxDpr: Number.isFinite(config.maxDpr) ? config.maxDpr : (lowPowerDevice ? 1.25 : 1.7),
-        pointerEnabled: config.pointerEnabled !== false && !lowPowerDevice,
-        layerCount: Number.isFinite(config.layerCount) ? Math.max(1, Math.min(3, config.layerCount)) : (lowPowerDevice ? 2 : 3),
-      };
-    }
-
-    async function wireSequenceParallax() {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      const config = await loadSequenceConfig();
-      if (!config || !config.enabled) return;
-
-      const section = document.querySelector(config.sectionSelector) || document.body;
-      if (!section) return;
-
-      const intensityMap = {
-        subtle: { pointer: 8, drift: 14, depth: [0.03, 0.015, 0] },
-        medium: { pointer: 14, drift: 22, depth: [0.06, 0.03, 0] },
-        bold: { pointer: 22, drift: 34, depth: [0.1, 0.05, 0] },
-      };
-      const intensity = intensityMap[config.intensity] || intensityMap.medium;
-
-      const root = document.createElement('div');
-      root.className = 'sequence-parallax-bg';
-      const canvas = document.createElement('canvas');
-      canvas.className = 'sequence-parallax-canvas';
-      root.appendChild(canvas);
-      document.body.prepend(root);
-      document.body.classList.add('sequence-parallax-active');
-      if (!config.hideDefaultLayers) {
-        document.body.classList.remove('sequence-parallax-active');
-      }
-
-      const ctx = canvas.getContext('2d', { alpha: true });
-      if (!ctx) return;
-
-      const frames = [];
-      const framePromises = config.frameUrls.map((url) => loadImage(url).catch(() => null));
-      const loaded = await Promise.all(framePromises);
-      loaded.forEach((img) => {
-        if (img) frames.push(img);
-      });
-      if (!frames.length) {
-        root.remove();
-        document.body.classList.remove('sequence-parallax-active');
-        return;
-      }
-
-      let raf = 0;
-      let pointerX = 0;
-      let pointerY = 0;
-
-      const resize = () => {
-        const dpr = Math.min(window.devicePixelRatio || 1, config.maxDpr || 1.7);
-        const w = Math.max(1, Math.round(window.innerWidth));
-        const h = Math.max(1, Math.round(window.innerHeight));
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(h * dpr);
-        canvas.style.width = `${w}px`;
-        canvas.style.height = `${h}px`;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      };
-
-      const getScrollProgress = () => {
-        const rect = section.getBoundingClientRect();
-        const start = window.scrollY + rect.top - window.innerHeight * 0.82;
-        const distance = Math.max(1, rect.height + window.innerHeight * 0.55);
-        const raw = (window.scrollY - start) / distance;
-        return Math.max(0, Math.min(1, raw));
-      };
-
-      const drawFrameCover = (img, x, y, scaleBoost, alpha) => {
-        const vw = canvas.width / (window.devicePixelRatio || 1);
-        const vh = canvas.height / (window.devicePixelRatio || 1);
-        const sw = img.naturalWidth || img.width;
-        const sh = img.naturalHeight || img.height;
-        if (!sw || !sh) return;
-        const coverScale = Math.max(vw / sw, vh / sh) * (1 + scaleBoost);
-        const dw = sw * coverScale;
-        const dh = sh * coverScale;
-        const dx = (vw - dw) / 2 + x;
-        const dy = (vh - dh) / 2 + y;
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(img, dx, dy, dw, dh);
-      };
-
-      const render = () => {
-        raf = 0;
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
-        const baseOpacity = theme === 'dark' ? config.opacityDark : config.opacityLight;
-        const progress = getScrollProgress();
-        const frameIndex = Math.min(frames.length - 1, Math.max(0, Math.round(progress * (frames.length - 1))));
-        const frame = frames[frameIndex];
-
-        const vw = canvas.width / (window.devicePixelRatio || 1);
-        const vh = canvas.height / (window.devicePixelRatio || 1);
-        ctx.clearRect(0, 0, vw, vh);
-
-        const scrollOsc = Math.sin(progress * Math.PI * 2) * intensity.drift;
-        const px = (pointerX - 0.5) * intensity.pointer;
-        const py = (pointerY - 0.5) * intensity.pointer;
-
-        if (config.layerCount >= 3) {
-          drawFrameCover(frame, px + scrollOsc, py, intensity.depth[0], baseOpacity * 0.3);
-        }
-        if (config.layerCount >= 2) {
-          drawFrameCover(frame, px * 0.6 + scrollOsc * 0.55, py * 0.6, intensity.depth[1], baseOpacity * 0.52);
-        }
-        drawFrameCover(frame, px * 0.3 + scrollOsc * 0.3, py * 0.3, intensity.depth[2], baseOpacity);
-        ctx.globalAlpha = 1;
-      };
-
-      const requestRender = () => {
-        if (raf) return;
-        raf = requestAnimationFrame(render);
-      };
-
-      window.addEventListener('resize', () => {
-        resize();
-        requestRender();
-      });
-
-      window.addEventListener('scroll', requestRender, { passive: true });
-
-      if (window.matchMedia('(pointer:fine)').matches && config.pointerEnabled) {
-        window.addEventListener('mousemove', (e) => {
-          pointerX = e.clientX / Math.max(1, window.innerWidth);
-          pointerY = e.clientY / Math.max(1, window.innerHeight);
-          requestRender();
-        });
-      }
-
-      resize();
-      requestRender();
     }
 
     function prefetchStaticPages() {
@@ -6863,7 +6712,6 @@
       wireTopProgressBar();
       wireAmbientPointerEffects();
       wireScrollParallax();
-      wireSequenceParallax();
       prefetchStaticPages();
 
       if (state.user?.role === 'admin') {
