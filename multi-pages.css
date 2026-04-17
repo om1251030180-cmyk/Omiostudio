@@ -192,13 +192,14 @@ body.side-collapsed .rail-logo span { display: none; }
 
 .search {
   flex: 0 0 auto;
-  min-width: 48px;
-  width: 48px;
+  min-width: 38px;
+  width: 38px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 10px 12px;
-  border-radius: 14px;
+  padding: 8px 10px;
+  border-radius: 12px;
   background: rgba(248, 251, 255, 0.98);
   border: 1px solid rgba(122, 140, 209, 0.3);
   box-shadow: inset 2px 2px 5px rgba(143, 161, 226, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.95);
@@ -210,6 +211,7 @@ body.side-collapsed .rail-logo span { display: none; }
   flex: 1;
   min-width: 160px;
   width: auto;
+  justify-content: flex-start;
 }
 
 .search input { width: 100%; border: 0; background: transparent; outline: 0; font-size: 0.86rem; color: var(--ink); }
