@@ -6777,6 +6777,10 @@
         previewUrl: w.previewUrl || ''
       }));
       const merged = [...staticData, ...liveWorks];
+      if (!merged.length) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; padding:40px; text-align:center; color:var(--ink-soft);"><p>No portfolio items available for this category.</p></div>';
+        return;
+      }
       grid.innerHTML = merged.map((p) => `
         <article class="portfolio-card reveal neo-card">
           <div class="port-bg ${p.grad}">
@@ -7663,6 +7667,11 @@
     function renderAiCenter(orders) {
       const shell = document.getElementById('aiCenterShell');
       if (!shell) return;
+
+      if (!orders.length) {
+        shell.innerHTML = '<div style="padding:24px; text-align:center; color:var(--ink-soft);"><p>No orders yet. Start your first project to see AI recommendations.</p></div>';
+        return;
+      }
 
       const pending = orders.filter((o) => o.status === 'pending').length;
       const inProgress = orders.filter((o) => o.status === 'in_progress').length;
