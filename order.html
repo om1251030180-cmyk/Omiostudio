@@ -181,8 +181,88 @@
       border-color: rgba(226, 85, 106, 0.42);
     }
 
+    .files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      min-height: 0;
+    }
+
+    .file-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.1), rgba(102, 224, 210, 0.1));
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      word-break: break-word;
+    }
+
+    .file-item:hover {
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.2), rgba(102, 224, 210, 0.2));
+      border-color: var(--violet);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(111, 99, 255, 0.15);
+    }
+
+    .file-icon {
+      font-size: 24px;
+    }
+
+    .file-name {
+      font-size: 0.7rem;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      max-width: 100px;
+    }
+
+    .file-size {
+      font-size: 0.6rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .file-remove {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 22px;
+      height: 22px;
+      background: var(--violet);
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .file-item:hover .file-remove {
+      opacity: 1;
+    }
+
     @media (max-width: 860px) {
       .grid-2, .grid-3, .checks { grid-template-columns: 1fr; }
+      .files-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
     }
   </style>
 </head>
@@ -191,7 +271,7 @@
     <section class="top">
       <div>
         <h1>Full Project Brief (Client Intake)</h1>
-        <div class="muted">Detailed Fiverr-style requirements form for complete project planning.</div>
+        <div class="muted">Detailed requirements form for complete project planning.</div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="btn-ghost" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
@@ -304,6 +384,7 @@
       <section class="card">
         <h2>6) File Uploads & Final Notes</h2>
         <div class="field"><label>Upload Files</label><input id="files" class="input" type="file" multiple /></div>
+        <div id="selectedFilesGrid" class="files-grid"></div>
         <div class="field"><label>Additional Notes</label><textarea id="notes" class="textarea" maxlength="1500"></textarea></div>
         <label class="check"><input id="terms" type="checkbox" required /> I confirm the provided details are accurate and I authorize Omio Studio to use these details for project execution.</label>
       </section>
@@ -423,6 +504,64 @@
       return [...document.querySelectorAll('.featureCheck:checked')].map((el) => el.value);
     }
 
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop()?.toLowerCase() || '';
+      const iconMap = {
+        'pdf': '📄', 'doc': '📝', 'docx': '📝', 'txt': '📋',
+        'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️',
+        'zip': '📦', 'rar': '📦', '7z': '📦',
+        'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+        'ppt': '🎯', 'pptx': '🎯',
+        'ai': '🎨', 'psd': '🎨', 'figma': '🎨'
+      };
+      return iconMap[ext] || '📄';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function displaySelectedFiles() {
+      const fileInput = document.getElementById('files');
+      const grid = document.getElementById('selectedFilesGrid');
+      const files = fileInput.files;
+
+      if (files.length === 0) {
+        grid.innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = Array.from(files)
+        .map((file, index) => `
+          <div class="file-item" title="${file.name}">
+            <div class="file-icon">${getFileIcon(file.name)}</div>
+            <div class="file-name">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</div>
+            <div class="file-size">${formatFileSize(file.size)}</div>
+            <button type="button" class="file-remove" onclick="removeFile(${index})" title="Remove">✕</button>
+          </div>
+        `)
+        .join('');
+    }
+
+    function removeFile(index) {
+      const fileInput = document.getElementById('files');
+      const dt = new DataTransfer();
+      const files = fileInput.files;
+
+      Array.from(files).forEach((file, i) => {
+        if (i !== index) {
+          dt.items.add(file);
+        }
+      });
+
+      fileInput.files = dt.files;
+      displaySelectedFiles();
+    }
+
     async function submitBrief() {
       const serviceType = document.getElementById('serviceType').value;
       const serviceLabel = document.getElementById('serviceType').selectedOptions[0]?.text || '';
@@ -493,6 +632,9 @@
     initTheme();
     initForm();
     ensureClientAccess();
+
+    // File input change listener
+    document.getElementById('files')?.addEventListener('change', displaySelectedFiles);
   </script>
 </body>
 </html>

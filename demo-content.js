@@ -1,5 +1,7 @@
-// Premium Full-Featured Website Demo Content
+// Demo content file - no longer needed
+// All demo functionality has been removed
 function getDomainSpecificDemoPremium(id, section) {
+  return '';
   const item = websiteShowcase.find((entry) => entry.id === id);
   if (!item) return '';
 
@@ -7,48 +9,88 @@ function getDomainSpecificDemoPremium(id, section) {
   if (id === 'luxora-estate') {
     if (section === 'home') {
       return `
-        <div class="miniature-hero">
-          <strong>LUXORA: Premium Real Estate</strong>
-          <span>Handpicked properties in prime locations. Investment-grade assets. Expert guidance.</span>
-        </div>
-        <div class="miniature-note" style="margin:8px 0 6px 0;"><strong>Latest Listings</strong></div>
-        <div class="miniature-demo-item">
-          <div class="demo-property-card">
-            <div class="demo-property-image">🏡</div>
-            <div class="demo-property-title">Sunset Mansion, Bandra</div>
-            <div class="demo-property-meta"><span>4 BHK • 4,200 sqft</span><span>₹5.2Cr</span></div>
-            <small style="color:#999; font-size:0.6rem;">Sea view • Pool • Smart home • 2025 ready</small>
+        <section class="demo-section" style="background: linear-gradient(135deg, rgba(26, 30, 63, 0.8), rgba(111, 99, 255, 0.15)); border-radius: 20px; padding: 40px; margin-bottom: 24px;">
+          <h2 style="font-size: 2.4rem; margin-bottom: 8px; font-family: 'DM Serif Display'; letter-spacing: -0.02em;">LUXORA</h2>
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.85); margin-bottom: 24px;">Premium Real Estate Investment Platform</p>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 24px;">Handpicked properties in prime locations. Investment-grade assets with expert guidance. Access exclusive luxury real estate opportunities across 15+ cities.</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #ffd56a;">₹850Cr+</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">AUM Managed</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #66e0d2;">5,200+</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">Active Investors</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #ff8a5b;">18.5%</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">Avg. ROI</div>
+            </div>
           </div>
-          <div class="demo-property-card">
-            <div class="demo-property-image">🏢</div>
-            <div class="demo-property-title">Premium Plaza, BKC</div>
-            <div class="demo-property-meta"><span>Commercial • 45,000 sqft</span><span>₹2.8Cr</span></div>
-            <small style="color:#999; font-size:0.6rem;">Grade A • 8% ROI • Lease-ready • 100% occupied</small>
+        </section>
+        <section style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 16px; color: #4ecdc4;">Featured Listings</h3>
+          <div style="display: grid; gap: 12px;">
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🏡 Sunset Mansion, Bandra</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">4 BHK • 4,200 sqft • Sea view • Pool • 2025 ready</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.4rem; font-weight: bold; color: #ffd700;">₹5.2 Cr</div>
+                <div style="font-size: 0.75rem; color: #4ecdc4; margin-top: 2px;">Grade A</div>
+              </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🏢 Premium Plaza, BKC</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">Commercial • 45,000 sqft • Grade A • 100% Occupied</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.4rem; font-weight: bold; color: #ffd700;">₹2.8 Cr</div>
+                <div style="font-size: 0.75rem; color: #4ecdc4; margin-top: 2px;">8% ROI</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <button class="demo-booking-button">📅 Schedule Virtual 3D Tour</button>
+        </section>
       `;
     }
     if (section === 'services') {
       return `
-        <div class="miniature-note" style="margin-bottom:8px;"><strong>✓ Real Estate Solutions</strong></div>
-        <div class="miniature-list">
-          <button class="active"><strong>🏠 Property Finder AI</strong><span>Smart matching • Location trends • Market analysis</span></button>
-          <button><strong>📋 Legal & Compliance</strong><span>Title check • Document review • Registration</span></button>
-          <button><strong>💳 Financing Solutions</strong><span>Home loans • Investment planning • Tax guidance</span></button>
-          <button><strong>🔍 Valuation & Inspection</strong><span>Expert appraisal • 3D virtual tour • Price negotiation</span></button>
-        </div>
+        <section style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 16px; color: #4ecdc4;">Our Services</h3>
+          <div style="display: grid; gap: 12px;">
+            <div style="background: linear-gradient(135deg, rgba(111, 99, 255, 0.2), rgba(102, 224, 210, 0.1)); border: 1px solid rgba(111, 99, 255, 0.3); border-radius: 12px; padding: 16px;">
+              <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🏠 Property Finder AI</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Smart matching • Location trends • Market analysis • 24/7 Updates</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+              <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">📋 Legal & Compliance</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Title check • Document review • Registration • Tax planning</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+              <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">💳 Financing Solutions</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Home loans • Investment planning • Wealth management • Tax guidance</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+              <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🔍 Valuation & Inspection</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Expert appraisal • 3D virtual tour • Market comp analysis • Negotiation</div>
+            </div>
+          </div>
+        </section>
       `;
     }
     return `
-      <div class="miniature-note" style="margin-bottom:8px;"><strong>Find Your Investment Property</strong><br>Join 100K+ investors. Free consultation with certified property experts.</div>
-      <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
-        <input type="text" placeholder="Full name" required>
-        <input type="email" placeholder="Email address" required>
-        <input type="tel" placeholder="Contact number" required>
-        <select required><option>Looking for</option><option>Residential</option><option>Commercial</option><option>Investment</option></select>
-        <button type="submit">Get Free Consultation</button>
-      </form>
+      <section style="background: rgba(76, 205, 196, 0.1); border-left: 4px solid #4ecdc4; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+        <h3 style="color: #4ecdc4; margin-bottom: 8px; font-size: 1.1rem;">Get Premium Consultation</h3>
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 16px; font-size: 0.95rem;">Join 5,200+ investors. Free consultation with certified real estate experts.</p>
+        <form onsubmit="submitWebsiteDemoLead(event)" style="display: grid; gap: 12px;">
+          <input type="text" placeholder="Full name" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; color: #fff;">
+          <input type="email" placeholder="Email address" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; color: #fff;">
+          <input type="tel" placeholder="Contact number" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; color: #fff;">
+          <button type="submit" style="background: linear-gradient(135deg, #4ecdc4, #66e0d2); border: none; padding: 12px; border-radius: 8px; color: #1a1a2e; font-weight: 600; cursor: pointer;">Get Free Consultation →</button>
+        </form>
+      </section>
     `;
   }
 
@@ -56,48 +98,103 @@ function getDomainSpecificDemoPremium(id, section) {
   if (id === 'fitmodo-gym') {
     if (section === 'home') {
       return `
-        <div class="miniature-hero">
-          <strong>FITMODO: Transform Your Fitness</strong>
-          <span>State-of-the-art gym • 200+ classes monthly • Certified trainers • Community-first</span>
-        </div>
-        <div class="miniature-note" style="margin:8px 0 6px 0;"><strong>Today's Class Schedule</strong></div>
-        <div class="miniature-demo-item">
-          <div class="demo-class-slot">
-            <div class="demo-class-title">💪 Advanced Strength</div>
-            <div class="demo-class-time">06:00 AM • 60 min • Trainer: Alex</div>
+        <section class="demo-section" style="background: linear-gradient(135deg, rgba(255, 138, 91, 0.2), rgba(255, 213, 106, 0.15)); border-radius: 20px; padding: 40px; margin-bottom: 24px;">
+          <h2 style="font-size: 2.4rem; margin-bottom: 8px; font-family: 'DM Serif Display'; letter-spacing: -0.02em;">FITMODO</h2>
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.85); margin-bottom: 24px;">Premium Fitness Transformation Platform</p>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 24px;">State-of-the-art gym facilities. 200+ classes monthly. Certified trainers. Community-first approach. Transform your fitness journey in 90 days.</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #ffd56a;">12,500+</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">Active Members</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #66e0d2;">4.8★</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">Member Rating</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #ff8a5b;">24/7</div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px;">Open Hours</div>
+            </div>
           </div>
-          <div class="demo-class-slot">
-            <div class="demo-class-title">🧘 Morning Yoga Flow</div>
-            <div class="demo-class-time">07:15 AM • 45 min • Trainer: Maya</div>
+        </section>
+        <section style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 16px; color: #4ecdc4;">Today's Class Schedule</h3>
+          <div style="display: grid; gap: 12px;">
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">💪 Advanced Strength</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">60 min • Trainer: Alex • 18/20 spots</div>
+              </div>
+              <div style="text-align: right; color: #4ecdc4; font-weight: 600;">6:00 AM</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🧘 Morning Yoga Flow</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">45 min • Trainer: Maya • 22/25 spots</div>
+              </div>
+              <div style="text-align: right; color: #4ecdc4; font-weight: 600;">7:15 AM</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">🏃 HIIT Cardio Blast</div>
+                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">50 min • Trainer: Marcus • 20/20 spots FULL</div>
+              </div>
+              <div style="text-align: right; color: #ff8a5b; font-weight: 600;">6:00 PM</div>
+            </div>
           </div>
-          <div class="demo-class-slot">
-            <div class="demo-class-title">🏃 HIIT Cardio Blast</div>
-            <div class="demo-class-time">06:00 PM • 50 min • Trainer: Marcus</div>
-          </div>
-        </div>
-        <small style="color:#999; font-size:0.6rem;\">⭐ 4.8/5 • 12,500+ Members • Open 24/7</small>
-        <button class="demo-booking-button" style="margin-top:8px;\">📅 Book Class Now</button>
+        </section>
       `;
     }
     if (section === 'services') {
       return `
-        <div class="miniature-note" style="margin-bottom:8px;\"><strong>✓ Membership & Training</strong></div>
-        <div class="miniature-list">
-          <button class="active"><strong>💪 Bronze Starter</strong><span>₹2,999/mo • Gym access • 4 classes/week</span></button>
-          <button><strong>🌟 Silver Pro</strong><span>₹4,499/mo • Unlimited classes • 1 trainer session</span></button>
-          <button><strong>👑 Gold Elite</strong><span>₹6,999/mo • Personal trainer • Nutrition coaching</span></button>
-          <button><strong>🏆 Platinum VIP</strong><span>₹9,999/mo • Full service • Premium lounge access</span></button>
-        </div>
+        <section style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.3rem; margin-bottom: 16px; color: #4ecdc4;">Membership Plans</h3>
+          <div style="display: grid; gap: 12px;">
+            <div style="background: linear-gradient(135deg, rgba(111, 99, 255, 0.2), rgba(102, 224, 210, 0.1)); border: 2px solid rgba(111, 99, 255, 0.3); border-radius: 12px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-weight: 600; color: #fff; font-size: 1.05rem;">💪 Bronze Starter</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 2px;">Perfect for beginners</div>
+                </div>
+                <div style="text-align: right; font-weight: 600; color: #ffd56a;">₹2,999<span style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">/mo</span></div>
+              </div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">✓ Gym access • ✓ 4 classes/week • ✓ Locker</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-weight: 600; color: #fff; font-size: 1.05rem;">🌟 Silver Pro</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 2px;">Most popular</div>
+                </div>
+                <div style="text-align: right; font-weight: 600; color: #ffd56a;">₹4,499<span style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">/mo</span></div>
+              </div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">✓ Unlimited classes • ✓ 1 trainer session • ✓ Nutrition app</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-weight: 600; color: #fff; font-size: 1.05rem;">👑 Gold Elite</div>
+                  <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 2px;">Premium experience</div>
+                </div>
+                <div style="text-align: right; font-weight: 600; color: #ffd56a;">₹6,999<span style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">/mo</span></div>
+              </div>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">✓ Personal trainer • ✓ Nutrition coaching • ✓ Priority booking</div>
+            </div>
+          </div>
+        </section>
       `;
     }
     return `
-      <div class="miniature-note" style="margin-bottom:8px;\"><strong>Start Your Transformation</strong><br>14-day free trial. No credit card needed. Personalized onboarding included.</div>
-      <form class="miniature-form" onsubmit="submitWebsiteDemoLead(event)">
-        <input type="text" placeholder="Your name" required>
-        <input type="email" placeholder="Email address" required>
-        <select required><option>Fitness goal</option><option>Weight loss</option><option>Muscle gain</option><option>Cardio fitness</option><option>Flexibility</option></select>
-        <button type="submit">Claim Free Trial</button>
-      </form>
+      <section style="background: rgba(76, 205, 196, 0.1); border-left: 4px solid #4ecdc4; padding: 20px; border-radius: 8px; margin-bottom: 24px;">
+        <h3 style="color: #4ecdc4; margin-bottom: 8px; font-size: 1.1rem;">Start Your Transformation</h3>
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 16px; font-size: 0.95rem;">14-day free trial. No credit card needed. Personalized onboarding with fitness assessment.</p>
+        <form onsubmit="submitWebsiteDemoLead(event)" style="display: grid; gap: 12px;">
+          <input type="text" placeholder="Your name" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; color: #fff;">
+          <input type="email" placeholder="Email address" required style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; color: #fff;">
+          <button type="submit" style="background: linear-gradient(135deg, #ff8a5b, #ffd56a); border: none; padding: 12px; border-radius: 8px; color: #1a1a2e; font-weight: 600; cursor: pointer;">Claim Free Trial →</button>
+        </form>
+      </section>
+    `;
     `;
   }
 
