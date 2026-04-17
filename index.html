@@ -71,6 +71,15 @@
       --admin-ink: #e8f0ff;
     }
 
+    /* Light theme admin colors override */
+    :root[data-theme='light'] body.role-admin #view-admin,
+    :root[data-theme='light'] #view-admin {
+      --admin-bg: rgba(255, 255, 255, 0.92);
+      --admin-stroke: rgba(126, 141, 209, 0.24);
+      --admin-soft: #626a94;
+      --admin-ink: #1a1f44;
+    }
+
     body.role-admin #view-admin .panel,
     body.role-admin #view-admin .command-card,
     body.role-admin #view-admin .work-card,
@@ -115,6 +124,18 @@
       color: #eaf1ff;
     }
 
+    /* Light theme input styling */
+    :root[data-theme='light'] body.role-admin #view-admin .status-select,
+    :root[data-theme='light'] body.role-admin #view-admin .input,
+    :root[data-theme='light'] body.role-admin #view-admin .textarea,
+    :root[data-theme='light'] #view-admin .status-select,
+    :root[data-theme='light'] #view-admin .input,
+    :root[data-theme='light'] #view-admin .textarea {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: rgba(126, 141, 209, 0.3) !important;
+      color: #1a1f44 !important;
+    }
+
     body.role-admin #view-admin .status-btn,
     body.role-admin #view-admin .tiny-btn,
     body.role-admin #view-admin .ghost-btn,
@@ -136,6 +157,11 @@
       color: #eaf2ff;
     }
 
+    /* Light theme admin view color */
+    :root[data-theme='light'] #view-admin {
+      color: #1a1f44 !important;
+    }
+
     #view-admin .kpi,
     #view-admin .api-pill,
     #view-admin .filter-btn,
@@ -146,6 +172,22 @@
       background: rgba(10, 22, 44, 0.9);
       border-color: rgba(118, 159, 247, 0.34);
       color: #e6efff;
+    }
+
+    /* Light theme kpi and elements */
+    :root[data-theme='light'] #view-admin .kpi,
+    :root[data-theme='light'] #view-admin .api-pill,
+    :root[data-theme='light'] #view-admin .filter-btn,
+    :root[data-theme='light'] #view-admin .table-wrap,
+    :root[data-theme='light'] #view-admin .lane,
+    :root[data-theme='light'] #view-admin .activity-line {
+      background: rgba(255, 255, 255, 0.92) !important;
+      border-color: rgba(126, 141, 209, 0.24) !important;
+      color: #1a1f44 !important;
+    }
+
+    :root[data-theme='light'] #view-admin table {
+      color: #1a1f44 !important;
     }
 
     #view-admin .kpi span,
@@ -216,6 +258,43 @@
       background: radial-gradient(circle at 12% 8%, rgba(219, 232, 255, 0.6), transparent 34%),
                   radial-gradient(circle at 84% 14%, rgba(230, 255, 251, 0.5), transparent 34%),
                   #f0f5ff;
+    }
+
+    /* Light theme admin text colors */
+    :root[data-theme='light'] #view-admin,
+    :root[data-theme='light'] body.admin-view-active #view-admin {
+      color: #1a1f44 !important;
+    }
+
+    :root[data-theme='light'] #view-admin .panel-head h3,
+    :root[data-theme='light'] #view-admin strong,
+    :root[data-theme='light'] #view-admin .panel-head,
+    :root[data-theme='light'] #view-admin th,
+    :root[data-theme='light'] #view-admin td,
+    :root[data-theme='light'] #view-admin .command-card h4,
+    :root[data-theme='light'] #view-admin .work-card h4 {
+      color: #1a1f44 !important;
+    }
+
+    :root[data-theme='light'] #view-admin .muted-note,
+    :root[data-theme='light'] #view-admin small,
+    :root[data-theme='light'] #view-admin .work-contact,
+    :root[data-theme='light'] #view-admin .panel-head p {
+      color: #626a94 !important;
+    }
+
+    :root[data-theme='light'] #view-admin .status-select,
+    :root[data-theme='light'] #view-admin .input,
+    :root[data-theme='light'] #view-admin .textarea {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: rgba(126, 141, 209, 0.3) !important;
+      color: #1a1f44 !important;
+    }
+
+    :root[data-theme='light'] #view-admin .kpi strong,
+    :root[data-theme='light'] #view-admin .terminal-row b,
+    :root[data-theme='light'] #view-admin .terminal-row span {
+      color: #1a1f44 !important;
     }
 
     body.admin-view-active .nav-wrap,
