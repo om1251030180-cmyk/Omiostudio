@@ -486,26 +486,55 @@
     }
 
     .top-search {
-      flex: 1;
+      flex: 0 0 auto;
       display: flex;
       align-items: center;
       gap: 8px;
       border-radius: 14px;
       padding: 10px 12px;
-      min-width: 160px;
+      min-width: 44px;
       background: rgba(244, 247, 255, 0.9);
       border: 1px solid rgba(120, 135, 200, 0.15);
       box-shadow: inset 3px 3px 8px rgba(160, 174, 231, 0.24), inset -3px -3px 8px rgba(255, 255, 255, 0.9);
       position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .top-search.expanded {
+      flex: 1;
+      min-width: 200px;
+      cursor: default;
+    }
+
+    .top-search span {
+      flex-shrink: 0;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .top-search.expanded span {
+      opacity: 0.7;
     }
 
     .top-search input {
       border: 0;
       outline: 0;
-      width: 100%;
+      width: 0;
       background: transparent;
       font-size: 0.86rem;
       color: var(--ink);
+      transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+
+    .top-search.expanded input {
+      width: 100%;
+      pointer-events: auto;
+    }
+
+    .top-search input::placeholder {
+      color: var(--ink-soft);
     }
 
     .quick-search-list {
@@ -2703,9 +2732,46 @@
       border-color: transparent;
     }
 
+    .dashboard-header {
+      animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard-tabs {
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-tab {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dashboard-tab:hover {
+      transform: translateY(-2px);
+    }
+
     .panel {
       padding: 18px;
       display: none;
+      animation: fadeInPanel 0.3s ease-in-out;
+    }
+
+    @keyframes fadeInPanel {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
     .panel.active { display: block; }
@@ -4352,6 +4418,9 @@
       .nav-center { order: 3; width: 100%; flex-wrap: wrap; }
       .top-search { min-width: 100%; }
       .top-chip { display: none; }
+      .dashboard-header { padding: 16px 12px !important; }
+      .dashboard-tabs { gap: 4px; padding-top: 12px; padding-bottom: 0; }
+      .dashboard-tab { padding: 8px 12px !important; font-size: 0.8rem !important; }
       .nav-right { order: 2; width: 100%; justify-content: flex-start; }
       .nav-links { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; align-items: center; }
       .insight-card { grid-column: span 12; }
@@ -4673,7 +4742,44 @@
 
     <section id="view-dashboard" class="view">
       <div class="container panel-wrap">
-        <aside class="side-menu glass">
+        <div class="dashboard-header glass" style="background: linear-gradient(135deg, rgba(244, 247, 255, 0.95), rgba(240, 244, 255, 0.92)); border-bottom: 1px solid rgba(120, 135, 200, 0.15); padding: 24px 20px; margin-bottom: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(120, 135, 200, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.8rem; margin: 0; color: var(--ink); font-weight: 800;">Client Dashboard</h2>
+              <p style="margin: 4px 0 0 0; color: var(--ink-soft); font-size: 0.9rem;">Welcome back, <strong id="dashClientName" style="color: var(--ink);">User</strong></p>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <span id="apiModeBadge" class="api-pill"></span>
+              <span id="liveSyncBadgeClient" class="api-pill">Last Sync: --</span>
+            </div>
+          </div>
+          
+          <nav class="dashboard-tabs glass" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 0; border-top: 1px solid rgba(120, 135, 200, 0.1); padding-top: 16px;">
+            <button id="tab-overview" class="dashboard-tab active" onclick="showClientPanel('overview')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              📊 Overview
+            </button>
+            <button id="tab-orders" class="dashboard-tab" onclick="showClientPanel('orders')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              📦 My Orders
+            </button>
+            <button id="tab-workspace" class="dashboard-tab" onclick="showClientPanel('workspace')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              🏗️ Workspace
+            </button>
+            <button id="tab-works" class="dashboard-tab" onclick="showClientPanel('works')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              ✨ Delivered Works
+            </button>
+            <button id="tab-connect" class="dashboard-tab" onclick="showClientPanel('connect')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              💬 Connect
+            </button>
+            <button id="tab-ai" class="dashboard-tab" onclick="showClientPanel('ai')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              🤖 AI Center
+            </button>
+            <button id="tab-profile" class="dashboard-tab" onclick="showClientPanel('profile')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              👤 Profile
+            </button>
+          </nav>
+        </div>
+
+        <aside class="side-menu glass" style="display: none;">
           <h3>Client Dashboard</h3>
           <button id="menu-overview" class="active" onclick="showClientPanel('overview')">Overview</button>
           <button id="menu-orders" onclick="showClientPanel('orders')">My Orders</button>
@@ -4983,6 +5089,10 @@
           <div style="height: 12px"></div>
           <h3 id="adminUsersAnchor" style="font-size: 1.3rem; margin-bottom: 8px;">Clients</h3>
           <div id="adminUsersTable" class="table-wrap"></div>
+
+          <div style="height: 12px"></div>
+          <h3 style="font-size: 1.3rem; margin-bottom: 8px; color: #4ecdc4;">🔐 Currently Logged In Users</h3>
+          <div id="loggedInUsersTable" class="table-wrap"></div>
         </article>
       </div>
     </section>
@@ -4998,25 +5108,57 @@
       <div class="modal-tabs">
         <button id="tab-login" class="active" onclick="switchAuthTab('login')">Login</button>
         <button id="tab-register" onclick="switchAuthTab('register')">Register</button>
+        <button id="tab-forgot" onclick="switchAuthTab('forgot')">Forgot Password</button>
       </div>
       <div id="authNotice" class="notice"></div>
 
+      <!-- LOGIN FORM -->
       <form id="loginForm" onsubmit="event.preventDefault(); login();">
-        <div class="field"><label>Email</label><input id="loginEmail" class="input" type="email" required /></div>
-        <div class="field"><label>Password</label><input id="loginPassword" class="input" type="password" required /></div>
+        <div class="field">
+          <label>Email or Phone</label>
+          <input id="loginIdentifier" class="input" type="text" placeholder="user@example.com or +1234567890" required />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" class="input" type="password" required />
+        </div>
         <button class="brand-btn" type="submit">Login</button>
+        <div style="text-align: center; margin-top: 12px; font-size: 0.85rem;">
+          <span style="color: var(--ink-soft);">Forgot your password?</span>
+          <button type="button" class="link-btn" onclick="switchAuthTab('forgot')" style="margin-left: 4px; text-decoration: underline;">Reset here</button>
+        </div>
       </form>
 
+      <!-- REGISTER FORM -->
       <form id="registerForm" class="hidden" onsubmit="event.preventDefault(); register();">
         <div class="form-grid">
           <div class="field"><label>First Name</label><input id="regFirst" class="input" type="text" required /></div>
           <div class="field"><label>Last Name</label><input id="regLast" class="input" type="text" /></div>
         </div>
         <div class="field"><label>Email</label><input id="regEmail" class="input" type="email" required /></div>
-        <div class="field"><label>Password</label><input id="regPassword" class="input" type="password" required minlength="6" /></div>
-        <div class="field"><label>Phone</label><input id="regPhone" class="input" type="text" /></div>
+        <div class="field"><label>Phone *</label><input id="regPhone" class="input" type="tel" placeholder="+1 (555) 000-0000" required /></div>
         <div class="field"><label>Company</label><input id="regCompany" class="input" type="text" /></div>
+        <div class="field"><label>Password</label><input id="regPassword" class="input" type="password" required minlength="6" placeholder="Minimum 6 characters" /></div>
+        <div class="field"><label>Confirm Password</label><input id="regConfirmPassword" class="input" type="password" required minlength="6" /></div>
         <button class="brand-btn" type="submit">Create Account</button>
+        <div style="font-size: 0.85rem; color: var(--ink-soft); margin-top: 8px;">* Phone number required for account recovery</div>
+      </form>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <form id="forgotForm" class="hidden" onsubmit="event.preventDefault(); handleForgotPassword();">
+        <div class="field">
+          <label>Email or Phone</label>
+          <input id="forgotIdentifier" class="input" type="text" placeholder="user@example.com or +1234567890" required />
+        </div>
+        <div class="field">
+          <label>Company Name</label>
+          <input id="forgotCompany" class="input" type="text" placeholder="Your company name (for verification)" />
+        </div>
+        <button class="brand-btn" type="submit">Send Reset Link</button>
+        <div style="margin-top: 16px; padding: 12px; background: rgba(255, 255, 255, 0.08); border-radius: 8px; font-size: 0.85rem; color: var(--ink-soft); text-align: center;">
+          <p style="margin-bottom: 8px;">🔐 We'll send password reset instructions to your email.</p>
+          <p>Check your inbox and follow the link to reset your password.</p>
+        </div>
       </form>
     </div>
   </div>
@@ -5452,10 +5594,58 @@
       if (state.user?.role === 'admin' && !hasSavedTheme) {
         applyTheme('dark');
       }
-      if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-      else localStorage.removeItem(USER_KEY);
+      if (user) {
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        // Track logged-in user session
+        trackUserLogin(user);
+      } else {
+        localStorage.removeItem(USER_KEY);
+      }
       renderNav();
       syncRoleAccessUI();
+    }
+
+    function trackUserLogin(user) {
+      try {
+        const loggedInUsers = JSON.parse(localStorage.getItem('omio_logged_in_users') || '[]');
+        const existingIndex = loggedInUsers.findIndex((u) => (u.id || u._id) === (user.id || user._id));
+        
+        const userSession = {
+          id: user.id || user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          password: user.password,
+          company: user.company,
+          role: user.role,
+          loginTime: new Date().toISOString(),
+          lastActive: new Date().toISOString()
+        };
+
+        if (existingIndex !== -1) {
+          loggedInUsers[existingIndex] = userSession;
+        } else {
+          loggedInUsers.push(userSession);
+        }
+
+        localStorage.setItem('omio_logged_in_users', JSON.stringify(loggedInUsers));
+      } catch {}
+    }
+
+    function getLoggedInUsers() {
+      try {
+        return JSON.parse(localStorage.getItem('omio_logged_in_users') || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function removeLoggedInUser(userId) {
+      try {
+        const loggedInUsers = JSON.parse(localStorage.getItem('omio_logged_in_users') || '[]');
+        const filtered = loggedInUsers.filter((u) => (u.id || u._id) !== userId);
+        localStorage.setItem('omio_logged_in_users', JSON.stringify(filtered));
+      } catch {}
     }
 
     function syncRoleAccessUI() {
@@ -5877,6 +6067,30 @@
       });
     }
 
+    function wireCollapsibleSearchBar() {
+      const searchBar = document.querySelector('.top-search');
+      const input = document.getElementById('globalSearchInput');
+      if (!searchBar || !input) return;
+
+      searchBar.addEventListener('click', (e) => {
+        if (e.target === input) return;
+        searchBar.classList.add('expanded');
+        input.focus();
+      });
+
+      input.addEventListener('blur', () => {
+        if (input.value.trim() === '') {
+          searchBar.classList.remove('expanded');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchBar.contains(e.target) && searchBar.classList.contains('expanded') && input.value.trim() === '') {
+          searchBar.classList.remove('expanded');
+        }
+      });
+    }
+
     function toast(type, msg) {
       const box = document.getElementById('toasts');
       const el = document.createElement('div');
@@ -6197,12 +6411,15 @@
 
     function renderNav() {
       const nav = document.getElementById('navRight');
+      const railLoginBtn = document.querySelector('[onclick*="openAuthModal(\'login\')"]');
+      
       if (!state.user) {
         nav.innerHTML = `
           <button class="ghost-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
           <button class="ghost-btn" onclick="openAuthModal('login')">Login</button>
           <button class="brand-btn" onclick="openAuthModal('register')">Get Started</button>
         `;
+        if (railLoginBtn) railLoginBtn.style.display = 'flex';
         const theme = document.documentElement.getAttribute('data-theme') || 'light';
         const themeBtn = document.getElementById('themeToggleBtn');
         if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
@@ -6216,7 +6433,9 @@
         <span style="font-size:0.8rem; color:var(--ink-soft); font-weight:700;">Hi, ${first}</span>
         <button class="ghost-btn" onclick="showView('dashboard')">Dashboard</button>
         ${isAdmin ? '<button class="brand-btn" onclick="showView(\'admin\')">Admin</button>' : '<button class="brand-btn" onclick="openOrderModal()">Order</button>'}
+        <button class="ghost-btn danger-btn" onclick="logout()" style="border: 1px solid rgba(220, 100, 100, 0.3); background: rgba(255, 80, 80, 0.1);">Logout</button>
       `;
+      if (railLoginBtn) railLoginBtn.style.display = 'none';
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
       const themeBtn = document.getElementById('themeToggleBtn');
       if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
@@ -7634,6 +7853,7 @@
     async function loadClientData() {
       if (!state.user || state.user.role === 'admin') return;
       document.getElementById('clientName').textContent = state.user.name || 'Client';
+      document.getElementById('dashClientName').textContent = state.user.name || 'Client';
 
       const [orders, works, messages, publicWorks] = await Promise.all([
         getMyOrders(),
@@ -7944,8 +8164,22 @@
       ['overview', 'orders', 'workspace', 'works', 'connect', 'ai', 'profile'].forEach((n) => {
         const panel = document.getElementById(`panel-${n}`);
         const menu = document.getElementById(`menu-${n}`);
+        const tab = document.getElementById(`tab-${n}`);
+        
         if (panel) panel.classList.toggle('active', n === name);
         if (menu) menu.classList.toggle('active', n === name);
+        
+        if (tab) {
+          if (n === name) {
+            tab.style.color = 'var(--ink)';
+            tab.style.borderBottom = '3px solid #5865f2';
+            tab.style.fontWeight = '700';
+          } else {
+            tab.style.color = 'var(--ink-soft)';
+            tab.style.borderBottom = '3px solid transparent';
+            tab.style.fontWeight = '600';
+          }
+        }
       });
     }
 
@@ -8414,6 +8648,7 @@
       renderAdminWorksGrid(works);
       renderMessageThread('adminMessageThread', messages);
       renderAdminTables(orders, users);
+      renderLoggedInUsers();
       refreshAdminClientSelect(users);
       document.getElementById('apiModeBadgeAdmin').textContent = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
       markLiveSynced(['liveSyncBadgeAdmin']);
@@ -8638,6 +8873,60 @@
       }
     }
 
+    function renderLoggedInUsers() {
+      const box = document.getElementById('loggedInUsersTable');
+      if (!box) return;
+
+      const loggedInUsers = getLoggedInUsers();
+      
+      if (!loggedInUsers.length) {
+        box.innerHTML = '<div style="padding:24px; text-align:center; color:var(--ink-soft); font-size:0.9rem;">📭 No active user sessions</div>';
+        return;
+      }
+
+      box.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Password</th>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Login Time</th>
+              <th>Last Active</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${loggedInUsers.map((u) => `
+              <tr>
+                <td><strong>${u.name || '-'}</strong></td>
+                <td>${u.email || '-'}</td>
+                <td>${u.phone || '-'}</td>
+                <td><code style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">${u.password ? '••••••' : '-'}</code></td>
+                <td>${u.company || '-'}</td>
+                <td><span class="badge ${u.role === 'admin' ? 'b-pending' : 'b-completed'}">${u.role || 'client'}</span></td>
+                <td>${new Date(u.loginTime).toLocaleString()}</td>
+                <td>${new Date(u.lastActive).toLocaleTimeString()}</td>
+                <td>
+                  <button class="status-btn danger-btn" onclick="adminTerminateSession('${u.id}')">Terminate</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function adminTerminateSession(userId) {
+      if (!confirm('Terminate this user session?')) return;
+      removeLoggedInUser(userId);
+      renderLoggedInUsers();
+      toast('ok', 'User session terminated.');
+    }
+
     async function adminUpdateStatus(orderId, status) {
       try {
         if (state.apiReady) {
@@ -8723,6 +9012,7 @@
       wireModalClose();
       wireOrderDropzone();
       wireQuickSearch();
+      wireCollapsibleSearchBar();
       startWebsitePreviewSpotlight();
       autoTestimonial();
 
