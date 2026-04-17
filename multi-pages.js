@@ -245,6 +245,36 @@
     }
   });
 
+  const wireSearchToggle = () => {
+    const searchBox = document.querySelector('.search');
+    if (!searchBox) return;
+
+    const input = searchBox.querySelector('input');
+    if (!input) return;
+
+    // Toggle search on icon click
+    searchBox.addEventListener('click', (e) => {
+      if (e.target === input) return; // Don't toggle if clicking on input
+      searchBox.classList.add('active');
+      input.focus();
+    });
+
+    // Close on escape or blur
+    input.addEventListener('blur', () => {
+      if (!input.value) {
+        searchBox.classList.remove('active');
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchBox.classList.remove('active');
+        input.value = '';
+        input.blur();
+      }
+    });
+  };
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.body.classList.remove('side-open');
@@ -265,4 +295,5 @@
   wireMagneticButtons();
   wireDismissSideRail();
   wirePageProgress();
+  wireSearchToggle();
 })();
