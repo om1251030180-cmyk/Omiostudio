@@ -5189,7 +5189,26 @@
       { id: 3, cat: 'logo', title: 'Brewline Coffee', info: 'Logo System', grad: 'port-grad-3' },
       { id: 4, cat: 'branding', title: 'Nexa Salon Kit', info: 'Cards + Social', grad: 'port-grad-4' },
       { id: 5, cat: 'website', title: 'Lumen Interior', info: 'Premium Portfolio', grad: 'port-grad-2' },
-      { id: 6, cat: 'uiux', title: 'Orbit Finance UX', info: 'UX Prototype', grad: 'port-grad-1' }
+      { id: 6, cat: 'uiux', title: 'Orbit Finance UX', info: 'UX Prototype', grad: 'port-grad-1' },
+      // AI-Generated Portfolio Items
+      { id: 7, cat: 'website', title: 'Skyline Analytics', info: 'Data Dashboard', grad: 'port-grad-2' },
+      { id: 8, cat: 'branding', title: 'Velvet Boutique', info: 'Visual Identity', grad: 'port-grad-3' },
+      { id: 9, cat: 'app', title: 'MindFlow Wellness', info: 'Meditation App', grad: 'port-grad-4' },
+      { id: 10, cat: 'logo', title: 'TechVision Labs', info: 'Brand Mark', grad: 'port-grad-1' },
+      { id: 11, cat: 'uiux', title: 'EcoMarket Platform', info: 'E-Commerce UX', grad: 'port-grad-2' },
+      { id: 12, cat: 'website', title: 'Urban Photography', info: 'Portfolio Site', grad: 'port-grad-3' },
+      { id: 13, cat: 'app', title: 'FitTrack Pro', info: 'Fitness Companion', grad: 'port-grad-4' },
+      { id: 14, cat: 'branding', title: 'Nova Studios', info: 'Design System', grad: 'port-grad-1' },
+      { id: 15, cat: 'logo', title: 'Quantum Ventures', info: 'Logo Suite', grad: 'port-grad-2' },
+      { id: 16, cat: 'website', title: 'Artisan Bakery', info: 'Restaurant Site', grad: 'port-grad-3' },
+      { id: 17, cat: 'uiux', title: 'CloudSync Manager', info: 'App Interface', grad: 'port-grad-4' },
+      { id: 18, cat: 'app', title: 'TravelMate', info: 'Journey Planner', grad: 'port-grad-1' },
+      { id: 19, cat: 'branding', title: 'GreenLeaf Organics', info: 'Eco-Brand Kit', grad: 'port-grad-2' },
+      { id: 20, cat: 'website', title: 'DigitalHub Academy', info: 'Course Platform', grad: 'port-grad-3' },
+      { id: 21, cat: 'logo', title: 'Aurora Connect', info: 'SaaS Branding', grad: 'port-grad-4' },
+      { id: 22, cat: 'uiux', title: 'PayFlow Wallet', info: 'Fintech Design', grad: 'port-grad-1' },
+      { id: 23, cat: 'website', title: 'Crystal Spa Retreat', info: 'Wellness Site', grad: 'port-grad-2' },
+      { id: 24, cat: 'app', title: 'SnapEdit Studio', info: 'Photo Editor App', grad: 'port-grad-3' }
     ];
 
     const websiteShowcase = [
@@ -6767,6 +6786,17 @@
 
     function renderPortfolio() {
       const grid = document.getElementById('portfolioGrid');
+      if (!grid) return;
+      
+      // AI-generated category icons for visual appeal
+      const categoryIcons = {
+        website: ['🌐', '💻', '📱', '🖥️', '🌍', '🚀'],
+        app: ['📲', '⚙️', '🎮', '💡', '📊', '🔧'],
+        logo: ['✨', '🎨', '🎭', '🌟', '💎', '🏅'],
+        branding: ['🎪', '🎬', '📊', '💼', '🎯', '📢'],
+        uiux: ['🎯', '🔮', '🖌️', '🏆', '✏️', '🎨']
+      };
+
       const staticData = state.serviceFilter === 'all' ? portfolio : portfolio.filter((p) => p.cat === state.serviceFilter);
       const liveWorks = (state.worksCache || []).filter((w) => !!w.isPublic).map((w, i) => ({
         id: `live-${i}`,
@@ -6777,22 +6807,29 @@
         previewUrl: w.previewUrl || ''
       }));
       const merged = [...staticData, ...liveWorks];
+      
       if (!merged.length) {
         grid.innerHTML = '<div style="grid-column: 1/-1; padding:40px; text-align:center; color:var(--ink-soft);"><p>No portfolio items available for this category.</p></div>';
         return;
       }
-      grid.innerHTML = merged.map((p) => `
-        <article class="portfolio-card reveal neo-card">
-          <div class="port-bg ${p.grad}">
-            <span>${p.info}</span>
-            <span>#${p.id}</span>
-          </div>
-          <div class="port-overlay">
-            <div class="port-cat">${p.cat}</div>
-            <div class="port-title">${p.previewUrl ? `<a href="${p.previewUrl}" target="_blank" rel="noopener">${p.title}</a>` : p.title}</div>
-          </div>
-        </article>
-      `).join('');
+      
+      grid.innerHTML = merged.map((p) => {
+        const icons = categoryIcons[p.cat] || ['✨'];
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+        return `
+          <article class="portfolio-card reveal neo-card">
+            <div class="port-bg ${p.grad}" style="font-size: 3.5rem; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+              <span style="text-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1;">${randomIcon}</span>
+              <span style="font-size: 0.65rem; position: absolute; bottom: 12px; right: 12px; opacity: 0.7; z-index: 2;">#${p.id}</span>
+              <span style="font-size: 0.65rem; position: absolute; top: 12px; left: 12px; opacity: 0.7; z-index: 2;">${p.info}</span>
+            </div>
+            <div class="port-overlay">
+              <div class="port-cat">${p.cat}</div>
+              <div class="port-title">${p.previewUrl ? `<a href="${p.previewUrl}" target="_blank" rel="noopener">${p.title}</a>` : p.title}</div>
+            </div>
+          </article>
+        `;
+      }).join('');
     }
 
     function renderWebsitePreviewGrid() {
