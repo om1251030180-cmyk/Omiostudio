@@ -1424,7 +1424,7 @@
 
     .portfolio-card {
       display: flex;
-      min-height: 220px;
+      min-height: 160px;
     }
 
     .testimonial,
@@ -1589,14 +1589,14 @@
     .portfolio-card {
       overflow: hidden;
       position: relative;
-      min-height: 210px;
-      grid-column: span 4;
+      min-height: 160px;
+      grid-column: span 3;
       transition: transform var(--ease);
     }
 
     .portfolio-card:hover { transform: translateY(-5px); }
 
-    .portfolio-card:nth-child(4n+1) { grid-column: span 5; }
+    .portfolio-card:nth-child(4n+1) { grid-column: span 3; }
     .portfolio-card:nth-child(4n+2) { grid-column: span 3; }
 
     .website-preview-shell {
@@ -2602,24 +2602,24 @@
       font-weight: 700;
     }
 
-    .port-grad-1 { background: linear-gradient(130deg, #2f2f67, #eb5f22); }
-    .port-grad-2 { background: linear-gradient(130deg, #03463f, #2ec8b8); }
-    .port-grad-3 { background: linear-gradient(130deg, #492026, #d5537d); }
-    .port-grad-4 { background: linear-gradient(130deg, #3f2e05, #ffb232); }
+    .port-grad-1 { background: linear-gradient(130deg, #7c3aed, #ec4899); }
+    .port-grad-2 { background: linear-gradient(130deg, #06b6d4, #a855f7); }
+    .port-grad-3 { background: linear-gradient(130deg, #ec4899, #f43f5e); }
+    .port-grad-4 { background: linear-gradient(130deg, #8b5cf6, #06b6d4); }
 
     .port-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent 60%);
-      padding: 18px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      gap: 5px;
+      gap: 3px;
     }
 
-    .port-cat { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.13em; opacity: 0.8; }
-    .port-title { font-family: Syne, sans-serif; font-size: 1.25rem; line-height: 1.05; }
+    .port-cat { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.13em; opacity: 0.8; }
+    .port-title { font-family: Syne, sans-serif; font-size: 1.05rem; line-height: 1.05; }
 
     .process-grid,
     .testi-grid,
@@ -7157,10 +7157,10 @@
         const randomIcon = icons[Math.floor(Math.random() * icons.length)];
         return `
           <article class="portfolio-card reveal neo-card">
-            <div class="port-bg ${p.grad}" style="font-size: 3.5rem; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+            <div class="port-bg ${p.grad}" style="font-size: 2.5rem; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
               <span style="text-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1;">${randomIcon}</span>
-              <span style="font-size: 0.65rem; position: absolute; bottom: 12px; right: 12px; opacity: 0.7; z-index: 2;">#${p.id}</span>
-              <span style="font-size: 0.65rem; position: absolute; top: 12px; left: 12px; opacity: 0.7; z-index: 2;">${p.info}</span>
+              <span style="font-size: 0.55rem; position: absolute; bottom: 8px; right: 8px; opacity: 0.7; z-index: 2;">#${p.id}</span>
+              <span style="font-size: 0.55rem; position: absolute; top: 8px; left: 8px; opacity: 0.7; z-index: 2;">${p.info}</span>
             </div>
             <div class="port-overlay">
               <div class="port-cat">${p.cat}</div>
