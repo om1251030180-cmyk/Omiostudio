@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- Bootstrap 5 for responsive design -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- GSAP & ScrollTrigger for animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
@@ -67,6 +70,179 @@
         radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.25), transparent 40%),
         radial-gradient(circle at 40% 0%, rgba(168, 85, 247, 0.25), transparent 35%),
         #0a0e27;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    /* ============================================
+       MODERN UI ENHANCEMENTS & UTILITY CLASSES
+       ============================================ */
+
+    /* Smooth transitions & animations */
+    :root {
+      --transition-fast: 150ms ease-in-out;
+      --transition-base: 300ms ease-in-out;
+      --transition-slow: 500ms ease-in-out;
+    }
+
+    /* Enhanced neumorphism effects */
+    .neumorphic {
+      box-shadow: 
+        8px 8px 16px rgba(0, 0, 0, 0.4),
+        -4px -4px 12px rgba(255, 255, 255, 0.05);
+      background: linear-gradient(145deg, rgba(30, 30, 60, 0.6), rgba(20, 20, 50, 0.4));
+      transition: all var(--transition-base);
+    }
+
+    .neumorphic:hover {
+      box-shadow: 
+        6px 6px 12px rgba(0, 0, 0, 0.3),
+        -2px -2px 8px rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Glassmorphism enhanced */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius);
+      transition: all var(--transition-base);
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(168, 85, 247, 0.4);
+      box-shadow: 0 8px 32px rgba(168, 85, 247, 0.2);
+    }
+
+    /* Loading skeleton animations */
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(200, 200, 200, 0.2) 25%, rgba(200, 200, 200, 0.3) 50%, rgba(200, 200, 200, 0.2) 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
+      border-radius: 8px;
+    }
+
+    /* Micro-interaction utilities */
+    .btn-ripple {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-ripple::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .btn-ripple:active::after {
+      animation: ripple 0.6s ease-out;
+    }
+
+    @keyframes ripple {
+      to {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+      }
+    }
+
+    /* Smooth page transitions */
+    .page-transition-enter {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    .page-transition-exit {
+      animation: fadeOutDown 0.3s ease-in forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOutDown {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    /* Form enhancements */
+    input, textarea, select {
+      transition: all var(--transition-fast);
+      border-color: transparent;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+      outline: none;
+    }
+
+    /* Status indicators */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-success {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      border: 1px solid rgba(76, 175, 80, 0.4);
+    }
+
+    .status-error {
+      background: rgba(244, 67, 54, 0.2);
+      color: #ff5252;
+      border: 1px solid rgba(244, 67, 54, 0.4);
+    }
+
+    .status-pending {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.4);
+    }
+
+    /* Responsive grid helpers */
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .hide-mobile { display: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      .hide-small { display: none !important; }
     }
 
     body.modal-open { overflow: hidden; }
@@ -10373,7 +10549,267 @@
       startLiveOpsTicker();
     }
 
+    /* ============================================
+       MODERN ENHANCEMENT FEATURES
+       ============================================ */
+
+    /**
+     * Theme Manager - Dark/Light mode with localStorage persistence
+     */
+    const ThemeManager = {
+      STORAGE_KEY: 'omio-theme',
+      
+      init() {
+        const savedTheme = localStorage.getItem(this.STORAGE_KEY);
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (systemDark ? 'dark' : 'light');
+        this.setTheme(theme);
+        this.createToggle();
+      },
+
+      setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(this.STORAGE_KEY, theme);
+        this.updateToggleIcon(theme);
+      },
+
+      createToggle() {
+        const toggle = document.createElement('button');
+        toggle.className = 'theme-toggle';
+        toggle.setAttribute('aria-label', 'Toggle dark mode');
+        toggle.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark' 
+          ? '☀️' : '🌙';
+        toggle.style.cssText = `
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: rgba(168, 85, 247, 0.3);
+          border: 1px solid rgba(168, 85, 247, 0.5);
+          color: var(--ink);
+          font-size: 20px;
+          cursor: pointer;
+          z-index: 998;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 300ms ease-in-out;
+          backdrop-filter: blur(10px);
+        `;
+        
+        toggle.onmouseover = () => {
+          toggle.style.background = 'rgba(168, 85, 247, 0.5)';
+          toggle.style.transform = 'scale(1.1)';
+        };
+        toggle.onmouseout = () => {
+          toggle.style.background = 'rgba(168, 85, 247, 0.3)';
+          toggle.style.transform = 'scale(1)';
+        };
+        
+        toggle.onclick = () => {
+          const current = document.documentElement.getAttribute('data-theme');
+          this.setTheme(current === 'dark' ? 'light' : 'dark');
+        };
+        
+        document.body.appendChild(toggle);
+      },
+
+      updateToggleIcon(theme) {
+        const toggle = document.querySelector('.theme-toggle');
+        if (toggle) toggle.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+      }
+    };
+
+    /**
+     * Form Validator - Real-time form validation with feedback
+     */
+    const FormValidator = {
+      rules: {
+        email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+        phone: (val) => /^\d{10,}$/.test(val.replace(/\D/g, '')),
+        name: (val) => val.trim().length >= 2,
+        message: (val) => val.trim().length >= 5,
+        url: (val) => /^https?:\/\/.+/.test(val)
+      },
+
+      validate(input) {
+        const type = input.getAttribute('data-validate');
+        if (!type || !this.rules[type]) return true;
+        
+        const isValid = this.rules[type](input.value);
+        this.showFeedback(input, isValid);
+        return isValid;
+      },
+
+      showFeedback(input, isValid) {
+        input.style.borderColor = isValid ? 'rgba(76, 175, 80, 0.5)' : 'rgba(244, 67, 54, 0.5)';
+        input.style.boxShadow = isValid 
+          ? '0 0 0 3px rgba(76, 175, 80, 0.1)' 
+          : '0 0 0 3px rgba(244, 67, 54, 0.1)';
+      },
+
+      setupValidation() {
+        document.querySelectorAll('[data-validate]').forEach(input => {
+          input.addEventListener('blur', () => this.validate(input));
+          input.addEventListener('change', () => this.validate(input));
+        });
+      }
+    };
+
+    /**
+     * Loading State Manager
+     */
+    const LoadingManager = {
+      show(element, message = 'Loading...') {
+        element.style.opacity = '0.6';
+        element.style.pointerEvents = 'none';
+        const loader = document.createElement('div');
+        loader.className = 'loader-spinner';
+        loader.innerHTML = `
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+          ">
+            <div style="
+              width: 30px;
+              height: 30px;
+              border: 3px solid rgba(168, 85, 247, 0.3);
+              border-top-color: rgba(168, 85, 247, 1);
+              border-radius: 50%;
+              animation: spin 0.8s linear infinite;
+            "></div>
+            <span style="font-size: 14px; color: var(--ink-soft);">${message}</span>
+          </div>
+        `;
+        element.appendChild(loader);
+      },
+
+      hide(element) {
+        element.style.opacity = '1';
+        element.style.pointerEvents = 'auto';
+        const loader = element.querySelector('.loader-spinner');
+        if (loader) loader.remove();
+      }
+    };
+
+    /**
+     * Animation utilities
+     */
+    const AnimationUtils = {
+      addClassOnScroll(selector, className) {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add(className);
+              }
+            });
+          }, { threshold: 0.1 });
+          observer.observe(el);
+        });
+      },
+
+      staggerChildren(parentSelector, duration = 0.1) {
+        const parent = document.querySelector(parentSelector);
+        if (!parent) return;
+        
+        const children = parent.children;
+        Array.from(children).forEach((child, index) => {
+          child.style.animationDelay = `${index * duration}s`;
+        });
+      }
+    };
+
+    /**
+     * Notification System
+     */
+    const Notifications = {
+      show(message, type = 'info') {
+        const notif = document.createElement('div');
+        notif.className = `notification notification-${type}`;
+        notif.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 16px 24px;
+          background: ${this.getBgColor(type)};
+          color: white;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          animation: slideIn 0.3s ease-out;
+          z-index: 9999;
+          max-width: 400px;
+          font-weight: 500;
+        `;
+        notif.textContent = message;
+        document.body.appendChild(notif);
+        
+        setTimeout(() => {
+          notif.style.animation = 'slideOut 0.3s ease-out forwards';
+          setTimeout(() => notif.remove(), 300);
+        }, 3000);
+      },
+
+      getBgColor(type) {
+        const colors = {
+          success: 'rgba(76, 175, 80, 0.9)',
+          error: 'rgba(244, 67, 54, 0.9)',
+          warning: 'rgba(255, 193, 7, 0.9)',
+          info: 'rgba(33, 150, 243, 0.9)'
+        };
+        return colors[type] || colors.info;
+      }
+    };
+
+    /**
+     * Initialize all enhancements
+     */
+    function initEnhancements() {
+      ThemeManager.init();
+      FormValidator.setupValidation();
+      
+      // Add slide animations
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideIn { 
+          from { 
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to { 
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slideOut { 
+          from { 
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to { 
+            transform: translateX(400px);
+            opacity: 0;
+          }
+        }
+        .theme-toggle:active {
+          transform: scale(0.95) !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Initialize enhancements after boot
     boot();
+    setTimeout(() => initEnhancements(), 100);
   </script>
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
