@@ -160,6 +160,81 @@
       }
     }
 
+    /* Apple-style card entrance animation */
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: scale(0.85) translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes elasticPop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInFromLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-60px) rotateY(90deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) rotateY(0);
+      }
+    }
+
+    @keyframes slideInFromRight {
+      from {
+        opacity: 0;
+        transform: translateX(60px) rotateY(-90deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) rotateY(0);
+      }
+    }
+
+    @keyframes parallaxFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes textReveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Enable 3D transforms */
+    .feature-card, .testimonial-card, .enhanced-card {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      will-change: transform, opacity;
+    }
+
     /* Smooth page transitions */
     .page-transition-enter {
       animation: fadeInUp 0.5s ease-out forwards;
@@ -11074,6 +11149,261 @@
     }
 
     /* ============================================
+       APPLE-STYLE PARALLAX & CARD ANIMATIONS
+       ============================================ */
+
+    /**
+     * Advanced parallax scroll effect (like Apple website)
+     * Creates depth and movement as user scrolls
+     */
+    function setupParallaxScroll() {
+      const parallaxElements = document.querySelectorAll('[data-parallax]');
+      
+      parallaxElements.forEach(el => {
+        const speed = parseFloat(el.getAttribute('data-parallax')) || 0.5;
+        
+        gsap.to(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top center',
+            end: 'bottom center',
+            onUpdate: (self) => {
+              gsap.set(el, {
+                y: self.getVelocity() * speed * 0.01,
+                opacity: gsap.utils.mapRange([0, 1], [0.5, 1])(self.progress)
+              });
+            }
+          }
+        });
+      });
+    }
+
+    /**
+     * Apple-style card entrance animation
+     * Cards scale up and fade in as they come into view
+     */
+    function setupCardEntranceAnimations() {
+      const cards = document.querySelectorAll('.feature-card, .testimonial-card, .enhanced-card, .service-card, .portfolio-card');
+      
+      cards.forEach((card, index) => {
+        // Set initial state
+        gsap.set(card, {
+          opacity: 0,
+          scale: 0.8,
+          y: 60
+        });
+
+        // Animate on scroll trigger
+        gsap.to(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 80%',
+            end: 'top 50%',
+            scrub: 0.5,
+            markers: false,
+            onEnter: () => {
+              gsap.to(card, {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.8,
+                delay: index * 0.1,
+                ease: 'elastic.out(1, 0.75)',
+                overwrite: 'auto'
+              });
+            }
+          }
+        });
+      });
+    }
+
+    /**
+     * Staggered card entrance with wave effect
+     * Each card enters one after another (Apple-style)
+     */
+    function setupWaveEntrance() {
+      const cardGroups = document.querySelectorAll('[data-card-group]');
+      
+      cardGroups.forEach(group => {
+        const cards = group.querySelectorAll('.feature-card, .testimonial-card, .service-card');
+        
+        gsap.set(cards, {
+          opacity: 0,
+          x: -40,
+          rotateY: 90
+        });
+
+        gsap.to(cards, {
+          scrollTrigger: {
+            trigger: group,
+            start: 'top 75%',
+            end: 'top 25%',
+            scrub: 1,
+            markers: false
+          },
+          opacity: 1,
+          x: 0,
+          rotateY: 0,
+          duration: 1,
+          stagger: {
+            amount: 0.4,
+            from: 'start'
+          },
+          ease: 'power3.out'
+        });
+      });
+    }
+
+    /**
+     * Text reveal animation (Apple-style)
+     * Words or letters fade in with slight scale
+     */
+    function setupTextReveal() {
+      const textElements = document.querySelectorAll('[data-text-reveal]');
+      
+      textElements.forEach(el => {
+        gsap.from(el, {
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            end: 'top 60%',
+            scrub: 0.5
+          },
+          opacity: 0,
+          y: 20,
+          duration: 1,
+          ease: 'power2.out'
+        });
+      });
+    }
+
+    /**
+     * Parallax background layers
+     * Multiple layers move at different speeds
+     */
+    function setupLayeredParallax() {
+      const heroSection = document.querySelector('.redesigned-hero');
+      if (!heroSection) return;
+
+      // Background blobs move slower
+      const blobs = document.querySelectorAll('.blob');
+      blobs.forEach((blob, index) => {
+        gsap.to(blob, {
+          scrollTrigger: {
+            trigger: document.body,
+            scrub: true
+          },
+          y: (index % 2 === 0) ? 200 : -200,
+          x: (index % 2 === 0) ? -100 : 100,
+          rotation: 180,
+          duration: 1
+        });
+      });
+
+      // Animated gradient layer
+      gsap.to('.animated-gradient-layer', {
+        scrollTrigger: {
+          trigger: document.body,
+          scrub: 1
+        },
+        backgroundPosition: '200% 200%',
+        duration: 1
+      });
+    }
+
+    /**
+     * Card hover parallax effect
+     * Elements inside cards move when hovered
+     */
+    function setupCardHoverParallax() {
+      const cards = document.querySelectorAll('.feature-card, .enhanced-card, .testimonial-card');
+      
+      cards.forEach(card => {
+        const innerElements = card.querySelectorAll('[data-parallax-depth]');
+        
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          innerElements.forEach(el => {
+            const depth = parseFloat(el.getAttribute('data-parallax-depth')) || 1;
+            const moveX = (x - centerX) * depth * 0.05;
+            const moveY = (y - centerY) * depth * 0.05;
+            
+            gsap.to(el, {
+              x: moveX,
+              y: moveY,
+              duration: 0.3,
+              overwrite: 'auto'
+            });
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          innerElements.forEach(el => {
+            gsap.to(el, {
+              x: 0,
+              y: 0,
+              duration: 0.6,
+              ease: 'elastic.out(1, 0.5)'
+            });
+          });
+        });
+      });
+    }
+
+    /**
+     * Scroll-triggered counter animation
+     * Numbers count up as they come into view
+     */
+    function setupCounterAnimation() {
+      const counters = document.querySelectorAll('[data-counter]');
+      
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-counter'));
+        const duration = 2;
+        
+        gsap.fromTo(counter, 
+          { textContent: 0 },
+          {
+            textContent: target,
+            duration,
+            ease: 'power2.out',
+            snap: { textContent: 1 },
+            scrollTrigger: {
+              trigger: counter,
+              start: 'top 80%',
+              end: 'top 50%',
+              markers: false
+            },
+            onUpdate: function() {
+              counter.textContent = Math.round(this.targets()[0].textContent);
+            }
+          }
+        );
+      });
+    }
+
+    /**
+     * Initialize all Apple-style animations
+     */
+    function initAppleStyleAnimations() {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        setupParallaxScroll();
+        setupCardEntranceAnimations();
+        setupWaveEntrance();
+        setupTextReveal();
+        setupLayeredParallax();
+        setupCardHoverParallax();
+        setupCounterAnimation();
+      }, 100);
+    }
+
+    /* ============================================
        MODERN ENHANCEMENT FEATURES
        ============================================ */
 
@@ -11388,6 +11718,9 @@
       
       // Setup lazy loading for images
       setupLazyLoading();
+      
+      // Initialize Apple-style animations
+      initAppleStyleAnimations();
     }
 
     /**
