@@ -8072,24 +8072,40 @@
 
     function showNotice(id, type, message) {
       const el = document.getElementById(id);
-      el.className = `notice show ${type}`;
-      el.textContent = message;
+      if (el) {
+        el.className = `notice show ${type}`;
+        el.textContent = message;
+      } else {
+        console.warn(`⚠️ Notice element not found: ${id}`);
+      }
     }
 
     function clearNotice(id) {
       const el = document.getElementById(id);
-      el.className = 'notice';
-      el.textContent = '';
+      if (el) {
+        el.className = 'notice';
+        el.textContent = '';
+      }
     }
 
     function openModal(id) {
-      document.getElementById(id).classList.add('open');
-      document.body.classList.add('modal-open');
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('open');
+        document.body.classList.add('modal-open');
+      } else {
+        console.warn(`⚠️ Modal element not found: ${id}`);
+      }
     }
 
     function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
-      if (!document.querySelector('.modal-layer.open')) document.body.classList.remove('modal-open');
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('open');
+        if (!document.querySelector('.modal-layer.open')) document.body.classList.remove('modal-open');
+      } else {
+        console.warn(`⚠️ Modal element not found: ${id}`);
+      }
     }
 
     function isUserLoggedIn() {
@@ -8464,17 +8480,34 @@
 
     function switchAuthTab(tab) {
       const login = tab === 'login';
-      document.getElementById('tab-login').classList.toggle('active', login);
-      document.getElementById('tab-register').classList.toggle('active', !login);
-      document.getElementById('loginForm').classList.toggle('hidden', !login);
-      document.getElementById('registerForm').classList.toggle('hidden', login);
+      
+      // Safely update tab elements if they exist
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      
+      if (tabLogin) tabLogin.classList.toggle('active', login);
+      if (tabRegister) tabRegister.classList.toggle('active', !login);
+      if (loginForm) loginForm.classList.toggle('hidden', !login);
+      if (registerForm) registerForm.classList.toggle('hidden', login);
+      
       clearNotice('authNotice');
     }
 
     async function login() {
       clearNotice('authNotice');
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-      const password = document.getElementById('loginPassword').value;
+      
+      const loginEmailEl = document.getElementById('loginEmail');
+      const loginPasswordEl = document.getElementById('loginPassword');
+      
+      if (!loginEmailEl || !loginPasswordEl) {
+        console.warn('⚠️ Login form elements not found');
+        return;
+      }
+      
+      const email = loginEmailEl.value.trim().toLowerCase();
+      const password = loginPasswordEl.value;
       if (!email || !password) {
         showNotice('authNotice', 'err', 'Enter email and password.');
         return;
@@ -8508,11 +8541,25 @@
 
     async function register() {
       clearNotice('authNotice');
-      const name = `${document.getElementById('regFirst').value.trim()} ${document.getElementById('regLast').value.trim()}`.trim();
-      const email = document.getElementById('regEmail').value.trim().toLowerCase();
-      const password = document.getElementById('regPassword').value;
-      const phone = document.getElementById('regPhone').value.trim();
-      const company = document.getElementById('regCompany').value.trim();
+      
+      // Get form elements safely
+      const regFirstEl = document.getElementById('regFirst');
+      const regLastEl = document.getElementById('regLast');
+      const regEmailEl = document.getElementById('regEmail');
+      const regPasswordEl = document.getElementById('regPassword');
+      const regPhoneEl = document.getElementById('regPhone');
+      const regCompanyEl = document.getElementById('regCompany');
+      
+      if (!regFirstEl || !regLastEl || !regEmailEl || !regPasswordEl || !regPhoneEl || !regCompanyEl) {
+        console.warn('⚠️ Register form elements not found');
+        return;
+      }
+      
+      const name = `${regFirstEl.value.trim()} ${regLastEl.value.trim()}`.trim();
+      const email = regEmailEl.value.trim().toLowerCase();
+      const password = regPasswordEl.value;
+      const phone = regPhoneEl.value.trim();
+      const company = regCompanyEl.value.trim();
 
       if (!name || !email || !password) {
         showNotice('authNotice', 'err', 'Name, email and password are required.');
@@ -9629,6 +9676,13 @@
     function renderTestimonial() {
       const t = testimonials[state.testimonialsIndex];
       const card = document.getElementById('testimonialCard');
+      
+      // Check if card element exists before trying to modify it
+      if (!card) {
+        console.warn('⚠️ testimonialCard element not found - skipping testimonial render');
+        return;
+      }
+      
       card.classList.add('neo-card');
       card.innerHTML = `
         <div class="card-topline"><span class="soft-chip">Client Voice</span></div>
