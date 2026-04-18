@@ -883,6 +883,25 @@
       document.getElementById('nextBtn').disabled = false;
     }
 
+    function populateServiceDetails() {
+      if (!selectedService) return;
+      
+      // Get form elements
+      const projectNameInput = document.querySelector('#detailsForm input[placeholder="Give your project a name"]');
+      const descriptionTextarea = document.querySelector('#detailsForm textarea');
+      
+      // Auto-populate Project Name with service name
+      if (projectNameInput) {
+        projectNameInput.value = `${selectedService.name} Project`;
+      }
+      
+      // Auto-populate Project Description with service details
+      if (descriptionTextarea) {
+        const featuresText = selectedService.features.join(', ');
+        descriptionTextarea.value = `Service: ${selectedService.name}\n\nDescription: ${selectedService.desc}\n\nIncluded Features: ${featuresText}\n\nEstimated Investment: ${selectedService.price}`;
+      }
+    }
+
     function switchTab(tab) {
       const sections = document.querySelectorAll('.form-section');
       const tabs = document.querySelectorAll('.tab-btn');
@@ -898,6 +917,7 @@
         document.getElementById('details-section').classList.add('active');
         tabs[1].classList.add('active');
         currentStep = 2;
+        populateServiceDetails();
       } else if (tab === 'budget') {
         document.getElementById('budget-section').classList.add('active');
         tabs[2].classList.add('active');
