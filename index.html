@@ -6650,6 +6650,16 @@
             <div style="display: flex; gap: 12px; align-items: center;">
               <span id="apiModeBadge" class="api-pill"></span>
               <span id="liveSyncBadgeClient" class="api-pill">Last Sync: --</span>
+              <button id="notificationsBell" onclick="showClientPanel('notifications')" style="flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.3); color: var(--ink); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative;" title="Notifications">
+                🔔
+                <span id="notificationBadge" style="position: absolute; top: -5px; right: -5px; background: #ff006e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; display: none;">0</span>
+              </button>
+              <button onclick="openOrderModal()" style="flex: 0 0 auto; padding: 8px 16px; border-radius: 8px; background: rgba(168, 85, 247, 0.3); border: 1px solid rgba(168, 85, 247, 0.5); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" title="Create New Order">
+                ➕ New Order
+              </button>
+              <button onclick="logout()" style="flex: 0 0 auto; padding: 8px 16px; border-radius: 8px; background: rgba(255, 0, 110, 0.2); border: 1px solid rgba(255, 0, 110, 0.3); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" title="Logout">
+                🚪 Logout
+              </button>
             </div>
           </div>
           
@@ -6671,6 +6681,9 @@
             </button>
             <button id="tab-ai" class="dashboard-tab" onclick="showClientPanel('ai')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
               🤖 AI Center
+            </button>
+            <button id="tab-notifications" class="dashboard-tab" onclick="showClientPanel('notifications')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
+              🔔 Notifications
             </button>
             <button id="tab-profile" class="dashboard-tab" onclick="showClientPanel('profile')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
               👤 Profile
@@ -6795,6 +6808,22 @@
               <span id="liveSyncBadgeAi" class="api-pill">Last Sync: --</span>
             </div>
             <div id="aiCenterShell" class="ai-center-shell"></div>
+          </article>
+
+          <article id="panel-notifications" class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Notifications Center</h3>
+                <p>All your order updates, messages, and system alerts in one place.</p>
+              </div>
+              <button class="ghost-btn" onclick="clearAllNotifications()">Clear All</button>
+            </div>
+            <div id="notificationsCenter" style="display: grid; gap: 12px; max-width: 800px;">
+              <div style="padding: 20px; text-align: center; color: var(--ink-soft); border: 1px dashed rgba(139, 92, 246, 0.2); border-radius: 12px;">
+                <p>🔔 No new notifications</p>
+                <small>You're all caught up! Check back later for updates on your orders and messages.</small>
+              </div>
+            </div>
           </article>
 
           <article id="panel-profile" class="panel">
@@ -10213,7 +10242,7 @@
     }
 
     function showClientPanel(name) {
-      ['overview', 'orders', 'workspace', 'works', 'connect', 'ai', 'profile'].forEach((n) => {
+      ['overview', 'orders', 'workspace', 'works', 'connect', 'ai', 'notifications', 'profile'].forEach((n) => {
         const panel = document.getElementById(`panel-${n}`);
         const menu = document.getElementById(`menu-${n}`);
         const tab = document.getElementById(`tab-${n}`);
@@ -10233,6 +10262,16 @@
           }
         }
       });
+    }
+
+    function clearAllNotifications() {
+      const badge = document.getElementById('notificationBadge');
+      if (badge) badge.style.display = 'none';
+      const center = document.getElementById('notificationsCenter');
+      if (center) {
+        center.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--ink-soft); border: 1px dashed rgba(139, 92, 246, 0.2); border-radius: 12px;"><p>🔔 No new notifications</p><small>You\'re all caught up! Check back later for updates on your orders and messages.</small></div>';
+      }
+      toast('ok', 'All notifications cleared');
     }
 
     function renderClientWorksPanel(works) {
