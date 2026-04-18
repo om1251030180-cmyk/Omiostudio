@@ -268,6 +268,18 @@ const SessionSchema = new mongoose.Schema({
   revokedAt: { type: Date, default: null }
 }, { timestamps: true });
 
+const ActivitySchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userEmail: String,
+  userName: String,
+  activityType: { type: String, enum: ['login', 'logout', 'password_reset', 'password_change', 'profile_update', 'order_create', 'order_update', 'file_upload', 'download', 'other'] },
+  description: String,
+  ipAddress: String,
+  userAgent: String,
+  metadata: mongoose.Schema.Types.Mixed,
+  status: { type: String, enum: ['success', 'failed'], default: 'success' }
+}, { timestamps: true });
+
 const AppSettingSchema = new mongoose.Schema({
   key: { type: String, required: true, unique: true },
   value: { type: mongoose.Schema.Types.Mixed, default: {} }
@@ -298,7 +310,7 @@ const MessageSchema = new mongoose.Schema({
   meetingLink: String,
 }, { timestamps: true });
 
-let User, Order, Invoice, Session, AppSetting, WorkItem, Message;
+let User, Order, Invoice, Session, AppSetting, WorkItem, Message, Activity;
 try {
   User  = mongoose.model('User', UserSchema);
   Order = mongoose.model('Order', OrderSchema);
@@ -307,6 +319,7 @@ try {
   AppSetting = mongoose.model('AppSetting', AppSettingSchema);
   WorkItem = mongoose.model('WorkItem', WorkItemSchema);
   Message = mongoose.model('Message', MessageSchema);
+  Activity = mongoose.model('Activity', ActivitySchema);
 } catch(e) {}
 
 /* ─── JSON FALLBACK STORAGE ─── */
@@ -864,6 +877,36 @@ const adminAuth = (req, res, next) => {
   });
 };
 
+/* ─── ACTIVITY LOGGING ─── */
+const logActivity = async (userId, userEmail, userName, activityType, description, req, metadata = {}) => {
+  try {
+    const activity = {
+      userId,
+      userEmail,
+      userName,
+      activityType,
+      description,
+      ipAddress: req?.ip || req?.connection?.remoteAddress || 'unknown',
+      userAgent: req?.headers?.['user-agent'] || 'unknown',
+      metadata,
+      status: 'success',
+      createdAt: new Date()
+    };
+
+    if (isMongoConnected() && Activity) {
+      await Activity.create(activity);
+    } else {
+      // JSON fallback
+      const db = getDB();
+      if (!db.activities) db.activities = [];
+      db.activities.push(activity);
+      saveDB(db);
+    }
+  } catch (e) {
+    console.log('Activity logging error:', e.message);
+  }
+};
+
 /* ══════════════════════════════════════════════════
    ROUTES
 ══════════════════════════════════════════════════ */
@@ -959,6 +1002,10 @@ app.post('/api/auth/login', async (req, res) => {
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
       const token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name }, process.env.JWT_SECRET || 'omio_secret_2024', { expiresIn: '7d' });
+      
+      // Log activity
+      await logActivity(user._id, user.email, user.name, 'login', `User logged in`, req);
+      
       return res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, company: user.company } });
     }
 
@@ -968,6 +1015,10 @@ app.post('/api/auth/login', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
     if (user.role !== 'admin' && user.isActive === false) return res.status(403).json({ error: 'Account is inactive. Contact studio admin.' });
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, process.env.JWT_SECRET || 'omio_secret_2024', { expiresIn: '7d' });
+    
+    // Log activity
+    await logActivity(user.id, user.email, user.name, 'login', `User logged in`, req);
+    
     res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -2049,6 +2100,45 @@ app.get('/api/admin/reset-tokens', adminAuth, async (req, res) => {
     }
     
     res.json(tokens);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get user activities
+app.get('/api/admin/activities', adminAuth, async (req, res) => {
+  try {
+    let activities = [];
+    
+    if (isMongoConnected()) {
+      activities = await Activity.find()
+        .sort({ createdAt: -1 })
+        .limit(500);
+    } else {
+      const db = getDB();
+      activities = (db.activities || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 500);
+    }
+    
+    res.json(activities);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get activities for specific user
+app.get('/api/admin/activities/:userId', adminAuth, async (req, res) => {
+  try {
+    let activities = [];
+    
+    if (isMongoConnected()) {
+      activities = await Activity.find({ userId: req.params.userId })
+        .sort({ createdAt: -1 })
+        .limit(100);
+    } else {
+      const db = getDB();
+      activities = (db.activities || [])
+        .filter(a => a.userId === req.params.userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 100);
+    }
+    
+    res.json(activities);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 

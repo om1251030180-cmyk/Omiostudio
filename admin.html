@@ -1234,84 +1234,84 @@
       const container = document.getElementById('clientActivityContainer');
       
       try {
-        const clientRes = await fetch(`${API_BASE}/admin/clients`, {
+        // Fetch real activities from the backend
+        const activitiesRes = await fetch(`${API_BASE}/admin/activities`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (clientRes.ok) {
-          const clients = await clientRes.json();
-          
-          if (clients.length === 0) {
-            container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No clients found</div>';
-            return;
+        if (!activitiesRes.ok) {
+          container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Error loading activities</div>';
+          return;
+        }
+
+        const allActivities = await activitiesRes.json();
+        
+        if (allActivities.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No activities recorded yet</div>';
+          return;
+        }
+
+        // Group activities by user
+        const activitiesByUser = {};
+        allActivities.forEach(activity => {
+          const userId = activity.userId || activity.userEmail;
+          if (!activitiesByUser[userId]) {
+            activitiesByUser[userId] = {
+              userName: activity.userName || 'Unknown',
+              userEmail: activity.userEmail || 'N/A',
+              activities: []
+            };
           }
+          activitiesByUser[userId].activities.push(activity);
+        });
 
-          // Build activities per client
-          let html = '';
-          clients.forEach(c => {
-            const activities = [];
-            
-            // Collect activities for this client
-            if (c.lastLogin) {
-              activities.push({
-                type: 'Login',
-                badge: 'activity-login',
-                time: new Date(c.lastLogin).toLocaleString(),
-                token: (c._id || 'local').slice(0, 8) + '...',
-                fullToken: c._id || 'local',
-                details: 'Web Access'
-              });
-            }
-            if (c.resetToken) {
-              activities.push({
-                type: 'Password Reset',
-                badge: 'activity-reset',
-                time: new Date(c.resetTokenExpiry || Date.now()).toLocaleString(),
-                token: c.resetToken.slice(0, 8) + '...',
-                fullToken: c.resetToken,
-                details: 'Reset Link Generated'
-              });
-            }
+        // Build HTML
+        let html = '';
+        Object.values(activitiesByUser).forEach(userGroup => {
+          const avatar = (userGroup.userName || 'U').charAt(0).toUpperCase();
+          const activityCount = userGroup.activities.length;
 
-            const avatar = (c.name || 'C').charAt(0).toUpperCase();
-            const activityCount = activities.length;
-
-            html += `
-              <div class="client-activity-card">
-                <div class="client-activity-header" onclick="this.parentElement.querySelector('.client-activity-list').classList.toggle('expanded'); this.querySelector('.expand-icon').classList.toggle('expanded');">
-                  <div class="client-activity-info">
-                    <div class="client-avatar">${avatar}</div>
-                    <div class="client-activity-details">
-                      <div class="client-activity-name">${c.name || 'Unknown'}</div>
-                      <div class="client-activity-email">${c.email || 'N/A'}</div>
-                    </div>
+          html += `
+            <div class="client-activity-card">
+              <div class="client-activity-header" onclick="this.parentElement.querySelector('.client-activity-list').classList.toggle('expanded'); this.querySelector('.expand-icon').classList.toggle('expanded');">
+                <div class="client-activity-info">
+                  <div class="client-avatar">${avatar}</div>
+                  <div class="client-activity-details">
+                    <div class="client-activity-name">${userGroup.userName}</div>
+                    <div class="client-activity-email">${userGroup.userEmail}</div>
                   </div>
-                  <div class="activity-count">${activityCount} Activities</div>
-                  <div class="expand-icon">▼</div>
                 </div>
-                <div class="client-activity-list">
-                  ${activities.map(a => `
+                <div class="activity-count">${activityCount} Activities</div>
+                <div class="expand-icon">▼</div>
+              </div>
+              <div class="client-activity-list">
+                ${userGroup.activities.map(a => {
+                  const actType = a.activityType || 'other';
+                  const badgeClass = actType === 'login' ? 'activity-login' : actType === 'password_reset' ? 'activity-reset' : 'activity-login';
+                  const displayType = actType === 'login' ? 'Login' : actType === 'password_reset' ? 'Password Reset' : actType === 'password_change' ? 'Password Changed' : actType.replace(/_/g, ' ').toUpperCase();
+                  
+                  return `
                     <div class="activity-item">
                       <div class="activity-item-left">
-                        <span class="activity-badge ${a.badge}">${a.type}</span>
-                        <span style="color: var(--text-muted);">${a.time}</span>
+                        <span class="activity-badge ${badgeClass}">${displayType}</span>
+                        <span style="color: var(--text-muted);">${new Date(a.createdAt).toLocaleString()}</span>
                       </div>
                       <div class="activity-item-right">
-                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;" title="Click copy button to copy full token">${a.token}</code>
-                        <button class="copy-token-btn" onclick="copyTokenToClipboard(this, '${a.fullToken}')">Copy</button>
-                        <span style="color: var(--text-muted); font-size: 0.75rem;">${a.details}</span>
+                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;" title="Session ID">${(a._id || a.id || 'local').slice(0, 8)}...</code>
+                        <button class="copy-token-btn" onclick="copyTokenToClipboard(this, '${a._id || a.id || 'local'}')">Copy</button>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">${a.ipAddress || 'Web'}</span>
                       </div>
                     </div>
-                  `).join('')}
-                </div>
+                  `;
+                }).join('')}
               </div>
-            `;
-          });
+            </div>
+          `;
+        });
 
-          container.innerHTML = html;
-        }
+        container.innerHTML = html;
       } catch (err) {
-        log('Error loading activity: ' + err.message);
+        log('Error loading activities: ' + err.message);
         container.innerHTML = '<div style="text-align: center; color: var(--danger); padding: 20px;">Error loading activities</div>';
       }
     }
