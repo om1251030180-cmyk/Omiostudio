@@ -608,6 +608,32 @@
       text-align: right;
     }
 
+    .copy-token-btn {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.65rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: monospace;
+    }
+
+    .copy-token-btn:hover {
+      background: rgba(99, 102, 241, 0.4);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .copy-token-btn.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #86efac;
+    }
+
     @media (max-width: 768px) {
       main {
         padding: 16px;
@@ -1184,6 +1210,24 @@
       }
     }
 
+    // COPY TOKEN TO CLIPBOARD
+    function copyTokenToClipboard(element, fullToken) {
+      navigator.clipboard.writeText(fullToken).then(() => {
+        const originalText = element.textContent;
+        element.textContent = 'Copied!';
+        element.classList.add('copied');
+        
+        setTimeout(() => {
+          element.textContent = originalText;
+          element.classList.remove('copied');
+        }, 2000);
+        
+        log('Token copied to clipboard');
+      }).catch(() => {
+        alert('Failed to copy token');
+      });
+    }
+
     // ACTIVITY LOG LOADING
     async function loadActivityLog() {
       const token = localStorage.getItem(TOKEN_KEY);
@@ -1214,6 +1258,7 @@
                 badge: 'activity-login',
                 time: new Date(c.lastLogin).toLocaleString(),
                 token: (c._id || 'local').slice(0, 8) + '...',
+                fullToken: c._id || 'local',
                 details: 'Web Access'
               });
             }
@@ -1223,6 +1268,7 @@
                 badge: 'activity-reset',
                 time: new Date(c.resetTokenExpiry || Date.now()).toLocaleString(),
                 token: c.resetToken.slice(0, 8) + '...',
+                fullToken: c.resetToken,
                 details: 'Reset Link Generated'
               });
             }
@@ -1251,7 +1297,8 @@
                         <span style="color: var(--text-muted);">${a.time}</span>
                       </div>
                       <div class="activity-item-right">
-                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;">${a.token}</code>
+                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;" title="Click copy button to copy full token">${a.token}</code>
+                        <button class="copy-token-btn" onclick="copyTokenToClipboard(this, '${a.fullToken}')">Copy</button>
                         <span style="color: var(--text-muted); font-size: 0.75rem;">${a.details}</span>
                       </div>
                     </div>
