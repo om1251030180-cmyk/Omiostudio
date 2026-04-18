@@ -465,10 +465,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0;
+      gap: 24px;
       padding: 0 40px;
       max-width: 100%;
-      margin: 0;
+      margin: 0 auto;
     }
 
     /* Logo */
@@ -518,12 +518,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      min-width: 0;
     }
 
     .nav-links {
       display: flex;
-      gap: 0;
+      gap: 4px;
       align-items: center;
+      justify-content: center;
     }
 
     .nav-link {
@@ -566,6 +568,7 @@
       gap: 12px;
       align-items: center;
       flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .nav-signin {
@@ -4366,15 +4369,15 @@
     }
 
     @media (max-width: 780px) {
-      .nav { height: auto; padding: 12px 0; flex-wrap: wrap; }
-      .nav-center { order: 3; width: 100%; flex-wrap: wrap; }
+      .nav { height: auto; padding: 12px 20px; flex-wrap: wrap; gap: 12px; }
+      .nav-center { order: 3; width: 100%; flex-wrap: wrap; justify-content: center; }
       .top-search { min-width: 100%; }
       .top-chip { display: none; }
       .dashboard-header { padding: 16px 12px !important; }
       .dashboard-tabs { gap: 4px; padding-top: 12px; padding-bottom: 0; }
       .dashboard-tab { padding: 8px 12px !important; font-size: 0.8rem !important; }
-      .nav-right { order: 2; width: 100%; justify-content: flex-start; }
-      .nav-links { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; align-items: center; }
+      .nav-right { order: 2; width: 100%; justify-content: center; gap: 8px; flex-wrap: wrap; }
+      .nav-links { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; align-items: center; justify-content: center; }
       .insight-card { grid-column: span 12; }
       .stat-strip { grid-template-columns: 1fr; }
       .portfolio-card, .portfolio-card:nth-child(4n+1), .portfolio-card:nth-child(4n+2) { grid-column: span 12; }
@@ -4405,7 +4408,9 @@
       .hero-main h1 { font-size: clamp(1.75rem, 9vw, 2.2rem); }
       .section { padding: 56px 0 0; }
       .nav-center { gap: 8px; }
-      .nav-right { gap: 6px; }
+      .nav-right { gap: 6px; flex-wrap: wrap; justify-content: center; }
+      .nav-logo { padding: 6px 10px; gap: 8px; }
+      .logo-text { font-size: 0.9rem; }
       .top-search { padding: 9px 10px; }
       .section-head { gap: 10px; margin-bottom: 14px; }
       .section-head h2 { font-size: clamp(1.45rem, 7.2vw, 1.95rem); }
@@ -5010,8 +5015,8 @@
         <div class="nav-right" id="navRight">
           <button class="nav-signin" onclick="openAuthModal('login')" id="signInBtn">Sign in</button>
           <button class="nav-signup" onclick="openOrderModal()" id="createProjectBtn">Start Project</button>
-          <div id="userProfile" style="display: none; display: flex; align-items: center; gap: 12px;">
-            <span id="userName" style="color: var(--dark-text-soft); font-size: 0.9rem;"></span>
+          <div id="userProfile" style="display: none !important; display: flex; align-items: center; gap: 12px; padding: 0 8px;">
+            <span id="userName" style="color: var(--dark-text-soft); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;"></span>
             <button class="nav-signin" onclick="handleLogout()" style="background: rgba(255, 107, 107, 0.2); border-color: #ff6b6b;">Logout</button>
           </div>
         </div>
