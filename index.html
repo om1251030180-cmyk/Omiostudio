@@ -410,27 +410,28 @@
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.65;
-      background-image: linear-gradient(rgba(17, 18, 18, 0.08) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(17, 18, 18, 0.08) 1px, transparent 1px);
-      background-size: 38px 38px;
+      opacity: 0.8;
+      background-image: linear-gradient(rgba(139, 92, 246, 0.12) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(139, 92, 246, 0.12) 1px, transparent 1px);
+      background-size: 50px 50px;
       mask-image: radial-gradient(circle at center, black 55%, transparent 100%);
       transform: translate3d(0, var(--parallax-y, 0px), 0);
       will-change: transform;
       animation: meshFlow 20s linear infinite;
+      box-shadow: inset 0 0 200px rgba(111, 99, 255, 0.1);
     }
 
     @keyframes meshFlow {
       0% {
         background-position: 0 0;
-        opacity: 0.65;
+        opacity: 0.8;
       }
       50% {
-        opacity: 0.75;
+        opacity: 0.95;
       }
       100% {
-        background-position: 38px 38px;
-        opacity: 0.65;
+        background-position: 50px 50px;
+        opacity: 0.8;
       }
     }
 
@@ -446,30 +447,36 @@
     }
 
     .b1 {
-      width: 36vw;
-      height: 36vw;
-      background: rgba(49, 214, 197, 0.35);
-      top: -12vw;
-      left: -10vw;
+      width: 50vw;
+      height: 50vw;
+      background: rgba(49, 214, 197, 0.45);
+      top: -15vw;
+      left: -15vw;
       animation: blobFloat1 8s ease-in-out infinite, blobPulse1 6s ease-in-out infinite;
+      box-shadow: 0 0 100px rgba(49, 214, 197, 0.4), 0 0 200px rgba(49, 214, 197, 0.2);
+      filter: blur(80px) brightness(1.2);
     }
 
     .b2 {
-      width: 42vw;
-      height: 42vw;
-      background: rgba(255, 123, 47, 0.26);
-      right: -13vw;
-      bottom: -14vw;
+      width: 55vw;
+      height: 55vw;
+      background: rgba(255, 123, 47, 0.38);
+      right: -18vw;
+      bottom: -18vw;
       animation: blobFloat2 10s ease-in-out infinite, blobPulse2 7s ease-in-out infinite;
+      box-shadow: 0 0 120px rgba(255, 123, 47, 0.35), 0 0 220px rgba(255, 123, 47, 0.15);
+      filter: blur(80px) brightness(1.2);
     }
 
     .b3 {
-      width: 24vw;
-      height: 24vw;
-      background: rgba(255, 210, 77, 0.3);
-      left: 44vw;
-      top: 52vh;
+      width: 38vw;
+      height: 38vw;
+      background: rgba(255, 210, 77, 0.42);
+      left: 40vw;
+      top: 45vh;
       animation: blobFloat3 12s ease-in-out infinite, blobPulse3 8s ease-in-out infinite;
+      box-shadow: 0 0 100px rgba(255, 210, 77, 0.35), 0 0 180px rgba(255, 210, 77, 0.18);
+      filter: blur(80px) brightness(1.2);
     }
 
     @keyframes blobFloat1 {
@@ -494,23 +501,101 @@
     }
 
     @keyframes blobPulse1 {
-      0%, 100% { opacity: 0.54; }
-      50% { opacity: 0.72; }
+      0%, 100% { opacity: 0.54; filter: blur(80px) brightness(1); }
+      50% { opacity: 0.8; filter: blur(70px) brightness(1.3); }
     }
 
     @keyframes blobPulse2 {
-      0%, 100% { opacity: 0.26; }
-      50% { opacity: 0.42; }
+      0%, 100% { opacity: 0.38; filter: blur(80px) brightness(1); }
+      50% { opacity: 0.65; filter: blur(70px) brightness(1.3); }
     }
 
     @keyframes blobPulse3 {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.48; }
+      0%, 100% { opacity: 0.42; filter: blur(80px) brightness(1); }
+      50% { opacity: 0.72; filter: blur(70px) brightness(1.3); }
     }
 
     @keyframes floaty {
       0%, 100% { transform: translate3d(0,0,0) scale(1); }
       50% { transform: translate3d(0, -20px, 0) scale(1.08); }
+    }
+
+    .animated-gradient-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        linear-gradient(135deg, transparent 0%, rgba(111, 99, 255, 0.15) 25%, transparent 50%),
+        linear-gradient(225deg, transparent 0%, rgba(102, 224, 210, 0.15) 25%, transparent 50%),
+        linear-gradient(45deg, transparent 0%, rgba(236, 72, 153, 0.15) 25%, transparent 50%);
+      background-size: 400% 400%;
+      animation: gradientFlow 12s ease infinite;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%, 100% 50%, 50% 0%; }
+      25% { background-position: 50% 100%, 0% 100%, 100% 50%; }
+      50% { background-position: 100% 50%, 50% 0%, 0% 100%; }
+      75% { background-position: 50% 0%, 100% 0%, 50% 100%; }
+      100% { background-position: 0% 50%, 100% 50%, 50% 0%; }
+    }
+
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(60px);
+      mix-blend-mode: screen;
+    }
+
+    .glow-1 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(111, 99, 255, 0.5) 0%, transparent 70%);
+      top: 10%;
+      left: 5%;
+      animation: orb1Float 18s ease-in-out infinite;
+    }
+
+    .glow-2 {
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(102, 224, 210, 0.4) 0%, transparent 70%);
+      top: 60%;
+      right: 10%;
+      animation: orb2Float 22s ease-in-out infinite;
+    }
+
+    .glow-3 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(255, 138, 91, 0.45) 0%, transparent 70%);
+      bottom: 5%;
+      left: 40%;
+      animation: orb3Float 20s ease-in-out infinite;
+    }
+
+    @keyframes orb1Float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(80px, -100px) scale(1.2); }
+      50% { transform: translate(-60px, 80px) scale(0.9); }
+      75% { transform: translate(100px, 40px) scale(1.15); }
+    }
+
+    @keyframes orb2Float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-100px, 80px) scale(0.95); }
+      50% { transform: translate(90px, -60px) scale(1.2); }
+      75% { transform: translate(-70px, -100px) scale(1.1); }
+    }
+
+    @keyframes orb3Float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-80px, -120px) scale(1.15); }
+      50% { transform: translate(100px, 90px) scale(0.95); }
+      75% { transform: translate(60px, -80px) scale(1.2); }
     }
 
     .app {
@@ -5362,6 +5447,10 @@
   <div class="blob b1 parallax-layer" data-parallax-speed="0.16"></div>
   <div class="blob b2 parallax-layer" data-parallax-speed="0.22"></div>
   <div class="blob b3 parallax-layer" data-parallax-speed="0.12"></div>
+  <div class="animated-gradient-layer"></div>
+  <div class="glow-orb glow-1"></div>
+  <div class="glow-orb glow-2"></div>
+  <div class="glow-orb glow-3"></div>
 
   <div class="app">
     <div class="nav-wrap">
