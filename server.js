@@ -805,9 +805,17 @@ app.put('/api/auth/profile', auth, async (req, res) => {
 // Forgot Password - Request reset link
 app.post('/api/auth/forgot-password', async (req, res) => {
   try {
+    console.log('📧 Forgot-password request received:', { email: req.body.email, method: req.body.method });
+    
     const { email, method } = req.body;
-    if (!email || !method) return res.status(400).json({ error: 'Email and method are required' });
-    if (!['email', 'sms', 'whatsapp', 'token'].includes(method)) return res.status(400).json({ error: 'Invalid method' });
+    if (!email || !method) {
+      console.log('❌ Missing email or method');
+      return res.status(400).json({ error: 'Email and method are required' });
+    }
+    if (!['email', 'sms', 'whatsapp', 'token'].includes(method)) {
+      console.log('❌ Invalid method:', method);
+      return res.status(400).json({ error: 'Invalid method' });
+    }
 
     let user;
     if (isMongoConnected()) {
@@ -817,7 +825,10 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       user = db.users.find(u => u.email === email);
     }
 
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) {
+      console.log('❌ User not found:', email);
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     // Generate reset token (6 character alphanumeric)
     const resetToken = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -839,30 +850,42 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     let sendResult = { success: false };
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:4002'}/reset-password.html?token=${resetToken}`;
     
+    console.log(`📤 Sending reset via ${method}...`);
+    
     if (method === 'email') {
       sendResult = await sendPasswordResetEmail(email, user.name, resetToken, method);
     } else if (method === 'sms') {
-      if (!user.phone) return res.status(400).json({ error: 'User has no phone number on file' });
+      if (!user.phone) {
+        console.log('❌ User has no phone number');
+        return res.status(400).json({ error: 'User has no phone number on file' });
+      }
       sendResult = await sendPasswordResetSMS(user.phone, resetToken);
     } else if (method === 'whatsapp') {
-      if (!user.phone) return res.status(400).json({ error: 'User has no phone number on file' });
+      if (!user.phone) {
+        console.log('❌ User has no phone number');
+        return res.status(400).json({ error: 'User has no phone number on file' });
+      }
       sendResult = await sendPasswordResetWhatsApp(user.phone, resetToken, user.name);
     } else if (method === 'token') {
       sendResult = { success: true, message: 'Token generated' };
     }
     
-    res.json({
+    const responseBody = {
       success: sendResult.success || method === 'token',
       message: sendResult.message || `Reset code sent via ${method}`,
-      token: resetToken, // For development/testing
+      token: resetToken,
       link: resetLink,
       expiresIn: '1 hour',
       contact: method === 'sms' || method === 'whatsapp' ? user.phone : user.email,
       method: method,
       instruction: method === 'token' ? 'Use the token above. Direct URL: ' + resetLink : null
-    });
+    };
+    
+    console.log('✅ Sending response:', responseBody.success ? 'Success' : 'Warning - Send failed');
+    res.json(responseBody);
   } catch(e) {
-    res.status(500).json({ error: e.message });
+    console.error('💥 Error in forgot-password endpoint:', e);
+    res.status(500).json({ error: e.message || 'Internal server error' });
   }
 });
 
