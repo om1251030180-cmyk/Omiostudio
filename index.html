@@ -9812,8 +9812,13 @@
 
     async function loadClientData() {
       if (!state.user || state.user.role === 'admin') return;
-      document.getElementById('clientName').textContent = state.user.name || 'Client';
-      document.getElementById('dashClientName').textContent = state.user.name || 'Client';
+      
+      // Safely set text content if elements exist
+      const clientNameEl = document.getElementById('clientName');
+      if (clientNameEl) clientNameEl.textContent = state.user.name || 'Client';
+      
+      const dashClientNameEl = document.getElementById('dashClientName');
+      if (dashClientNameEl) dashClientNameEl.textContent = state.user.name || 'Client';
 
       const [orders, works, messages, publicWorks] = await Promise.all([
         getMyOrders(),
@@ -9829,13 +9834,16 @@
       const progress = orders.filter((o) => o.status === 'in_progress').length;
       const done = orders.filter((o) => o.status === 'completed').length;
 
-      document.getElementById('clientKpis').innerHTML = `
-        <article class="kpi neo-card"><strong data-count="${orders.length}">0</strong><span>◎ Total Orders</span></article>
-        <article class="kpi neo-card"><strong data-count="${pending}">0</strong><span>◉ Pending</span></article>
-        <article class="kpi neo-card"><strong data-count="${progress}">0</strong><span>↗ In Progress</span></article>
-        <article class="kpi neo-card"><strong data-count="${done}">0</strong><span>✓ Completed</span></article>
-      `;
-      animateCountupIn(document.getElementById('clientKpis'));
+      const clientKpisEl = document.getElementById('clientKpis');
+      if (clientKpisEl) {
+        clientKpisEl.innerHTML = `
+          <article class="kpi neo-card"><strong data-count="${orders.length}">0</strong><span>◎ Total Orders</span></article>
+          <article class="kpi neo-card"><strong data-count="${pending}">0</strong><span>◉ Pending</span></article>
+          <article class="kpi neo-card"><strong data-count="${progress}">0</strong><span>↗ In Progress</span></article>
+          <article class="kpi neo-card"><strong data-count="${done}">0</strong><span>✓ Completed</span></article>
+        `;
+        animateCountupIn(clientKpisEl);
+      }
 
       renderOrdersTable('recentOrders', orders.slice(0, 5));
       renderOrdersTable('allOrdersTable', orders);
@@ -9848,13 +9856,23 @@
       refreshMessageOrderSelect();
       renderPortfolio();
 
-      document.getElementById('apiModeBadge').textContent = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
+      const apiModeBadgeEl = document.getElementById('apiModeBadge');
+      if (apiModeBadgeEl) apiModeBadgeEl.textContent = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
+      
       markLiveSynced(['liveSyncBadgeClient', 'liveSyncBadgeAi']);
 
-      document.getElementById('profileName').value = state.user.name || '';
-      document.getElementById('profileEmail').value = state.user.email || '';
-      document.getElementById('profilePhone').value = state.user.phone || '';
-      document.getElementById('profileCompany').value = state.user.company || '';
+      const profileNameEl = document.getElementById('profileName');
+      if (profileNameEl) profileNameEl.value = state.user.name || '';
+      
+      const profileEmailEl = document.getElementById('profileEmail');
+      if (profileEmailEl) profileEmailEl.value = state.user.email || '';
+      
+      const profilePhoneEl = document.getElementById('profilePhone');
+      if (profilePhoneEl) profilePhoneEl.value = state.user.phone || '';
+      
+      const profileCompanyEl = document.getElementById('profileCompany');
+      if (profileCompanyEl) profileCompanyEl.value = state.user.company || '';
+      
       syncLiveIntervalControl();
     }
 
@@ -10610,7 +10628,10 @@
       renderAdminTables(orders, users);
       renderLoggedInUsers();
       refreshAdminClientSelect(users);
-      document.getElementById('apiModeBadgeAdmin').textContent = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
+      
+      const apiModeBadgeAdminEl = document.getElementById('apiModeBadgeAdmin');
+      if (apiModeBadgeAdminEl) apiModeBadgeAdminEl.textContent = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
+      
       markLiveSynced(['liveSyncBadgeAdmin']);
     }
 
@@ -10716,8 +10737,12 @@
         <article class="kpi neo-card"><strong data-count="${stats.completed || 0}">0</strong><span>✓ Completed</span></article>
         <article class="kpi neo-card"><strong data-count="${stats.totalUsers || 0}">0</strong><span>◎ Clients</span></article>
       `;
-      document.getElementById('adminKpis').innerHTML = html;
-      animateCountupIn(document.getElementById('adminKpis'));
+      
+      const adminKpisEl = document.getElementById('adminKpis');
+      if (adminKpisEl) {
+        adminKpisEl.innerHTML = html;
+        animateCountupIn(adminKpisEl);
+      }
     }
 
     function renderAdminKpisFromOrders(orders, users) {
