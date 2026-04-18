@@ -620,6 +620,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
       transition: width var(--ease), transform var(--ease), padding var(--ease);
       background: var(--glass-strong);
       border: 1px solid rgba(255, 255, 255, 0.72);
@@ -4619,11 +4621,7 @@
             <div id="quickSearchList" class="quick-search-list"></div>
           </div>
           <div class="nav-links">
-            <button onclick="navigateToPage('services.html')">Services Page</button>
-            <button onclick="navigateToPage('portfolio.html')">Portfolio Page</button>
-            <button onclick="navigateToPage('about.html')">About</button>
           </div>
-          <span class="top-chip">Most Popular</span>
         </div>
 
         <div class="nav-right" id="navRight"></div>
@@ -4652,46 +4650,7 @@
           </div>
         </article>
 
-        <aside class="hero-side">
-          <div class="features-3d-showcase">
-            <div class="feature-3d-card reveal" data-feature="0">
-              <div class="card-inner">
-                <div class="card-front">
-                  <div class="card-icon">⚡</div>
-                  <h4>Live Pipeline</h4>
-                  <p>Real-time order tracking</p>
-                </div>
-                <div class="card-back">
-                  <p>Clients submit requests with files, deadlines, and budget. Your team updates progress from a lightweight admin panel.</p>
-                </div>
-              </div>
-            </div>
-            <div class="feature-3d-card reveal" data-feature="1">
-              <div class="card-inner">
-                <div class="card-front">
-                  <div class="card-icon">🚀</div>
-                  <h4>Modern Stack</h4>
-                  <p>Fast & deployable</p>
-                </div>
-                <div class="card-back">
-                  <p>GSAP animations, glass-neumorphic cards, modular JS, and API-first logic with localStorage fallback.</p>
-                </div>
-              </div>
-            </div>
-            <div class="feature-3d-card reveal" data-feature="2">
-              <div class="card-inner">
-                <div class="card-front">
-                  <div class="card-icon">📬</div>
-                  <h4>Notifications</h4>
-                  <p>Email ready</p>
-                </div>
-                <div class="card-back">
-                  <p>Nodemailer routes send registration, order confirmation, and status updates to your inbox and clients.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
+
       </div>
 
       <div class="container section" id="insights">
@@ -4745,15 +4704,6 @@
           <p class="reveal">Bookmark services you like and launch order flow in one click.</p>
         </div>
         <div id="savedServices" class="saved-service-grid"></div>
-      </div>
-
-      <div class="container section" id="portfolio">
-        <div class="section-head">
-          <h2 class="reveal">Portfolio Showcase</h2>
-          <p class="reveal">Filter by category and preview visual direction quickly, including live client-approved work.</p>
-        </div>
-        <div id="portfolioFilters" class="filters"></div>
-        <div id="portfolioGrid" class="portfolio-grid"></div>
       </div>
 
       <div class="container section" id="website-previews">
@@ -6137,23 +6087,28 @@
     function wireCollapsibleSearchBar() {
       const searchBar = document.querySelector('.top-search');
       const input = document.getElementById('globalSearchInput');
+      const icon = searchBar?.querySelector('span');
       if (!searchBar || !input) return;
 
       searchBar.addEventListener('click', (e) => {
         if (e.target === input) return;
-        searchBar.classList.add('expanded');
-        input.focus();
-      });
-
-      input.addEventListener('blur', () => {
-        if (input.value.trim() === '') {
+        
+        if (searchBar.classList.contains('expanded')) {
+          // Collapse
           searchBar.classList.remove('expanded');
+          input.value = '';
+          input.blur();
+        } else {
+          // Expand
+          searchBar.classList.add('expanded');
+          input.focus();
         }
       });
 
       document.addEventListener('click', (e) => {
-        if (!searchBar.contains(e.target) && searchBar.classList.contains('expanded') && input.value.trim() === '') {
+        if (!searchBar.contains(e.target) && searchBar.classList.contains('expanded')) {
           searchBar.classList.remove('expanded');
+          input.value = '';
         }
       });
     }
