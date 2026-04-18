@@ -11096,9 +11096,9 @@
 
       console.log('✅ Rendering', premiumTestimonials.length, 'testimonials...');
 
-      // Generate testimonials HTML
-      grid.innerHTML = premiumTestimonials.map((testimonial, index) => `
-        <div class="testimonial-review-card" data-testimonial="${index}" style="opacity: 0;">
+      // Generate testimonials HTML - simple version that shows immediately
+      const htmlContent = premiumTestimonials.map((testimonial, index) => `
+        <div class="testimonial-review-card" data-testimonial="${index}">
           <div class="testimonial-content">
             <div class="testimonial-stars" title="Rating: ${testimonial.stars}/5">
               ${'⭐'.repeat(testimonial.stars)}
@@ -11117,57 +11117,33 @@
         </div>
       `).join('');
 
-      console.log('✅ HTML injected. Cards count:', grid.querySelectorAll('.testimonial-review-card').length);
+      // Set HTML directly
+      grid.innerHTML = htmlContent;
+      console.log('✅ HTML injected successfully. Cards visible:', grid.querySelectorAll('.testimonial-review-card').length);
 
-      // Wait a tick and then animate
-      requestAnimationFrame(() => {
-        const testimonialCards = grid.querySelectorAll('.testimonial-review-card');
-        
-        if (testimonialCards.length === 0) {
-          console.error('❌ No cards found after rendering!');
-          return;
-        }
-
-        console.log('✅ Animating', testimonialCards.length, 'cards...');
-
+      // Now animate the cards after they're in the DOM
+      const cards = grid.querySelectorAll('.testimonial-review-card');
+      if (cards.length > 0 && typeof gsap !== 'undefined') {
         // Set initial state
-        gsap.set(testimonialCards, {
-          opacity: 0,
-          y: 40,
-          scale: 0.90
-        });
-
-        // Animate all cards with stagger
-        gsap.to(testimonialCards, {
+        gsap.set(cards, { opacity: 0, y: 40, scale: 0.9 });
+        
+        // Animate with stagger
+        gsap.to(cards, {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: 'elastic.out(1.2, 0.8)',
-          delay: 0.15
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'elastic.out(1.2, 0.75)',
+          delay: 0.1
         });
 
-        // Add individual scroll-triggered animations
-        testimonialCards.forEach((card, index) => {
-          gsap.to(card, {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              end: 'top 60%',
-              scrub: 1,
-              onEnter: () => {
-                gsap.to(card, {
-                  duration: 0.5,
-                  boxShadow: '0 32px 64px rgba(111, 99, 255, 0.3)'
-                });
-              }
-            }
-          });
-        });
-
-        console.log('✅ All testimonials animated successfully!');
-      });
+        console.log('✅ Animations started for', cards.length, 'testimonials');
+      } else if (cards.length > 0) {
+        // GSAP not loaded yet, just make cards visible
+        cards.forEach(card => card.style.opacity = '1');
+        console.warn('⚠️ GSAP not available, testimonials shown without animation');
+      }
     }
 
     function initAnimations() {
