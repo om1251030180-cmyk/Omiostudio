@@ -5611,6 +5611,9 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      will-change: transform, opacity;
     }
 
     .testimonial-review-card::before {
@@ -11029,10 +11032,14 @@
      */
     function renderPremiumTestimonials() {
       const grid = document.getElementById('testimonials-grid');
-      if (!grid) return;
+      if (!grid) {
+        console.warn('Testimonials grid not found');
+        return;
+      }
 
+      // Generate testimonials HTML
       grid.innerHTML = premiumTestimonials.map((testimonial, index) => `
-        <div class="testimonial-review-card" style="animation-delay: ${index * 0.05}s;">
+        <div class="testimonial-review-card" data-testimonial="${index}">
           <div class="testimonial-content">
             <div class="testimonial-stars">
               ${'⭐'.repeat(testimonial.stars)}
@@ -11051,8 +11058,48 @@
         </div>
       `).join('');
 
-      // Animate testimonials on scroll
-      animateStaggerGrid('.testimonial-review-card');
+      console.log('Testimonials rendered:', grid.querySelectorAll('.testimonial-review-card').length);
+
+      // Immediately animate testimonials with stagger
+      const testimonialCards = grid.querySelectorAll('.testimonial-review-card');
+      
+      // Set initial state
+      gsap.set(testimonialCards, {
+        opacity: 0,
+        y: 30,
+        scale: 0.95
+      });
+
+      // Animate each card
+      gsap.to(testimonialCards, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: 'elastic.out(1, 0.75)',
+        delay: 0.2
+      });
+
+      // Also setup scroll trigger animations
+      testimonialCards.forEach((card, index) => {
+        gsap.fromTo(card, 
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            delay: index * 0.05,
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 90%',
+              end: 'top 70%',
+              scrub: false,
+              markers: false
+            }
+          }
+        );
+      });
     }
 
     function initAnimations() {
