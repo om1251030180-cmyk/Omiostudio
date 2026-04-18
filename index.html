@@ -986,6 +986,11 @@
       color: var(--ink);
     }
 
+    .nav-signin:active {
+      background: rgba(139, 92, 246, 0.15);
+      transform: scale(0.98);
+    }
+
     .nav-signup {
       padding: 10px 24px;
       background: linear-gradient(135deg, #ff5722, #ff7043);
@@ -1004,9 +1009,21 @@
       box-shadow: 0 6px 24px rgba(255, 87, 34, 0.4);
     }
 
+    .nav-signup:active {
+      transform: translateY(0);
+    }
+
     :root[data-theme='light'] .nav-signin {
       color: #666;
       border-color: rgba(111, 99, 255, 0.2);
+    }
+
+    :root[data-theme='light'] .nav-signup {
+      box-shadow: 0 4px 16px rgba(255, 87, 34, 0.25);
+    }
+
+    :root[data-theme='light'] .nav-signup:hover {
+      box-shadow: 0 6px 24px rgba(255, 87, 34, 0.35);
     }
 
     :root[data-theme='light'] .nav-signin:hover {
@@ -7889,12 +7906,8 @@
     }
 
     function openAuthModal(tab = 'login') {
-      // Redirect to login or signup page instead of modal
-      if (tab === 'signup') {
-        window.location.href = 'signup.html';
-      } else {
-        window.location.href = 'login.html';
-      }
+      openModal('authLayer');
+      switchAuthTab(tab);
     }
 
     function openOrderModal(shortServiceId = '') {
@@ -8111,30 +8124,22 @@
       
       if (!state.user) {
         nav.innerHTML = `
-          <button class="ghost-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
-          <button class="ghost-btn" onclick="openAuthModal('login')">Login</button>
-          <button class="brand-btn" onclick="openAuthModal('register')">Get Started</button>
+          <button class="nav-signin" onclick="openAuthModal('login')" id="headerLoginBtn">Sign in</button>
+          <button class="nav-signup" onclick="openAuthModal('register')" id="headerGetStartedBtn">Get Started</button>
         `;
         if (railLoginBtn) railLoginBtn.style.display = 'flex';
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
-        const themeBtn = document.getElementById('themeToggleBtn');
-        if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
         return;
       }
 
       const first = state.user.name?.split(' ')[0] || 'User';
       const isAdmin = state.user.role === 'admin';
       nav.innerHTML = `
-        <button class="ghost-btn" id="themeToggleBtn" onclick="toggleTheme()">Dark Theme</button>
         <span style="font-size:0.8rem; color:var(--ink-soft); font-weight:700;">Hi, ${first}</span>
-        <button class="ghost-btn" onclick="showView('dashboard')">Dashboard</button>
-        ${isAdmin ? '<button class="brand-btn" onclick="showView(\'admin\')">Admin</button>' : '<button class="brand-btn" onclick="openOrderModal()">Order</button>'}
-        <button class="ghost-btn danger-btn" onclick="logout()" style="border: 1px solid rgba(220, 100, 100, 0.3); background: rgba(255, 80, 80, 0.1);">Logout</button>
+        <button class="nav-signin" onclick="showView('dashboard')" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4);">Dashboard</button>
+        ${isAdmin ? '<button class="nav-signup" onclick="showView(\'admin\')">Admin Panel</button>' : '<button class="nav-signup" onclick="openOrderModal()">New Order</button>'}
+        <button class="nav-signin" onclick="logout()" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.4); color: #ff5050;">Logout</button>
       `;
       if (railLoginBtn) railLoginBtn.style.display = 'none';
-      const theme = document.documentElement.getAttribute('data-theme') || 'light';
-      const themeBtn = document.getElementById('themeToggleBtn');
-      if (themeBtn) themeBtn.textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
     }
 
     function badgeClass(status) {
