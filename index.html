@@ -617,6 +617,119 @@
       background: rgba(111, 99, 255, 0.08);
     }
 
+    /* Animated Welcome Banner */
+    .welcome-banner {
+      position: relative;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.08), rgba(102, 224, 210, 0.05));
+      border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+      padding: 32px 0;
+      overflow: hidden;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      animation: welcomeSlideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(111, 99, 255, 0.1), transparent 50%);
+      pointer-events: none;
+      animation: morphPulse 4s ease-in-out infinite;
+    }
+
+    .welcome-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .welcome-text {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2, #ff8a5b);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: writingAnimation 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, textMorph 8s ease-in-out 2s infinite;
+      text-shadow: 0 0 30px rgba(111, 99, 255, 0.2);
+      letter-spacing: -0.5px;
+    }
+
+    .cursive-text {
+      font-family: 'Brush Script MT', 'Lucida Handwriting', 'Great Vibes', cursive;
+      font-style: italic;
+    }
+
+    @keyframes welcomeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes writingAnimation {
+      from {
+        opacity: 0;
+        transform: translateX(-40px) scaleX(0.8);
+        letter-spacing: 20px;
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scaleX(1);
+        letter-spacing: -0.5px;
+      }
+    }
+
+    @keyframes textMorph {
+      0%, 100% {
+        transform: scaleY(1) skewY(0deg);
+        filter: drop-shadow(0 0 20px rgba(111, 99, 255, 0.3));
+      }
+      25% {
+        transform: scaleY(1.05) skewY(1deg);
+        filter: drop-shadow(0 0 30px rgba(102, 224, 210, 0.4));
+      }
+      50% {
+        transform: scaleY(0.95) skewY(-1deg);
+        filter: drop-shadow(0 0 25px rgba(255, 138, 91, 0.3));
+      }
+      75% {
+        transform: scaleY(1.02) skewY(0.5deg);
+        filter: drop-shadow(0 0 28px rgba(111, 99, 255, 0.35));
+      }
+    }
+
+    @keyframes morphPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
+    :root[data-theme='light'] .welcome-banner {
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.05), rgba(102, 224, 210, 0.03));
+      border-bottom-color: rgba(111, 99, 255, 0.1);
+    }
+
+    :root[data-theme='light'] .welcome-text {
+      text-shadow: 0 0 20px rgba(111, 99, 255, 0.15);
+    }
+
     /* Responsive */
     @media (max-width: 1050px) {
       .nav {
@@ -4371,6 +4484,8 @@
     @media (max-width: 780px) {
       .nav { height: auto; padding: 12px 20px; flex-wrap: wrap; gap: 12px; }
       .nav-center { order: 3; width: 100%; flex-wrap: wrap; justify-content: center; }
+      .welcome-banner { padding: 28px 0; min-height: auto; }
+      .welcome-text { font-size: clamp(2.2rem, 7vw, 3.2rem); }
       .top-search { min-width: 100%; }
       .top-chip { display: none; }
       .dashboard-header { padding: 16px 12px !important; }
@@ -4395,6 +4510,8 @@
     @media (max-width: 420px) {
       .container { width: min(1200px, 100vw); padding: 0 16px; }
       .nav-wrap { width: calc(100% - 10px); margin-top: 8px; }
+      .welcome-banner { padding: 24px 0; min-height: auto; }
+      .welcome-text { font-size: clamp(1.8rem, 8vw, 3rem); }
       .hero { padding: 58px 0 44px; gap: 14px; }
       .hero-main,
       .hero-side,
@@ -5016,10 +5133,16 @@
           <button class="nav-signin" onclick="openAuthModal('login')" id="signInBtn">Sign in</button>
           <button class="nav-signup" onclick="openOrderModal()" id="createProjectBtn">Start Project</button>
           <div id="userProfile" style="display: none !important; display: flex; align-items: center; gap: 12px; padding: 0 8px;">
-            <span id="userName" style="color: var(--dark-text-soft); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;"></span>
             <button class="nav-signin" onclick="handleLogout()" style="background: rgba(255, 107, 107, 0.2); border-color: #ff6b6b;">Logout</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Animated Welcome Banner -->
+    <div id="welcomeBanner" class="welcome-banner" style="display: none;">
+      <div class="container welcome-container">
+        <h1 id="welcomeText" class="welcome-text cursive-text">Welcome, Om Ghotekari!</h1>
       </div>
     </div>
 
@@ -6642,7 +6765,8 @@
       const signInBtn = document.getElementById('signInBtn');
       const createProjectBtn = document.getElementById('createProjectBtn');
       const userProfile = document.getElementById('userProfile');
-      const userName = document.getElementById('userName');
+      const welcomeBanner = document.getElementById('welcomeBanner');
+      const welcomeText = document.getElementById('welcomeText');
 
       if (isLoggedIn && userSession) {
         // Hide auth buttons, show user profile
@@ -6653,7 +6777,16 @@
         }
         if (userProfile) {
           userProfile.style.display = 'flex';
-          userName.textContent = `Welcome, ${userSession.name}!`;
+        }
+        // Show animated welcome banner
+        if (welcomeBanner && welcomeText) {
+          welcomeText.textContent = `Welcome, ${userSession.name}!`;
+          welcomeBanner.style.display = 'block';
+          // Trigger animation by re-adding the class
+          welcomeText.style.animation = 'none';
+          setTimeout(() => {
+            welcomeText.style.animation = 'writingAnimation 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, textMorph 8s ease-in-out 2s infinite';
+          }, 10);
         }
       } else {
         // Show auth buttons, hide user profile
@@ -6663,6 +6796,7 @@
           createProjectBtn.style.display = 'inline-block';
         }
         if (userProfile) userProfile.style.display = 'none';
+        if (welcomeBanner) welcomeBanner.style.display = 'none';
       }
     }
 
