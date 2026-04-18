@@ -8127,38 +8127,74 @@
     function renderNav() {
       const nav = document.getElementById('navRight');
       if (!nav) {
-        console.warn('⚠️ navRight element not found');
+        console.error('❌ CRITICAL: navRight element not found');
         return;
       }
       
-      const railLoginBtn = document.querySelector('[onclick*="openAuthModal(\'login\')"]');
+      console.log('📱 renderNav called, user state:', state.user ? state.user.email : 'NOT LOGGED IN');
       
       if (!state.user) {
-        console.log('👤 User not logged in - showing auth buttons');
+        console.log('🔐 Creating login/register buttons');
         nav.innerHTML = `
-          <button class="nav-signin" onclick="openAuthModal('login')" id="headerLoginBtn">Sign in</button>
-          <button class="nav-signup" onclick="openAuthModal('register')" id="headerGetStartedBtn">Get Started</button>
+          <button id="headerLoginBtn" class="nav-signin" style="padding: 10px 18px; background: transparent; color: var(--ink-soft); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Sign in</button>
+          <button id="headerGetStartedBtn" class="nav-signup" style="padding: 10px 24px; background: linear-gradient(135deg, #ff5722, #ff7043); color: #fff; border: 0; border-radius: 6px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">Get Started</button>
         `;
-        // Verify buttons were created
+        
+        // Add event listeners directly instead of using onclick attribute
         const loginBtn = document.getElementById('headerLoginBtn');
         const getStartedBtn = document.getElementById('headerGetStartedBtn');
-        console.log('✅ Login button exists:', !!loginBtn);
-        console.log('✅ Get Started button exists:', !!getStartedBtn);
         
-        if (railLoginBtn) railLoginBtn.style.display = 'flex';
+        if (loginBtn) {
+          loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('✅ Sign In button clicked');
+            window.location.href = 'login.html';
+          });
+          console.log('✅ Sign In button listener attached');
+        } else {
+          console.error('❌ Sign In button not found after creation');
+        }
+        
+        if (getStartedBtn) {
+          getStartedBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('✅ Get Started button clicked');
+            window.location.href = 'signup.html';
+          });
+          console.log('✅ Get Started button listener attached');
+        } else {
+          console.error('❌ Get Started button not found after creation');
+        }
+        
         return;
       }
 
-      console.log('👤 User logged in as:', state.user.name);
+      console.log('👤 User logged in - creating user menu');
       const first = state.user.name?.split(' ')[0] || 'User';
       const isAdmin = state.user.role === 'admin';
       nav.innerHTML = `
         <span style="font-size:0.8rem; color:var(--ink-soft); font-weight:700;">Hi, ${first}</span>
-        <button class="nav-signin" onclick="showView('dashboard')" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4);">Dashboard</button>
-        ${isAdmin ? '<button class="nav-signup" onclick="showView(\'admin\')">Admin Panel</button>' : '<button class="nav-signup" onclick="openOrderModal()">New Order</button>'}
-        <button class="nav-signin" onclick="logout()" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.4); color: #ff5050;">Logout</button>
+        <button id="dashboardBtn" class="nav-signin" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); padding: 10px 18px; color: var(--ink-soft); border: 1px solid; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Dashboard</button>
+        <button id="actionBtn" class="nav-signup" style="padding: 10px 24px; background: linear-gradient(135deg, #ff5722, #ff7043); color: #fff; border: 0; border-radius: 6px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">${isAdmin ? 'Admin Panel' : 'New Order'}</button>
+        <button id="logoutBtn" class="nav-signin" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.4); color: #ff5050; padding: 10px 18px; border: 1px solid; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Logout</button>
       `;
-      if (railLoginBtn) railLoginBtn.style.display = 'none';
+      
+      const dashboardBtn = document.getElementById('dashboardBtn');
+      const actionBtn = document.getElementById('actionBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      
+      if (dashboardBtn) {
+        dashboardBtn.addEventListener('click', () => showView('dashboard'));
+      }
+      if (actionBtn) {
+        actionBtn.addEventListener('click', () => {
+          if (isAdmin) showView('admin');
+          else openOrderModal();
+        });
+      }
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => logout());
+      }
     }
 
     function badgeClass(status) {
