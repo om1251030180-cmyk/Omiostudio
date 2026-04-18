@@ -8225,18 +8225,19 @@
     async function login() {
       clearNotice('authNotice');
       
-      const loginEmailEl = document.getElementById('loginEmail');
+      const loginIdentifierEl = document.getElementById('loginIdentifier');
       const loginPasswordEl = document.getElementById('loginPassword');
       
-      if (!loginEmailEl || !loginPasswordEl) {
+      if (!loginIdentifierEl || !loginPasswordEl) {
         console.warn('⚠️ Login form elements not found');
+        showNotice('authNotice', 'err', 'Form elements not found.');
         return;
       }
       
-      const email = loginEmailEl.value.trim().toLowerCase();
+      const identifier = loginIdentifierEl.value.trim().toLowerCase();
       const password = loginPasswordEl.value;
-      if (!email || !password) {
-        showNotice('authNotice', 'err', 'Enter email and password.');
+      if (!identifier || !password) {
+        showNotice('authNotice', 'err', 'Enter email/phone and password.');
         return;
       }
 
@@ -8245,12 +8246,16 @@
           const data = await apiRequest('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email: identifier, password })
           });
           setToken(data.token);
           setUser(data.user);
         } else {
-          const user = getLocalUsers().find((u) => u.email === email && u.password === password);
+          const user = getLocalUsers().find((u) => {
+            const userEmail = u.email?.toLowerCase() || '';
+            const userPhone = u.phone?.toLowerCase() || '';
+            return (userEmail === identifier || userPhone === identifier) && u.password === password;
+          });
           if (!user) throw new Error('Invalid credentials');
           if (user.role !== 'admin' && user.isActive === false) throw new Error('Account is inactive. Contact studio admin.');
           setToken(`local_${Date.now()}`);
