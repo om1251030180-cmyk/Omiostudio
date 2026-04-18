@@ -10125,13 +10125,14 @@
       
       gsap.from(element, {
         opacity: 0,
-        y: 40,
-        duration: 1,
+        y: 30,
+        duration: 0.8,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: element,
-          start: "top 80%",
-          end: "top 20%",
-          scrub: 0.5,
+          start: "top 85%",
+          end: "top 50%",
+          scrub: false,
           markers: false
         }
       });
@@ -10145,18 +10146,21 @@
       const items = document.querySelectorAll(selector);
       if (!items.length) return;
       
-      gsap.from(items, {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: selector,
-          start: "top 80%",
-          end: "top 40%",
-          scrub: 0.5,
-          markers: false
-        }
+      items.forEach((item, index) => {
+        gsap.from(item, {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          delay: index * 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            end: "top 50%",
+            scrub: false,
+            markers: false
+          }
+        });
       });
     }
 
