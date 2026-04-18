@@ -9024,6 +9024,13 @@
     function renderPortfolioFilters() {
       const filters = ['all', 'website', 'app', 'logo', 'branding', 'uiux'];
       const box = document.getElementById('portfolioFilters');
+      
+      // Check if element exists before attempting to modify
+      if (!box) {
+        console.warn('⚠️ portfolioFilters element not found - skipping filter rendering');
+        return;
+      }
+      
       box.innerHTML = filters.map((f) => `
         <button class="filter-btn ${state.serviceFilter === f ? 'active' : ''}" onclick="setPortfolioFilter('${f}')">${f === 'all' ? 'All' : f.toUpperCase()}</button>
       `).join('');
