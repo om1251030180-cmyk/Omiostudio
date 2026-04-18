@@ -203,6 +203,22 @@
       border-color: var(--primary);
     }
 
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .form-input.error {
+      border-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.08);
+    }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr auto;
@@ -535,22 +551,24 @@
           <!-- Email -->
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" class="form-input" placeholder="Enter your email" required />
+            <input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required />
+            <div class="error-message"></div>
           </div>
 
           <!-- Password -->
           <div class="form-group">
             <label class="form-label">Password</label>
-            <input type="password" class="form-input" placeholder="Enter your password" required />
+            <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required />
+            <div class="error-message"></div>
           </div>
 
           <!-- Remember & Forgot -->
           <div class="form-row">
             <label class="checkbox-label">
-              <input type="checkbox" />
+              <input type="checkbox" id="rememberMe" />
               <span>Remember for 30 days</span>
             </label>
-            <a href="#" class="forgot-password">Forgot password?</a>
+            <a href="reset-password.html" class="forgot-password">Forgot password?</a>
           </div>
 
           <!-- Sign In Button -->
@@ -650,8 +668,82 @@
 
     function handleLogin(event) {
       event.preventDefault();
-      alert('Login functionality would be implemented here');
-      // In a real app, this would make an API call
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      // Validation
+      if (!validateEmail(email)) {
+        showError('loginEmail', 'Please enter a valid email');
+        return;
+      }
+
+      if (!password) {
+        showError('loginPassword', 'Password is required');
+        return;
+      }
+
+      // Check credentials
+      try {
+        const users = JSON.parse(localStorage.getItem('omio_users') || '[]');
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (!user) {
+          showError('loginPassword', 'Invalid email or password');
+          return;
+        }
+
+        // Store session
+        const sessionData = {
+          userId: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          loginTime: new Date().toISOString()
+        };
+
+        if (rememberMe) {
+          localStorage.setItem('omio_session', JSON.stringify(sessionData));
+          localStorage.setItem('omio_remember', 'true');
+        } else {
+          sessionStorage.setItem('omio_session', JSON.stringify(sessionData));
+          localStorage.removeItem('omio_remember');
+        }
+
+        // Success
+        alert('Login successful!');
+        window.location.href = 'index.html';
+      } catch (err) {
+        alert('Error during login. Please try again.');
+      }
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function showError(inputId, message) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      
+      const errorDiv = input.parentElement.querySelector('.error-message');
+      if (!errorDiv) {
+        const err = document.createElement('div');
+        err.className = 'error-message show';
+        err.textContent = message;
+        input.parentElement.appendChild(err);
+      } else {
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+      }
+      
+      input.classList.add('error');
+
+      input.addEventListener('focus', () => {
+        input.classList.remove('error');
+        if (errorDiv) errorDiv.classList.remove('show');
+      }, { once: true });
     }
 
     // Initialize theme

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - Omio Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6f63ff;
+      --primary-light: #7b7cff;
+      --primary-dark: #5a4ce3;
+      --secondary: #66e0d2;
+      --accent: #ff5722;
+      --dark-bg: #0a0e27;
+      --dark-surface: #1a1f44;
+      --dark-text: #ffffff;
+      --dark-text-soft: #a0a8c8;
+      --dark-border: rgba(139, 92, 246, 0.15);
+      --light-bg: #f0f5ff;
+      --light-surface: #ffffff;
+      --light-text: #1a1f44;
+      --light-text-soft: #666666;
+      --light-border: rgba(111, 99, 255, 0.15);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--dark-bg);
+      color: var(--dark-text);
+      overflow-x: hidden;
+    }
+
+    body[data-theme='light'] {
+      background: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    .signup-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left Panel - Form */
+    .signup-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 40px;
+      background: var(--dark-surface);
+      position: relative;
+      z-index: 10;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    body[data-theme='light'] .signup-panel {
+      background: var(--light-surface);
+    }
+
+    .signup-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(111, 99, 255, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(102, 224, 210, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .signup-content {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .signup-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .signup-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .signup-logo img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .signup-brand {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .signup-brand {
+      color: var(--light-text-soft);
+    }
+
+    .signup-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .signup-subtitle {
+      font-size: 0.9rem;
+      color: var(--dark-text-soft);
+      margin-bottom: 24px;
+    }
+
+    body[data-theme='light'] .signup-subtitle {
+      color: var(--light-text-soft);
+    }
+
+    /* Tab Navigation */
+    .signup-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: rgba(139, 92, 246, 0.08);
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      color: var(--dark-text-soft);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(111, 99, 255, 0.3);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--dark-text);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .form-label {
+      color: var(--light-text-soft);
+    }
+
+    .form-input {
+      padding: 11px 14px;
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--dark-text);
+      font-size: 0.9rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .form-input::placeholder {
+      color: var(--dark-text-soft);
+      opacity: 0.5;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      background: rgba(139, 92, 246, 0.12);
+      box-shadow: 0 0 0 3px rgba(111, 99, 255, 0.1);
+    }
+
+    body[data-theme='light'] .form-input {
+      background: rgba(111, 99, 255, 0.06);
+      border-color: var(--light-border);
+      color: var(--light-text);
+    }
+
+    body[data-theme='light'] .form-input:focus {
+      background: rgba(111, 99, 255, 0.1);
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 16px;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .checkbox-label {
+      color: var(--light-text-soft);
+    }
+
+    .checkbox-label input {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .form-input.error {
+      border-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.08);
+    }
+
+    .signup-button {
+      width: 100%;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s var(--ease);
+      box-shadow: 0 8px 24px rgba(111, 99, 255, 0.3);
+      margin-bottom: 12px;
+    }
+
+    .signup-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(111, 99, 255, 0.4);
+    }
+
+    .signup-button:active {
+      transform: translateY(0);
+    }
+
+    .signup-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+      color: var(--dark-text-soft);
+      font-size: 0.8rem;
+    }
+
+    body[data-theme='light'] .divider {
+      color: var(--light-text-soft);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--dark-border);
+    }
+
+    body[data-theme='light'] .divider::before,
+    body[data-theme='light'] .divider::after {
+      background: var(--light-border);
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .social-button {
+      padding: 11px 12px;
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-button:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    body[data-theme='light'] .social-button {
+      background: rgba(111, 99, 255, 0.06);
+      border-color: var(--light-border);
+    }
+
+    body[data-theme='light'] .social-button:hover {
+      background: rgba(111, 99, 255, 0.12);
+    }
+
+    .login-link {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .login-link {
+      color: var(--light-text-soft);
+    }
+
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: var(--secondary);
+    }
+
+    /* Right Panel - Brand */
+    .brand-panel {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      filter: blur(40px);
+    }
+
+    .brand-panel::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+      filter: blur(30px);
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #fff;
+    }
+
+    .brand-icon {
+      font-size: 3.5rem;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .brand-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .brand-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.95;
+      margin-bottom: 32px;
+      max-width: 320px;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1050px) {
+      .signup-container {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-panel {
+        display: none;
+      }
+
+      .signup-panel {
+        padding: 40px 20px;
+      }
+
+      .signup-content {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .signup-panel {
+        padding: 30px 20px;
+        justify-content: flex-start;
+        padding-top: 40px;
+      }
+
+      .signup-title {
+        font-size: 1.4rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .signup-tabs {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1px solid var(--dark-border);
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--dark-text);
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+    }
+
+    body[data-theme='light'] .theme-toggle {
+      border-color: var(--light-border);
+      background: rgba(111, 99, 255, 0.06);
+    }
+
+    body[data-theme='light'] .theme-toggle:hover {
+      background: rgba(111, 99, 255, 0.12);
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .success-message {
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid #4caf50;
+      color: #4caf50;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+
+  <div class="signup-container">
+    <!-- Left Panel - Signup Form -->
+    <div class="signup-panel">
+      <div class="signup-content">
+        <!-- Header -->
+        <div class="signup-header">
+          <div class="signup-logo"><img src="logo.svg" alt="Omio" /></div>
+          <div class="signup-brand">Omio Studio</div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="signup-title">Create Account</h1>
+        <p class="signup-subtitle">Join our community and start creating amazing projects</p>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMsg">Account created successfully! Redirecting to login...</div>
+
+        <!-- Tab Navigation -->
+        <div class="signup-tabs">
+          <button class="tab-btn active" onclick="switchTab('email')">Email</button>
+          <button class="tab-btn" onclick="switchTab('phone')">Phone</button>
+        </div>
+
+        <!-- Email Signup Form -->
+        <form id="emailForm" class="form-section active" onsubmit="handleEmailSignup(event)">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="emailName" placeholder="Enter your full name" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="emailAddress" placeholder="Enter your email" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="emailPassword" placeholder="Create a strong password" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-input" id="emailConfirmPassword" placeholder="Confirm your password" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Phone (Optional) -->
+          <div class="form-group">
+            <label class="form-label">Phone (Optional)</label>
+            <input type="tel" class="form-input" id="emailPhone" placeholder="+1 (555) 123-4567" />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Terms -->
+          <label class="checkbox-label">
+            <input type="checkbox" id="emailTerms" required />
+            <span>I agree to Terms of Service and Privacy Policy</span>
+          </label>
+
+          <!-- Sign Up Button -->
+          <button type="submit" class="signup-button">Create Account</button>
+        </form>
+
+        <!-- Phone Signup Form -->
+        <form id="phoneForm" class="form-section" onsubmit="handlePhoneSignup(event)">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="phoneName" placeholder="Enter your full name" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="phoneNumber" placeholder="+1 (555) 123-4567" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="phoneEmail" placeholder="Enter your email" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="phonePassword" placeholder="Create a strong password" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-input" id="phoneConfirmPassword" placeholder="Confirm your password" required />
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Terms -->
+          <label class="checkbox-label">
+            <input type="checkbox" id="phoneTerms" required />
+            <span>I agree to Terms of Service and Privacy Policy</span>
+          </label>
+
+          <!-- Sign Up Button -->
+          <button type="submit" class="signup-button">Create Account</button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">Or sign up with</div>
+
+        <!-- Social Buttons -->
+        <div class="social-buttons">
+          <button type="button" class="social-button" title="Sign up with Google">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.91 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+            </svg>
+          </button>
+          <button type="button" class="social-button" title="Sign up with GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </button>
+          <button type="button" class="social-button" title="Sign up with Apple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.05 2.29.89 3.08.89.79 0 2.38-1.1 4.02-.92 1.71.14 2.99.82 3.77 2.01-3.54 2.08-2.83 6.86.5 8.1-.64 1.86-1.73 2.84-3.37 3.59z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Login Link -->
+        <p class="login-link" style="margin-top: 16px;">
+          Already have an account? <a href="login.html">Sign in</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Panel - Brand -->
+    <div class="brand-panel">
+      <div class="brand-content">
+        <div class="brand-icon">🚀</div>
+        <h2 class="brand-title">Start Creating</h2>
+        <p class="brand-description">Join thousands of creative professionals using Omio Studio to bring their ideas to life.</p>
+        
+        <div class="brand-features">
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <span>Premium design tools</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <span>Collaborative workspace</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <span>Unlimited projects</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const THEME_KEY = 'omio_theme';
+
+    function getStoredTheme() {
+      try {
+        const value = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+        return value === 'dark' || value === 'light' ? value : '';
+      } catch {
+        return '';
+      }
+    }
+
+    function getPreferredTheme() {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+      return 'light';
+    }
+
+    function applyTheme(theme) {
+      const next = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch {}
+      updateThemeButton();
+    }
+
+    function updateThemeButton() {
+      const btn = document.querySelector('.theme-toggle');
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      btn.textContent = current === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    function switchTab(tab) {
+      // Update buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Update forms
+      document.querySelectorAll('.form-section').forEach(form => form.classList.remove('active'));
+      if (tab === 'email') {
+        document.getElementById('emailForm').classList.add('active');
+      } else {
+        document.getElementById('phoneForm').classList.add('active');
+      }
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePassword(password) {
+      return password.length >= 8;
+    }
+
+    function validatePhone(phone) {
+      const re = /^[\d\s\-\+\(\)]+$/;
+      return re.test(phone) && phone.replace(/\D/g, '').length >= 10;
+    }
+
+    function handleEmailSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById('emailName').value;
+      const email = document.getElementById('emailAddress').value;
+      const password = document.getElementById('emailPassword').value;
+      const confirmPassword = document.getElementById('emailConfirmPassword').value;
+      const phone = document.getElementById('emailPhone').value;
+      const terms = document.getElementById('emailTerms').checked;
+
+      // Validation
+      let isValid = true;
+
+      if (!name.trim()) {
+        showError('emailName', 'Name is required');
+        isValid = false;
+      }
+
+      if (!validateEmail(email)) {
+        showError('emailAddress', 'Please enter a valid email');
+        isValid = false;
+      }
+
+      if (!validatePassword(password)) {
+        showError('emailPassword', 'Password must be at least 8 characters');
+        isValid = false;
+      }
+
+      if (password !== confirmPassword) {
+        showError('emailConfirmPassword', 'Passwords do not match');
+        isValid = false;
+      }
+
+      if (phone && !validatePhone(phone)) {
+        showError('emailPhone', 'Please enter a valid phone number');
+        isValid = false;
+      }
+
+      if (!terms) {
+        alert('Please accept the terms and conditions');
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Save user data
+      const userData = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        let users = JSON.parse(localStorage.getItem('omio_users') || '[]');
+        
+        if (users.some(u => u.email === email)) {
+          showError('emailAddress', 'This email is already registered');
+          return;
+        }
+
+        users.push(userData);
+        localStorage.setItem('omio_users', JSON.stringify(users));
+        
+        // Show success message
+        const successMsg = document.getElementById('successMsg');
+        successMsg.classList.add('show');
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+      } catch (err) {
+        alert('Error creating account. Please try again.');
+      }
+    }
+
+    function handlePhoneSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById('phoneName').value;
+      const phone = document.getElementById('phoneNumber').value;
+      const email = document.getElementById('phoneEmail').value;
+      const password = document.getElementById('phonePassword').value;
+      const confirmPassword = document.getElementById('phoneConfirmPassword').value;
+      const terms = document.getElementById('phoneTerms').checked;
+
+      // Validation
+      let isValid = true;
+
+      if (!name.trim()) {
+        showError('phoneName', 'Name is required');
+        isValid = false;
+      }
+
+      if (!validatePhone(phone)) {
+        showError('phoneNumber', 'Please enter a valid phone number');
+        isValid = false;
+      }
+
+      if (!validateEmail(email)) {
+        showError('phoneEmail', 'Please enter a valid email');
+        isValid = false;
+      }
+
+      if (!validatePassword(password)) {
+        showError('phonePassword', 'Password must be at least 8 characters');
+        isValid = false;
+      }
+
+      if (password !== confirmPassword) {
+        showError('phoneConfirmPassword', 'Passwords do not match');
+        isValid = false;
+      }
+
+      if (!terms) {
+        alert('Please accept the terms and conditions');
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Save user data
+      const userData = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        let users = JSON.parse(localStorage.getItem('omio_users') || '[]');
+        
+        if (users.some(u => u.email === email || u.phone === phone)) {
+          showError('phoneEmail', 'This email or phone is already registered');
+          return;
+        }
+
+        users.push(userData);
+        localStorage.setItem('omio_users', JSON.stringify(users));
+        
+        // Show success message
+        const successMsg = document.getElementById('successMsg');
+        successMsg.classList.add('show');
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+      } catch (err) {
+        alert('Error creating account. Please try again.');
+      }
+    }
+
+    function showError(inputId, message) {
+      const input = document.getElementById(inputId);
+      const errorDiv = input.parentElement.querySelector('.error-message');
+      input.classList.add('error');
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+
+      input.addEventListener('focus', () => {
+        input.classList.remove('error');
+        errorDiv.classList.remove('show');
+      }, { once: true });
+    }
+
+    // Initialize theme
+    applyTheme(getStoredTheme() || getPreferredTheme());
+  </script>
+</body>
+</html>
