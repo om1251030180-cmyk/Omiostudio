@@ -111,11 +111,11 @@ html, body {
 .layout {
   position: relative;
   z-index: 1;
-  padding-left: 230px;
+  padding-left: 0;
   transition: padding-left var(--ease);
 }
 
-body.side-collapsed .layout { padding-left: 90px; }
+body.side-collapsed .layout { padding-left: 0; }
 
 .side-rail {
   position: fixed;
@@ -1256,7 +1256,7 @@ select {
 }
 
 @media (max-width: 1050px) {
-  .layout { padding-left: 92px; }
+  .layout { padding-left: 0; }
   .side-rail { width: 74px; padding: 12px 10px; }
   .rail-label, .rail-logo span { display: none; }
   .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 6; }
