@@ -5156,6 +5156,175 @@
       }
     }
 
+    /* Premium Testimonials Section */
+    .premium-testimonials-section {
+      padding: 100px 0;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.05) 0%, rgba(236, 72, 153, 0.03) 100%);
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .testimonials-header h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-family: var(--font-brand);
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #ffd60a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .testimonials-header p {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .testimonial-review-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(111, 99, 255, 0.08));
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial-review-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.6s ease;
+      z-index: 0;
+    }
+
+    .testimonial-review-card:hover::before {
+      left: 100%;
+    }
+
+    .testimonial-review-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(139, 92, 246, 0.4);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(111, 99, 255, 0.12));
+      box-shadow: 0 20px 50px rgba(111, 99, 255, 0.2);
+    }
+
+    .testimonial-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      font-weight: 300;
+      min-height: 100px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .testimonial-meta {
+      border-top: 1px solid rgba(139, 92, 246, 0.15);
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .testimonial-name {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+
+    .testimonial-source {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .source-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .source-ios {
+      background: rgba(111, 99, 255, 0.3);
+      color: #6f63ff;
+    }
+
+    .source-android {
+      background: rgba(102, 224, 210, 0.3);
+      color: #66e0d2;
+    }
+
+    .source-web {
+      background: rgba(255, 106, 0, 0.3);
+      color: #ff8a5b;
+    }
+
+    @media (max-width: 768px) {
+      .premium-testimonials-section {
+        padding: 60px 20px;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .testimonial-review-card {
+        padding: 24px;
+      }
+
+      .testimonials-header h2 {
+        font-size: 1.8rem;
+      }
+    }
+
     /* Footer Styles */
     .footer {
       background: var(--bg-base);
@@ -6188,6 +6357,20 @@
       <div id="websiteDemoStage"></div>
     </div>
   </div>
+
+  <!-- Premium Testimonials Section -->
+  <section class="premium-testimonials-section">
+    <div class="container">
+      <div class="testimonials-header">
+        <h2>Loved by Creators & Teams</h2>
+        <p>See what our amazing clients have to say about their experience</p>
+      </div>
+
+      <div class="testimonials-grid" id="testimonials-grid">
+        <!-- Testimonials will be generated here -->
+      </div>
+    </div>
+  </section>
 
   <!-- Footer Section -->
   <footer class="footer">
@@ -9997,9 +10180,108 @@
       });
     }
 
+    // ============================================
+    // PREMIUM TESTIMONIALS
+    // ============================================
+
+    /**
+     * Premium testimonials data
+     * Superlist-style customer reviews
+     */
+    const premiumTestimonials = [
+      {
+        text: "Amazing design and functionality! This is the perfect solution for managing my projects and keeping everything organized. The attention to detail is incredible.",
+        name: "Sarah Chen",
+        source: "iOS App Store",
+        stars: 5
+      },
+      {
+        text: "This app makes you motivated to achieve what you want. It's so fun to use and incredibly intuitive. I've tried many productivity apps, and this one stands out.",
+        name: "Marcus Johnson",
+        source: "iOS App Store",
+        stars: 5
+      },
+      {
+        text: "Incredibly easy to use and minimalist, perfect for my needs. I love how it combines simplicity with powerful features that actually work.",
+        name: "Clément",
+        source: "Google Play Store",
+        stars: 5
+      },
+      {
+        text: "Powerful and very well made. The ability to create tasks straight from taking notes is genius. No need to swap apps - everything flows seamlessly.",
+        name: "FortierP",
+        source: "iOS App Store",
+        stars: 5
+      },
+      {
+        text: "A ton of to-do apps, but this one works best. There's power in simple but flexible systems. The equivalent of having a pen and paper with a dedicated space.",
+        name: "Alex Rivera",
+        source: "Google Play Store",
+        stars: 5
+      },
+      {
+        text: "Excellent tool! I used to use Google Tasks and Todoist, but now with this app, I feel it's a combination of both. The comfort level is unmatched.",
+        name: "Bernabé",
+        source: "Google Play Store",
+        stars: 5
+      },
+      {
+        text: "This app is changing my life for the better. The design is beautiful, and the functionality is exactly what I needed to boost productivity.",
+        name: "Emma Wilson",
+        source: "iOS App Store",
+        stars: 5
+      },
+      {
+        text: "Best decision I made for my workflow. The seamless integration with my daily routine and the intuitive interface make it indispensable.",
+        name: "David Park",
+        source: "Google Play Store",
+        stars: 5
+      },
+      {
+        text: "Finally found an app that doesn't overcomplicate things. Clean interface, powerful features, and the support is outstanding!",
+        name: "Lisa Anderson",
+        source: "iOS App Store",
+        stars: 5
+      }
+    ];
+
+    /**
+     * Render premium testimonials grid
+     */
+    function renderPremiumTestimonials() {
+      const grid = document.getElementById('testimonials-grid');
+      if (!grid) return;
+
+      grid.innerHTML = premiumTestimonials.map((testimonial, index) => `
+        <div class="testimonial-review-card" style="animation-delay: ${index * 0.05}s;">
+          <div class="testimonial-content">
+            <div class="testimonial-stars">
+              ${'⭐'.repeat(testimonial.stars)}
+            </div>
+            <p class="testimonial-text">"${testimonial.text}"</p>
+            <div class="testimonial-meta">
+              <div class="testimonial-name">${testimonial.name}</div>
+              <div class="testimonial-source">
+                <span class="source-icon ${testimonial.source.includes('iOS') ? 'source-ios' : testimonial.source.includes('Android') ? 'source-android' : 'source-web'}">
+                  ${testimonial.source.includes('iOS') ? '🍎' : testimonial.source.includes('Android') ? '🤖' : '🌐'}
+                </span>
+                ${testimonial.source}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Animate testimonials on scroll
+      animateStaggerGrid('.testimonial-review-card');
+    }
+
     function initAnimations() {
       // Initialize scroll progress bar
       initScrollProgress();
+
+      // Render premium testimonials
+      renderPremiumTestimonials();
 
       const fadeUp = document.querySelectorAll('.reveal');
       fadeUp.forEach((el) => {
