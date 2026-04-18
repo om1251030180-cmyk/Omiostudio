@@ -7906,9 +7906,12 @@
     }
 
     function openAuthModal(tab = 'login') {
+      console.log('🔐 openAuthModal called with tab:', tab);
       if (tab === 'register') {
+        console.log('📍 Redirecting to signup.html');
         window.location.href = 'signup.html';
       } else {
+        console.log('📍 Redirecting to login.html');
         window.location.href = 'login.html';
       }
     }
@@ -8123,17 +8126,30 @@
 
     function renderNav() {
       const nav = document.getElementById('navRight');
+      if (!nav) {
+        console.warn('⚠️ navRight element not found');
+        return;
+      }
+      
       const railLoginBtn = document.querySelector('[onclick*="openAuthModal(\'login\')"]');
       
       if (!state.user) {
+        console.log('👤 User not logged in - showing auth buttons');
         nav.innerHTML = `
           <button class="nav-signin" onclick="openAuthModal('login')" id="headerLoginBtn">Sign in</button>
           <button class="nav-signup" onclick="openAuthModal('register')" id="headerGetStartedBtn">Get Started</button>
         `;
+        // Verify buttons were created
+        const loginBtn = document.getElementById('headerLoginBtn');
+        const getStartedBtn = document.getElementById('headerGetStartedBtn');
+        console.log('✅ Login button exists:', !!loginBtn);
+        console.log('✅ Get Started button exists:', !!getStartedBtn);
+        
         if (railLoginBtn) railLoginBtn.style.display = 'flex';
         return;
       }
 
+      console.log('👤 User logged in as:', state.user.name);
       const first = state.user.name?.split(' ')[0] || 'User';
       const isAdmin = state.user.role === 'admin';
       nav.innerHTML = `
