@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omio Studio - Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary: #ec4899;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark-bg: #0f172a;
+      --dark-card: #1e293b;
+      --dark-border: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      width: 100%;
+      height: 100vh;
+    }
+
+    /* TOP NAVBAR */
+    .top-navbar {
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 20px;
+      gap: 16px;
+      z-index: 100;
+      min-height: 70px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex-wrap: nowrap;
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .navbar-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: transparent;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+      border: none;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+
+    .navbar-item:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+    }
+
+    .navbar-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
+      border: 1px solid var(--primary);
+      color: var(--primary-light);
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-icon:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 100%;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    /* METRICS GRID */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .metric-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      min-width: 150px;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .metric-card:hover {
+      background: rgba(99, 102, 241, 0.05);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .metric-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    /* TABLES */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      background: var(--dark-card);
+      border-radius: 10px;
+      border: 1px solid var(--dark-border);
+      overflow: hidden;
+    }
+
+    .data-table thead {
+      background: rgba(99, 102, 241, 0.05);
+      border-bottom: 2px solid var(--dark-border);
+    }
+
+    .data-table th {
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.7rem;
+    }
+
+    .data-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-active { background: rgba(16, 185, 129, 0.2); color: #86efac; }
+    .status-pending { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+    .status-completed { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .status-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+    /* BUTTONS */
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #86efac;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.75rem;
+    }
+
+    /* MODALS */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 28px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1400px) {
+      .metrics-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .top-navbar {
+        padding: 0 16px;
+        gap: 12px;
+      }
+
+      .navbar-logo {
+        font-size: 1rem;
+      }
+
+      .navbar-item {
+        font-size: 0.7rem;
+        padding: 5px 8px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .main-content {
+        padding: 16px;
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-navbar {
+        padding: 0 12px;
+        gap: 8px;
+      }
+
+      .navbar-logo span {
+        display: none;
+      }
+
+      .navbar-item {
+        font-size: 0.65rem;
+        padding: 4px 6px;
+        gap: 2px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .main-content {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 8px 6px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+      }
+
+      .metric-value {
+        font-size: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar-menu {
+        gap: 1px;
+      }
+
+      .navbar-item {
+        font-size: 0.6rem;
+        padding: 3px 5px;
+      }
+
+      .btn-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+
+      .section-title {
+        font-size: 1rem;
+      }
+
+      .metric-value {
+        font-size: 1.3rem;
+      }
+
+      .metric-label {
+        font-size: 0.6rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 6px 4px;
+        font-size: 0.65rem;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP NAVIGATION -->
+    <nav class="top-navbar">
+      <div class="navbar-left">
+        <div class="navbar-logo">
+          <div class="logo-icon">âš™ï¸</div>
+          <span>Admin Dashboard</span>
+        </div>
+      </div>
+
+      <ul class="navbar-menu" id="navbarMenu">
+        <li><button class="navbar-item active" onclick="switchTab('dashboard', this)">ðŸ“Š Dashboard</button></li>
+        <li><button class="navbar-item" onclick="switchTab('clients-details', this)">ðŸ‘¥ Clients Details</button></li>
+        <li><button class="navbar-item" onclick="switchTab('orders', this)">ðŸ“¦ Orders</button></li>
+        <li><button class="navbar-item" onclick="switchTab('invoices', this)">ðŸ’³ Invoices</button></li>
+        <li><button class="navbar-item" onclick="switchTab('documents', this)">ðŸ“„ Documents</button></li>
+        <li><button class="navbar-item" onclick="switchTab('live-database', this)">ðŸ—„ï¸ Live Database</button></li>
+        <li><button class="navbar-item" onclick="switchTab('activity', this)">ðŸ“œ Activity</button></li>
+      </ul>
+
+      <div class="navbar-right">
+        <button class="btn-icon" onclick="loadAllData()">ðŸ”„</button>
+        <button class="btn-icon" onclick="handleLogout()">ðŸšª</button>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="section active">
+        <div class="section-header">
+          <h1 class="section-title">Dashboard</h1>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Total Clients</div>
+            <div class="metric-value" id="totalClients">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Active Orders</div>
+            <div class="metric-value" id="activeOrders">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Revenue</div>
+            <div class="metric-value" id="totalRevenue">â‚¹0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Invoices</div>
+            <div class="metric-value" id="totalInvoices">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Completed Orders</div>
+            <div class="metric-value" id="completedOrders">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending Orders</div>
+            <div class="metric-value" id="pendingOrders">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIENTS -->
+      <section id="clients" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Client Management</h1>
+          <button class="btn btn-primary" onclick="openClientModal()">âž• Add Client</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Total Orders</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTable">
+            <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading clients...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ORDERS -->
+      <section id="orders" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Order Management</h1>
+          <button class="btn btn-primary" onclick="openOrderModal()">âž• New Order</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- INVOICES -->
+      <section id="invoices" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Invoice Management</h1>
+          <button class="btn btn-primary" onclick="openInvoiceModal()">âž• Create Invoice</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Client</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesTable">
+            <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading invoices...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section id="documents" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Document Management</h1>
+          <button class="btn btn-primary" onclick="openDocumentModal()">ðŸ“¤ Upload Document</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Document Type</th>
+              <th>File Name</th>
+              <th>Uploaded By</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="documentsTable">
+            <tr><td colspan="6" style="text-align: center; padding: 20px;">No documents uploaded</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- CLIENTS DETAILS -->
+      <section id="clients-details" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Clients Details</h1>
+          <button class="btn btn-primary" onclick="openAddClientModal()">âž• Add New Client</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientsDetailsTable">
+            <tr><td colspan="6" style="text-align: center; padding: 20px;">Loading clients...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- LIVE DATABASE -->
+      <section id="live-database" class="section">
+        <div class="section-header">
+          <h1 class="section-title">Live Database</h1>
+          <button class="btn btn-primary" onclick="loadLiveDatabase()">ðŸ”„ Refresh</button>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <h3 style="margin-bottom: 12px;">ðŸ‘¤ Active Sessions (Live Users)</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Token</th>
+                <th>Last Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sessionsTable">
+              <tr><td colspan="6" style="text-align: center; padding: 20px;">No active sessions</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <h3 style="margin-bottom: 12px;">ðŸ”‘ Password Reset Tokens</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User Email</th>
+                <th>Token</th>
+                <th>Created At</th>
+                <th>Expires At</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tokensTable">
+              <tr><td colspan="6" style="text-align: center; padding: 20px;">No reset tokens</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom: 12px;">ðŸ“‹ Database Statistics</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+            <div class="card">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Total Users</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="dbTotalUsers">0</div>
+            </div>
+            <div class="card">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Total Orders</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="dbTotalOrders">0</div>
+            </div>
+            <div class="card">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Database Size</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="dbSize">Calculating...</div>
+            </div>
+            <div class="card">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Last Updated</div>
+              <div style="font-size: 0.9rem; font-weight: 600;" id="dbLastUpdate">-</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY LOG -->
+      <section id="activity" class="section">
+        <h1 class="section-title">Activity Log</h1>
+        <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid var(--dark-border); border-radius: 8px; padding: 16px; font-family: 'Courier New', monospace; font-size: 0.85rem; max-height: 500px; overflow-y: auto;" id="activityLog">
+          <div style="color: var(--text-muted);">â€¢ System initialized</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ORDER DETAILS MODAL -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Order Details</span>
+        <button class="modal-close" onclick="closeOrderModal()">Ã—</button>
+      </div>
+      <div id="orderDetails"></div>
+    </div>
+  </div>
+
+  <!-- INVOICE MODAL -->
+  <div id="invoiceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Create/Edit Invoice</span>
+        <button class="modal-close" onclick="closeInvoiceModal()">Ã—</button>
+      </div>
+      <form onsubmit="saveInvoice(event)">
+        <div class="form-group">
+          <label class="form-label">Invoice Number</label>
+          <input type="text" class="form-input" id="invoiceNum" placeholder="INV-001" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client</label>
+            <select class="form-select" id="invoiceClient" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount (â‚¹)</label>
+            <input type="number" class="form-input" id="invoiceAmount" placeholder="0" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Invoice Date</label>
+            <input type="date" class="form-input" id="invoiceDate" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input type="date" class="form-input" id="invoiceDueDate" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="invoiceDesc" placeholder="Invoice description..." rows="3"></textarea>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">ðŸ’¾ Create Invoice</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeInvoiceModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DOCUMENT UPLOAD MODAL -->
+  <div id="documentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Upload Document</span>
+        <button class="modal-close" onclick="closeDocumentModal()">Ã—</button>
+      </div>
+      <form onsubmit="uploadDocument(event)">
+        <div class="form-group">
+          <label class="form-label">Order ID</label>
+          <input type="text" class="form-input" id="docOrderId" placeholder="ORD-001" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Document Type</label>
+          <select class="form-select" id="docType" required>
+            <option value="">Select Document Type</option>
+            <option value="final-draft">Final Draft</option>
+            <option value="legal-document">Legal Document</option>
+            <option value="invoice">Invoice</option>
+            <option value="receipt">Receipt</option>
+            <option value="contract">Contract</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Upload File</label>
+          <input type="file" class="form-input" id="docFile" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="docDesc" placeholder="Document description..." rows="2"></textarea>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">ðŸ“¤ Upload</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeDocumentModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ORDER STATUS MODAL -->
+  <div id="statusModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Change Order Status</span>
+        <button class="modal-close" onclick="closeStatusModal()">Ã—</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Status</label>
+        <select class="form-select" id="newStatus">
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="statusNotes" placeholder="Add notes about status change..." rows="3"></textarea>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-success" style="flex: 1;" onclick="updateOrderStatus()">âœ“ Update Status</button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="closeStatusModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dynamic port detection
+    let API_BASE = 'http://localhost:4001/api';
+    const TOKEN_KEY = 'omio_token';
+    const USER_KEY = 'omio_user';
+
+    let currentUser = null;
+    let currentOrderId = null;
+    let ordersData = [];
+    let clientsData = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 Admin Dashboard Initializing...');
+      logActivity('Admin Dashboard Starting...');
+      
+      // Try to detect correct port
+      await detectPort();
+      console.log(`✅ Using API base: ${API_BASE}`);
+      
+      ensureAdmin();
+      console.log('✅ Admin verified');
+      
+      // Set up auto-refresh
+      loadAllData();
+      setInterval(loadAllData, 30000);
+      console.log('✅ Auto-refresh set to 30 seconds');
+    });
+
+    async function detectPort() {
+      for (let port = 4000; port <= 4009; port++) {
+        try {
+          const res = await fetch(`http://localhost:${port}/api/health`, { 
+            method: 'GET',
+            timeout: 1000 
+          });
+          if (res.ok) {
+            API_BASE = `http://localhost:${port}/api`;
+            console.log(`âœ“ Connected to server on port ${port}`);
+            return;
+          }
+        } catch (e) {
+          // Port not available, try next
+        }
+      }
+      console.warn('âš  Could not detect server port, using default 4001');
+    }
+
+    function ensureAdmin() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const user = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+
+      if (!token || !user || user.role !== 'admin' || user.email !== 'admin@omio.studio') {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      logActivity(`Admin ${user.email} logged in`);
+    }
+
+    async function loadAllData() {
+      try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        console.log(`📊 Loading dashboard data... Token: ${token ? '✓' : '✗'}`);
+        logActivity('Loading dashboard data from database...');
+        
+        // Fetch real stats from backend
+        const statsRes = await fetch(`${API_BASE}/admin/stats`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(`📈 Stats API Response: ${statsRes.status}`);
+        
+        if (!statsRes.ok) {
+          const errText = await statsRes.text();
+          throw new Error(`Stats failed: ${statsRes.status} - ${errText}`);
+        }
+        
+        const stats = await statsRes.json();
+        console.log('📊 Stats received:', stats);
+        
+        // Fetch revenue data
+        const revenueRes = await fetch(`${API_BASE}/admin/revenue`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const revenue = revenueRes.ok ? await revenueRes.json() : { totalRevenue: 0, totalInvoices: 0 };
+        
+        console.log('💰 Revenue received:', revenue);
+        
+        // Update metrics with real data
+        document.getElementById('totalClients').textContent = stats.totalUsers || 0;
+        document.getElementById('activeOrders').textContent = stats.pending || 0;
+        document.getElementById('totalRevenue').textContent = '₹' + (revenue.totalRevenue || 0).toLocaleString();
+        document.getElementById('totalInvoices').textContent = revenue.totalInvoices || 0;
+        document.getElementById('completedOrders').textContent = stats.completed || 0;
+        document.getElementById('pendingOrders').textContent = stats.inProgress || 0;
+
+        console.log('✅ Dashboard metrics updated');
+        
+        loadClients();
+        loadOrders();
+        loadInvoices();
+        
+        logActivity('Dashboard data loaded successfully from database');
+      } catch (error) {
+        console.error('❌ Load error:', error);
+        logActivity(`❌ Error loading data: ${error.message}`);
+      }
+    }
+
+    async function loadClients() {
+      try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(`👥 Clients API Response: ${res.status}`);
+        
+        if (!res.ok) throw new Error(`Clients failed: ${res.status}`);
+        
+        clientsData = await res.json();
+        console.log(`👥 Loaded ${clientsData.length} clients`);
+
+        const tbody = document.getElementById('clientsTable');
+        
+        if (!clientsData || clientsData.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">No clients yet</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = clientsData.map(c => `
+          <tr>
+            <td>${c.company || 'N/A'}</td>
+            <td>${c.name || 'N/A'}</td>
+            <td>${c.email || 'N/A'}</td>
+            <td>${c.phone || 'N/A'}</td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="viewClientOrders('${c.company || c.name}')">View</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('❌ Clients load error:', error);
+        logActivity(`❌ Error loading clients: ${error.message}`);
+        document.getElementById('clientsTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading clients</td></tr>';
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_BASE}/admin/orders`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(`📦 Orders API Response: ${res.status}`);
+        
+        if (!res.ok) throw new Error(`Orders failed: ${res.status}`);
+        
+        ordersData = await res.json();
+        console.log(`📦 Loaded ${ordersData.length} orders`);
+
+        const tbody = document.getElementById('ordersTable');
+        
+        if (!ordersData || ordersData.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">No orders yet</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = ordersData.slice(0, 20).map(o => {
+          const orderId = o._id || o.id;
+          const clientName = o.userName || (o.userId?.name || 'Unknown');
+          const service = o.serviceLabel || o.customService || o.serviceType || 'Service';
+          const amount = o.estimatedPrice || o.budget || '₹0';
+          const status = o.status || 'pending';
+          const created = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A';
+          
+          return `
+            <tr>
+              <td><strong>${String(orderId).slice(0, 15)}</strong></td>
+              <td>${clientName}</td>
+              <td>${service}</td>
+              <td>${amount}</td>
+              <td><span class="status-badge status-${status}">${status.toUpperCase()}</span></td>
+              <td>${created}</td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="viewOrder('${orderId}')">View</button>
+                <button class="btn btn-primary btn-sm" onclick="openStatusModal('${orderId}')">Status</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('❌ Orders load error:', error);
+        logActivity(`❌ Error loading orders: ${error.message}`);
+        document.getElementById('ordersTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading orders</td></tr>';
+      }
+    }
+
+    async function loadInvoices() {
+      try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const res = await fetch(`${API_BASE}/admin/orders`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(`📄 Invoices API Response: ${res.status}`);
+        
+        if (!res.ok) throw new Error(`Invoices failed: ${res.status}`);
+        
+        const orders = await res.json();
+        console.log(`📄 Generated invoices from ${orders.length} orders`);
+        
+        // Generate invoices from orders
+        const invoices = (orders || []).map((o, idx) => ({
+          id: `INV-${String(idx + 1).padStart(3, '0')}`,
+          client: o.userName || (o.userId?.name || 'Unknown'),
+          amount: o.estimatedPrice || o.budget || '₹0',
+          status: o.payment?.fullyPaid ? 'paid' : 'pending',
+          date: o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A',
+          dueDate: o.createdAt ? new Date(new Date(o.createdAt).getTime() + 30*24*60*60*1000).toLocaleDateString() : 'N/A'
+        })).slice(0, 10);
+
+        const tbody = document.getElementById('invoicesTable');
+        
+        if (!invoices || invoices.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--text-muted);">No invoices yet</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = invoices.map(inv => `
+          <tr>
+            <td><strong>${inv.id}</strong></td>
+            <td>${inv.client}</td>
+            <td>${inv.amount}</td>
+            <td><span class="status-badge ${inv.status === 'paid' ? 'status-completed' : 'status-pending'}">${inv.status.toUpperCase()}</span></td>
+            <td>${inv.date}</td>
+            <td>${inv.dueDate}</td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="downloadInvoice('${inv.id}')">ðŸ“¥ Download</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('❌ Invoices load error:', error);
+        logActivity(`❌ Error loading invoices: ${error.message}`);
+        document.getElementById('invoicesTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading invoices</td></tr>';
+      }
+    }
+
+    function switchTab(tabName, element) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.navbar-item').forEach(i => i.classList.remove('active'));
+      
+      const section = document.getElementById(tabName);
+      if (section) section.classList.add('active');
+      if (element) element.classList.add('active');
+      
+      // Load data specific to tab
+      if (tabName === 'clients-details') {
+        loadClientDetails();
+      } else if (tabName === 'live-database') {
+        loadLiveDatabase();
+      }
+    }
+
+    function viewOrder(orderId) {
+      currentOrderId = orderId;
+      
+      // Find order from already loaded data
+      const order = ordersData.find(o => (o._id || o.id) === orderId);
+      
+      if (!order) {
+        alert('Order not found');
+        return;
+      }
+      
+      const clientName = order.userName || (order.userId?.name || 'Unknown');
+      const service = order.serviceLabel || order.customService || order.serviceType || 'Service';
+      const amount = order.estimatedPrice || order.budget || 'â‚¹0';
+      const status = order.status || 'pending';
+      const created = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A';
+      
+      document.getElementById('orderDetails').innerHTML = `
+        <div class="card">
+          <h3>${String(orderId).slice(0, 20)}</h3>
+          <div style="display: grid; gap: 12px; margin-top: 16px;">
+            <div><strong>Client:</strong> ${clientName}</div>
+            <div><strong>Service:</strong> ${service}</div>
+            <div><strong>Amount:</strong> ${amount}</div>
+            <div><strong>Status:</strong> <span class="status-badge status-${status}">${status.toUpperCase()}</span></div>
+            <div><strong>Created:</strong> ${created}</div>
+            ${order.description ? `<div><strong>Description:</strong> ${order.description}</div>` : ''}
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="openStatusModal('${orderId}')">Change Status</button>
+            <button class="btn btn-success" onclick="approveOrder('${orderId}')">âœ“ Accept Order</button>
+            <button class="btn btn-danger" onclick="rejectOrder('${orderId}')">âœ— Reject Order</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('orderModal').classList.add('active');
+      logActivity(`Viewed order: ${orderId}`);
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('active');
+    }
+
+    function openStatusModal(orderId) {
+      currentOrderId = orderId;
+      document.getElementById('statusModal').classList.add('active');
+    }
+
+    function closeStatusModal() {
+      document.getElementById('statusModal').classList.remove('active');
+    }
+
+    function updateOrderStatus() {
+      const newStatus = document.getElementById('newStatus').value;
+      const notes = document.getElementById('statusNotes').value;
+      
+      logActivity(`Order ${currentOrderId} status changed to ${newStatus}`);
+      alert(`Order status updated to ${newStatus}`);
+      closeStatusModal();
+      loadOrders();
+    }
+
+    function approveOrder(orderId) {
+      logActivity(`Order approved: ${orderId}`);
+      alert(`Order ${orderId} has been approved!`);
+      closeOrderModal();
+      loadOrders();
+    }
+
+    function rejectOrder(orderId) {
+      const reason = prompt('Reason for rejection:');
+      if (reason) {
+        logActivity(`Order rejected: ${orderId} - Reason: ${reason}`);
+        alert(`Order ${orderId} has been rejected`);
+        closeOrderModal();
+        loadOrders();
+      }
+    }
+
+    function openInvoiceModal() {
+      document.getElementById('invoiceDate').valueAsDate = new Date();
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30);
+      document.getElementById('invoiceDueDate').valueAsDate = dueDate;
+      
+      // Populate clients dropdown
+      const select = document.getElementById('invoiceClient');
+      select.innerHTML = clientsData.map(c => `<option value="${c.company}">${c.company}</option>`).join('');
+      
+      document.getElementById('invoiceModal').classList.add('active');
+    }
+
+    function closeInvoiceModal() {
+      document.getElementById('invoiceModal').classList.remove('active');
+    }
+
+    function saveInvoice(e) {
+      e.preventDefault();
+      const invNum = document.getElementById('invoiceNum').value || 'INV-' + Date.now();
+      logActivity(`Invoice created: ${invNum}`);
+      alert(`Invoice ${invNum} created successfully!`);
+      closeInvoiceModal();
+      loadInvoices();
+    }
+
+    function openDocumentModal() {
+      document.getElementById('documentModal').classList.add('active');
+    }
+
+    function closeDocumentModal() {
+      document.getElementById('documentModal').classList.remove('active');
+    }
+
+    function uploadDocument(e) {
+      e.preventDefault();
+      const orderId = document.getElementById('docOrderId').value;
+      const docType = document.getElementById('docType').value;
+      const fileName = document.getElementById('docFile').files[0]?.name;
+      
+      logActivity(`Document uploaded: ${docType} for ${orderId}`);
+      alert(`Document uploaded successfully!`);
+      closeDocumentModal();
+    }
+
+    function downloadInvoice(invId) {
+      logActivity(`Invoice downloaded: ${invId}`);
+      alert(`Downloading ${invId}...`);
+    }
+
+    function viewClientOrders(company) {
+      switchTab('orders', document.querySelector('[onclick*="orders"]'));
+      logActivity(`Viewed orders for: ${company}`);
+    }
+
+    function openClientModal() {
+      alert('Add new client feature coming soon');
+    }
+
+    function openOrderModal() {
+      alert('New order form coming soon');
+    }
+
+    function handleLogout() {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      logActivity('Admin logged out');
+      window.location.href = 'index.html';
+    }
+
+    function logActivity(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      const log = document.getElementById('activityLog');
+      const entry = document.createElement('div');
+      entry.style.color = 'var(--text-muted)';
+      entry.textContent = `â€¢ ${message} at ${timestamp}`;
+      log.insertBefore(entry, log.firstChild);
+      
+      while (log.children.length > 100) {
+        log.removeChild(log.lastChild);
+      }
+    }
+
+    // ===== CLIENTS DETAILS SECTION =====
+    async function loadClientDetails() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem(TOKEN_KEY)}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to load clients');
+        
+        const clients = await res.json();
+        const tbody = document.getElementById('clientsDetailsTable');
+        
+        if (!clients || clients.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">No clients yet</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = clients.map(c => `
+          <tr>
+            <td><strong>${c.name || 'N/A'}</strong></td>
+            <td>${c.email || 'N/A'}</td>
+            <td>${c.phone || 'N/A'}</td>
+            <td>${c.company || 'N/A'}</td>
+            <td><span class="status-badge ${c.isActive === false ? 'status-pending' : 'status-active'}">
+              ${c.isActive === false ? 'INACTIVE' : 'ACTIVE'}
+            </span></td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="editClient('${c._id || c.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="suspendClient('${c._id || c.id}', '${c.name}')">Suspend</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        logActivity(`Error loading client details: ${error.message}`);
+        document.getElementById('clientsDetailsTable').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">Error loading clients</td></tr>';
+      }
+    }
+
+    function editClient(clientId) {
+      logActivity(`Editing client: ${clientId}`);
+      alert('Edit client feature coming soon');
+    }
+
+    function suspendClient(clientId, clientName) {
+      if (confirm(`Suspend client: ${clientName}?`)) {
+        logActivity(`Client suspended: ${clientId} - ${clientName}`);
+        alert(`Client ${clientName} has been suspended`);
+        loadClientDetails();
+      }
+    }
+
+    function openAddClientModal() {
+      alert('Add client feature coming soon');
+    }
+
+    // ===== LIVE DATABASE SECTION =====
+    async function loadLiveDatabase() {
+      try {
+        logActivity('Loading live database data...');
+        
+        // Fetch clients for sessions
+        const clientsRes = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem(TOKEN_KEY)}` }
+        });
+        const clients = clientsRes.ok ? await clientsRes.json() : [];
+        
+        // Simulate active sessions (in production, this would come from a real sessions table)
+        const activeSessions = clients.slice(0, 5).map((c, idx) => ({
+          id: `sess_${idx}`,
+          name: c.name,
+          email: c.email,
+          role: c.role || 'client',
+          token: `${localStorage.getItem(TOKEN_KEY)}`.slice(0, 20) + '...',
+          lastActive: new Date(Date.now() - Math.random() * 3600000).toLocaleString()
+        }));
+        
+        // Render active sessions
+        const sessionsTable = document.getElementById('sessionsTable');
+        if (activeSessions.length === 0) {
+          sessionsTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No active sessions</td></tr>';
+        } else {
+          sessionsTable.innerHTML = activeSessions.map(s => `
+            <tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${s.email}</td>
+              <td><span class="status-badge status-active">${s.role.toUpperCase()}</span></td>
+              <td><code style="font-size: 0.7rem; color: var(--text-muted);">${s.token}</code></td>
+              <td>${s.lastActive}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="revokeSession('${s.id}')">Revoke</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+        
+        // Simulate password reset tokens
+        const resetTokens = [
+          { email: 'test@example.com', token: 'abc123def456...', created: new Date(Date.now() - 3600000).toLocaleString(), expires: new Date(Date.now() + 3600000).toLocaleString(), status: 'Active' }
+        ];
+        
+        const tokensTable = document.getElementById('tokensTable');
+        if (resetTokens.length === 0) {
+          tokensTable.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No reset tokens</td></tr>';
+        } else {
+          tokensTable.innerHTML = resetTokens.map(t => `
+            <tr>
+              <td>${t.email}</td>
+              <td><code style="font-size: 0.7rem; color: var(--text-muted);">${t.token}</code></td>
+              <td>${t.created}</td>
+              <td>${t.expires}</td>
+              <td><span class="status-badge status-active">${t.status}</span></td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="invalidateToken('${t.token}')">Invalidate</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+        
+        // Update database stats
+        document.getElementById('dbTotalUsers').textContent = clients.length;
+        document.getElementById('dbTotalOrders').textContent = (ordersData || []).length;
+        document.getElementById('dbSize').textContent = 'Live';
+        document.getElementById('dbLastUpdate').textContent = new Date().toLocaleString();
+        
+        logActivity('Live database loaded successfully');
+      } catch (error) {
+        logActivity(`Error loading live database: ${error.message}`);
+      }
+    }
+
+    function revokeSession(sessionId) {
+      logActivity(`Session revoked: ${sessionId}`);
+      alert('Session has been revoked');
+      loadLiveDatabase();
+    }
+
+    function invalidateToken(token) {
+      logActivity(`Token invalidated: ${token}`);
+      alert('Reset token has been invalidated');
+      loadLiveDatabase();
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadAllData, 30000);
+  </script>
+</body>
+</html>

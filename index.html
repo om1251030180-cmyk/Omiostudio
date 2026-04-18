@@ -825,37 +825,27 @@
     }
 
     .nav-wrap {
-      --scroll-progress: 0%;
       position: sticky;
       top: 0;
       z-index: 999;
-      backdrop-filter: blur(8px);
-      background: rgba(10, 14, 39, 0.95);
-      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+      backdrop-filter: blur(0px);
+      background: transparent;
+      border-bottom: none;
       width: 100%;
       padding: 0;
       margin: 0;
       border-radius: 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: none;
       overflow: hidden;
     }
 
     :root[data-theme='light'] .nav-wrap {
-      background: rgba(255, 255, 255, 0.98);
-      border-bottom-color: rgba(111, 99, 255, 0.15);
+      background: transparent;
+      border-bottom-color: transparent;
     }
 
     /* Scroll Progress Bar */
-    .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #ffd60a 100%);
-      z-index: 1000;
-      will-change: width;
-      width: 0%;
-    }
+
 
     .nav {
       height: 70px;
@@ -5986,6 +5976,480 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       ENHANCED RESPONSIVE DESIGN (All Screen Sizes)
+       ═════════════════════════════════════════════════ */
+
+    /* Extra-large screens (1920px+) */
+    @media (min-width: 1920px) {
+      .container {
+        width: min(1600px, 90vw);
+        padding: 0 40px;
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 6vw, 4.5rem);
+      }
+
+      .features-grid {
+        gap: 32px;
+      }
+
+      .feature-card {
+        padding: 40px;
+      }
+    }
+
+    /* Large screens (1440px to 1919px) */
+    @media (min-width: 1440px) and (max-width: 1919px) {
+      .container {
+        width: min(1380px, 95vw);
+        padding: 0 30px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(2.5rem, 5.5vw, 3.8rem);
+      }
+
+      .features-grid {
+        gap: 28px;
+      }
+    }
+
+    /* Desktops (1024px to 1439px) */
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .container {
+        width: min(1200px, 95vw);
+        padding: 0 24px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .feature-card {
+        padding: 24px;
+      }
+
+      .nav {
+        height: 65px;
+        padding: 0 16px;
+        gap: 20px;
+      }
+
+      .nav-links {
+        gap: 4px;
+      }
+
+      .nav-signin, .nav-signup {
+        padding: 9px 16px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Tablets (768px to 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .container {
+        width: 100%;
+        padding: 0 20px;
+      }
+
+      html {
+        font-size: 15px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+      }
+
+      h2 {
+        font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .feature-card {
+        padding: 20px;
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+      }
+
+      .feature-card h3 {
+        font-size: 1.1rem;
+      }
+
+      .redesigned-hero {
+        padding: 60px 0 80px;
+      }
+
+      .nav {
+        height: 60px;
+        padding: 0 12px;
+        gap: 12px;
+      }
+
+      .logo-text {
+        font-size: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .nav-signin, .nav-signup {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+      }
+
+      button, a, input, select, textarea {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+
+    /* Medium mobile (640px to 767px) */
+    @media (min-width: 640px) and (max-width: 767px) {
+      html {
+        font-size: 14px;
+      }
+
+      .container {
+        width: 100%;
+        padding: 0 16px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+      }
+
+      h2 {
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .feature-card {
+        padding: 16px;
+      }
+
+      .feature-icon {
+        font-size: 1.8rem;
+      }
+
+      .feature-card h3 {
+        font-size: 1rem;
+      }
+
+      .redesigned-hero {
+        padding: 40px 0 60px;
+        border-radius: 20px;
+      }
+
+      .hero-badge {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        margin-bottom: 16px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .cta-primary, .cta-secondary {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+      }
+
+      .nav {
+        height: 56px;
+        padding: 0 12px;
+        gap: 8px;
+      }
+
+      .nav-right {
+        gap: 8px;
+      }
+
+      .nav-signin, .nav-signup {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+      }
+
+      button, a, input, select, textarea {
+        min-height: 44px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .stat-box {
+        padding: 16px;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Small mobile (480px to 639px) */
+    @media (min-width: 480px) and (max-width: 639px) {
+      html {
+        font-size: 13px;
+      }
+
+      .container {
+        width: 100%;
+        padding: 0 14px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+      }
+
+      h2 {
+        font-size: clamp(1rem, 2.5vw, 1.4rem);
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .feature-card {
+        padding: 12px;
+      }
+
+      .feature-icon {
+        font-size: 1.6rem;
+      }
+
+      .feature-card h3 {
+        font-size: 0.9rem;
+      }
+
+      .redesigned-hero {
+        padding: 30px 0 50px;
+        border-radius: 16px;
+      }
+
+      .nav {
+        height: 54px;
+        padding: 0 10px;
+        gap: 6px;
+      }
+
+      .nav-right {
+        gap: 6px;
+      }
+
+      .nav-signin, .nav-signup {
+        padding: 8px 10px;
+        font-size: 0.7rem;
+      }
+
+      .logo-text {
+        display: none;
+      }
+
+      button, a, input, select, textarea {
+        min-height: 42px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .stat-box {
+        padding: 12px;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      .modal {
+        width: min(95vw, 600px);
+        max-height: 85vh;
+        padding: 14px;
+      }
+
+      .modal.small {
+        width: min(92vw, 480px);
+      }
+    }
+
+    /* Extra-small mobile (360px to 479px) */
+    @media (max-width: 479px) {
+      html {
+        font-size: 12px;
+      }
+
+      .container {
+        width: 100%;
+        padding: 0 12px;
+      }
+
+      h1, .hero-title {
+        font-size: clamp(1rem, 3vw, 1.6rem);
+      }
+
+      h2 {
+        font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .feature-card {
+        padding: 12px;
+      }
+
+      .feature-icon {
+        font-size: 1.4rem;
+      }
+
+      .feature-card h3 {
+        font-size: 0.85rem;
+      }
+
+      .redesigned-hero {
+        padding: 20px 0 40px;
+        border-radius: 12px;
+      }
+
+      .hero-badge {
+        padding: 5px 10px;
+        font-size: 0.65rem;
+        margin-bottom: 12px;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .cta-primary, .cta-secondary {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+      }
+
+      .nav {
+        height: 52px;
+        padding: 0 10px;
+        gap: 4px;
+      }
+
+      .nav-right {
+        gap: 4px;
+      }
+
+      .nav-signin, .nav-signup {
+        padding: 7px 10px;
+        font-size: 0.65rem;
+      }
+
+      .logo-mark {
+        width: 24px;
+        height: 24px;
+      }
+
+      .logo-text {
+        display: none;
+      }
+
+      button, a, input, select, textarea {
+        min-height: 40px;
+        min-width: 40px;
+      }
+
+      .hero-stats {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .stat-item {
+        min-width: 100px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .stat-box {
+        padding: 10px;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+      }
+
+      .stat-name {
+        font-size: 0.75rem;
+      }
+
+      .modal {
+        width: min(90vw, 560px);
+        max-height: 80vh;
+        padding: 12px;
+      }
+
+      .modal.small {
+        width: min(88vw, 440px);
+      }
+
+      .modal-close {
+        width: 28px;
+        height: 28px;
+        font-size: 1.2rem;
+      }
+
+      .section {
+        padding: 30px 0;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════
        ADVANCED COMPONENT STYLES
        ═════════════════════════════════════════════════ */
 
@@ -6130,9 +6594,6 @@
   </style>
 </head>
 <body data-parallax-preset="medium">
-  <!-- Scroll Progress Bar -->
-  <div class="scroll-progress"></div>
-
   <div class="mesh"></div>
   <div class="blob b1"></div>
   <div class="blob b2"></div>
@@ -6162,14 +6623,8 @@
           </div>
         </div>
 
-        <!-- Right: Auth Buttons -->
-        <div class="nav-right" id="navRight">
-          <button class="nav-signin" onclick="openAuthModal('login')" id="signInBtn">Sign in</button>
-          <button class="nav-signup" onclick="openOrderModal()" id="createProjectBtn">Start Project</button>
-          <div id="userProfile" style="display: none !important; display: flex; align-items: center; gap: 12px; padding: 0 8px;">
-            <button class="nav-signin" onclick="handleLogout()" style="background: rgba(255, 107, 107, 0.2); border-color: #ff6b6b;">Logout</button>
-          </div>
-        </div>
+        <!-- Right: Auth Buttons (Managed by renderNav()) -->
+        <div class="nav-right" id="navRight"></div>
       </div>
     </div>
 
@@ -6273,7 +6728,7 @@
             <option value="az">A to Z</option>
           </select>
         </div>
-        <div id="servicesGrid" class="services-grid-redesigned"></div>
+        <div id="servicesGrid" class="services-grid-redesigned" data-card-group></div>
       </div>
 
       <!-- Process Section -->
@@ -6282,7 +6737,7 @@
           <h2>Our Process</h2>
           <p>From discovery to launch with transparency at every step</p>
         </div>
-        <div id="processGrid" class="process-grid"></div>
+        <div id="processGrid" class="process-grid" data-card-group></div>
       </div>
 
       <!-- Stats Section (Prometheus-inspired) -->
@@ -6348,390 +6803,319 @@
       </div>
     </section>
 
-    <section id="view-dashboard" class="view">
-      <div class="container panel-wrap">
-        <div class="dashboard-header glass" style="background: linear-gradient(135deg, rgba(244, 247, 255, 0.95), rgba(240, 244, 255, 0.92)); border-bottom: 1px solid rgba(120, 135, 200, 0.15); padding: 24px 20px; margin-bottom: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(120, 135, 200, 0.08);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div>
-              <h2 style="font-size: 1.8rem; margin: 0; color: var(--ink); font-weight: 800;">Client Dashboard</h2>
-              <p style="margin: 4px 0 0 0; color: var(--ink-soft); font-size: 0.9rem;">Welcome back, <strong id="dashClientName" style="color: var(--ink);">User</strong></p>
-            </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-              <span id="apiModeBadge" class="api-pill"></span>
-              <span id="liveSyncBadgeClient" class="api-pill">Last Sync: --</span>
-              <button id="notificationsBell" onclick="showClientPanel('notifications')" style="flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.3); color: var(--ink); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative;" title="Notifications">
-                🔔
-                <span id="notificationBadge" style="position: absolute; top: -5px; right: -5px; background: #ff006e; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; display: none;">0</span>
-              </button>
-              <button onclick="openOrderModal()" style="flex: 0 0 auto; padding: 8px 16px; border-radius: 8px; background: rgba(168, 85, 247, 0.3); border: 1px solid rgba(168, 85, 247, 0.5); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" title="Create New Order">
-                ➕ New Order
-              </button>
-              <button onclick="logout()" style="flex: 0 0 auto; padding: 8px 16px; border-radius: 8px; background: rgba(255, 0, 110, 0.2); border: 1px solid rgba(255, 0, 110, 0.3); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" title="Logout">
-                🚪 Logout
-              </button>
-            </div>
-          </div>
-          
-          <nav class="dashboard-tabs glass" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 0; border-top: 1px solid rgba(120, 135, 200, 0.1); padding-top: 16px;">
-            <button id="tab-overview" class="dashboard-tab active" onclick="showClientPanel('overview')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              📊 Overview
-            </button>
-            <button id="tab-orders" class="dashboard-tab" onclick="showClientPanel('orders')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              📦 My Orders
-            </button>
-            <button id="tab-workspace" class="dashboard-tab" onclick="showClientPanel('workspace')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              🏗️ Workspace
-            </button>
-            <button id="tab-works" class="dashboard-tab" onclick="showClientPanel('works')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              ✨ Delivered Works
-            </button>
-            <button id="tab-connect" class="dashboard-tab" onclick="showClientPanel('connect')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              💬 Connect
-            </button>
-            <button id="tab-ai" class="dashboard-tab" onclick="showClientPanel('ai')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              🤖 AI Center
-            </button>
-            <button id="tab-notifications" class="dashboard-tab" onclick="showClientPanel('notifications')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              🔔 Notifications
-            </button>
-            <button id="tab-profile" class="dashboard-tab" onclick="showClientPanel('profile')" style="flex: 0 0 auto; padding: 10px 16px; border: none; background: transparent; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s ease; position: relative; white-space: nowrap;">
-              👤 Profile
-            </button>
-          </nav>
+    <section id="view-admin" class="view">
+      <style>
+        .admin-container {
+          display: grid;
+          grid-template-columns: 250px 1fr;
+          gap: 0;
+          min-height: 100vh;
+          background: #0a0e27;
+        }
+
+        .admin-sidebar {
+          background: rgba(15, 8, 40, 0.95);
+          border-right: 1px solid rgba(139, 92, 246, 0.2);
+          padding: 20px;
+          position: sticky;
+          top: 0;
+          height: 100vh;
+          overflow-y: auto;
+        }
+
+        .admin-sidebar h2 {
+          font-size: 1.3rem;
+          margin-bottom: 24px;
+          color: #a855f7;
+        }
+
+        .admin-nav-item {
+          padding: 12px 16px;
+          margin-bottom: 8px;
+          border-radius: 8px;
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--ink-soft);
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        }
+
+        .admin-nav-item:hover {
+          background: rgba(168, 85, 247, 0.15);
+          color: var(--ink);
+          border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .admin-nav-item.active {
+          background: linear-gradient(135deg, #a855f7, #ec4899);
+          color: #fff;
+          border-color: #a855f7;
+        }
+
+        .admin-main {
+          padding: 40px;
+          overflow-y: auto;
+        }
+
+        .admin-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 40px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .admin-header h1 {
+          font-size: 2rem;
+          margin-bottom: 4px;
+        }
+
+        .admin-header p {
+          color: var(--ink-soft);
+          font-size: 0.9rem;
+        }
+
+        .admin-header-actions {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+        }
+
+        .admin-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 16px;
+          margin-bottom: 40px;
+        }
+
+        .admin-stat-card {
+          background: rgba(139, 92, 246, 0.1);
+          border: 1px solid rgba(139, 92, 246, 0.3);
+          border-radius: 12px;
+          padding: 20px;
+          text-align: center;
+        }
+
+        .admin-stat-number {
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: #a855f7;
+          margin-bottom: 8px;
+        }
+
+        .admin-stat-label {
+          color: var(--ink-soft);
+          font-size: 0.9rem;
+        }
+
+        .admin-section {
+          display: none;
+          animation: fadeIn 0.3s ease;
+        }
+
+        .admin-section.active {
+          display: block;
+        }
+
+        .section-card {
+          background: var(--card);
+          border: 1px solid rgba(139, 92, 246, 0.3);
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 24px;
+        }
+
+        .section-title {
+          font-size: 1.3rem;
+          font-weight: 700;
+          margin-bottom: 12px;
+          color: var(--ink);
+        }
+
+        .section-subtitle {
+          color: var(--ink-soft);
+          margin-bottom: 20px;
+          font-size: 0.9rem;
+        }
+      </style>
+
+      <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <div class="admin-sidebar">
+          <h2>⚙️ Admin Panel</h2>
+          <button class="admin-nav-item active" onclick="adminSwitchTab('dashboard')">📊 Dashboard</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('orders')">📦 Orders</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('clients')">👥 Clients</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('pricing')">💰 Pricing</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('delivery')">🚀 Work Delivery</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('messages')">💬 Messages</button>
+          <button class="admin-nav-item" onclick="adminSwitchTab('activity')">📋 Activity</button>
+          <hr style="border: 0; height: 1px; background: rgba(139, 92, 246, 0.2); margin: 20px 0;">
+          <button class="admin-nav-item" onclick="loadAdmin()">🔄 Refresh</button>
+          <button class="admin-nav-item" onclick="navigateToPage('admin.html')">🔗 Full Admin</button>
+          <button class="admin-nav-item" onclick="logout()" style="color: #ff5050; margin-top: 20px;">🚪 Logout</button>
         </div>
 
-        <aside class="side-menu glass" style="display: none;">
-          <h3>Client Dashboard</h3>
-          <button id="menu-overview" class="active" onclick="showClientPanel('overview')">Overview</button>
-          <button id="menu-orders" onclick="showClientPanel('orders')">My Orders</button>
-          <button id="menu-workspace" onclick="showClientPanel('workspace')">Workspace</button>
-          <button id="menu-works" onclick="showClientPanel('works')">Delivered Works</button>
-          <button id="menu-connect" onclick="showClientPanel('connect')">Client Connect</button>
-          <button id="menu-ai" onclick="showClientPanel('ai')">AI Center</button>
-          <button id="menu-profile" onclick="showClientPanel('profile')">Profile</button>
-          <button onclick="openOrderModal()">New Order</button>
-          <button onclick="logout()">Logout</button>
-        </aside>
-
-        <main>
-          <article id="panel-overview" class="panel active">
-            <div class="panel-head">
-              <div>
-                <h3>Welcome, <span id="clientName"></span></h3>
-                <p>Your project center with local cache + server sync.</p>
-              </div>
-              <div class="hero-actions">
-                <span id="apiModeBadge" class="api-pill"></span>
-                <span id="liveSyncBadgeClient" class="api-pill">Last Sync: --</span>
-              </div>
+        <!-- Main Content -->
+        <div class="admin-main">
+          <div class="admin-header">
+            <div>
+              <h1>Omio Admin Control</h1>
+              <p>Manage orders, clients, and delivery workflow</p>
             </div>
-            <div id="clientKpis" class="kpi-grid"></div>
-            <div class="table-wrap" id="recentOrders"></div>
-            <div id="activityFeed" class="activity-list"></div>
-          </article>
-
-          <article id="panel-orders" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>All Orders</h3>
-                <p>Track statuses, notes, and deliveries.</p>
-              </div>
-              <button class="ghost-btn" onclick="exportMyOrdersCsv()">Export CSV</button>
+            <div class="admin-header-actions">
+              <span id="apiModeBadgeAdmin" class="api-pill"></span>
+              <span id="liveSyncBadgeAdmin" class="api-pill">Last Sync: --</span>
             </div>
-            <div id="allOrdersTable" class="table-wrap"></div>
-          </article>
+          </div>
 
-          <article id="panel-workspace" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Project Workspace</h3>
-                <p>Kanban-style execution with pipeline visibility and activity feed.</p>
-              </div>
-            </div>
-            <div id="workspaceBoard" class="workspace-board"></div>
-            <div class="drag-hint">Drag cards between lanes to update status instantly</div>
-            <div id="workspaceActivity" class="workspace-activity glass"></div>
-          </article>
+          <!-- Dashboard Tab -->
+          <div id="dashboard-tab" class="admin-section active">
+            <div class="admin-stats" id="adminKpis"></div>
+            <div id="adminCommandGrid"></div>
+          </div>
 
-          <article id="panel-works" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Delivered Works</h3>
-                <p>Company-delivered assets and previews published for your account.</p>
-              </div>
+          <!-- Orders Tab -->
+          <div id="orders-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">📦 Orders Management</div>
+              <div class="section-subtitle">View and manage all client orders</div>
+              <div class="filters" id="adminFilters"></div>
+              <div id="adminOrdersTable" class="table-wrap"></div>
             </div>
-            <div id="clientWorksGrid" class="works-grid"></div>
-          </article>
+          </div>
 
-          <article id="panel-connect" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Client Connect</h3>
-                <p>Secure communication, call requests, and meeting link coordination.</p>
-              </div>
-              <span class="api-pill">Strict content rules enabled</span>
+          <!-- Clients Tab -->
+          <div id="clients-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">👥 All Clients</div>
+              <div class="section-subtitle">Manage client accounts and information</div>
+              <div id="adminUsersTable" class="table-wrap"></div>
             </div>
-            <div class="connect-shell">
-              <div id="messageThread" class="message-thread"></div>
-              <form class="message-form" onsubmit="event.preventDefault(); sendClientMessage();">
+            <div class="section-card">
+              <div class="section-title">🔐 Active Sessions</div>
+              <div class="section-subtitle">Currently logged-in users</div>
+              <div id="loggedInUsersTable" class="table-wrap"></div>
+            </div>
+          </div>
+
+          <!-- Pricing Tab -->
+          <div id="pricing-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">💰 Service Pricing</div>
+              <div class="section-subtitle">Manage service management pricing</div>
+              <button class="brand-btn" onclick="saveManagementPricingFromAdmin()" style="margin-bottom: 16px;">Save Pricing</button>
+              <div id="managementPricingAdminGrid" class="pricing-grid"></div>
+            </div>
+          </div>
+
+          <!-- Work Delivery Tab -->
+          <div id="delivery-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">🚀 Publish Work</div>
+              <div class="section-subtitle">Create and publish delivered work for clients</div>
+              <form onsubmit="event.preventDefault(); publishClientWork();">
+                <div class="form-grid">
+                  <div class="field"><label>Client Name</label><input id="workClientName" class="input" type="text" required /></div>
+                  <div class="field"><label>Client Email</label><input id="workClientEmail" class="input" type="email" required /></div>
+                </div>
+                <div class="form-grid">
+                  <div class="field"><label>Service Type</label><input id="workServiceType" class="input" type="text" placeholder="Website / App / Logo" required /></div>
+                  <div class="field"><label>Work Title</label><input id="workTitle" class="input" type="text" required /></div>
+                </div>
+                <div class="field"><label>Work Summary</label><textarea id="workSummary" class="textarea" maxlength="900" required></textarea></div>
+                <div class="form-grid">
+                  <div class="field"><label>Preview URL</label><input id="workPreviewUrl" class="input" type="url" placeholder="https://..." /></div>
+                  <div class="field"><label>Visibility</label>
+                    <select id="workVisibility" class="status-select">
+                      <option value="private">Private (client only)</option>
+                      <option value="public">Public portfolio + client</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="brand-btn" type="submit">Publish Work</button>
+                <div id="workPublishNotice" class="notice" style="margin-top: 12px;"></div>
+              </form>
+            </div>
+            <div class="section-card">
+              <div class="section-title">📁 Delivered Works</div>
+              <div id="adminWorksGrid" class="works-grid"></div>
+            </div>
+          </div>
+
+          <!-- Messages Tab -->
+          <div id="messages-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">💬 Client Connect</div>
+              <div class="section-subtitle">Send messages, schedule calls, and coordinate with clients</div>
+              <form onsubmit="event.preventDefault(); adminArrangeCall();" style="margin-bottom: 20px;">
                 <div class="form-grid">
                   <div class="field">
-                    <label>Order Context</label>
-                    <select id="messageOrderSelect" class="status-select"></select>
+                    <label>Select Client</label>
+                    <select id="adminMessageClient" class="status-select"></select>
                   </div>
                   <div class="field">
                     <label>Message Type</label>
-                    <select id="messageType" class="status-select">
-                      <option value="text">Text Message</option>
-                      <option value="call_request">Call Request</option>
-                      <option value="video_request">Video Call Request</option>
+                    <select id="adminMessageType" class="status-select">
+                      <option value="text">Text Update</option>
+                      <option value="call_scheduled">Call Scheduled</option>
+                      <option value="video_scheduled">Video Call Scheduled</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-grid">
                   <div class="field">
-                    <label>Preferred Time</label>
-                    <input id="messagePreferredAt" class="input" type="datetime-local" />
+                    <label>Scheduled Time</label>
+                    <input id="adminMessagePreferredAt" class="input" type="datetime-local" />
                   </div>
                   <div class="field">
-                    <label>Meeting Link (optional)</label>
-                    <input id="messageMeetingLink" class="input" type="url" placeholder="https://meet.example.com/session" />
+                    <label>Meeting Link</label>
+                    <input id="adminMessageMeetingLink" class="input" type="url" placeholder="https://meet.example.com/room" />
                   </div>
                 </div>
                 <div class="field">
                   <label>Message</label>
-                  <textarea id="messageText" class="textarea" maxlength="900" placeholder="Write message to studio team"></textarea>
+                  <textarea id="adminMessageText" class="textarea" maxlength="900" placeholder="Type your message..."></textarea>
                 </div>
-                <button class="brand-btn" type="submit">Send Message</button>
-                <div id="messageNotice" class="notice"></div>
+                <button class="brand-btn" type="submit">Send to Client</button>
+                <div id="adminMessageNotice" class="notice" style="margin-top: 12px;"></div>
               </form>
             </div>
-          </article>
-
-          <article id="panel-ai" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>AI Command Center</h3>
-                <p>Operational intelligence view for prioritization, alerts, and delivery focus.</p>
-              </div>
-              <span id="liveSyncBadgeAi" class="api-pill">Last Sync: --</span>
-            </div>
-            <div id="aiCenterShell" class="ai-center-shell"></div>
-          </article>
-
-          <article id="panel-notifications" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Notifications Center</h3>
-                <p>All your order updates, messages, and system alerts in one place.</p>
-              </div>
-              <button class="ghost-btn" onclick="clearAllNotifications()">Clear All</button>
-            </div>
-            <div id="notificationsCenter" style="display: grid; gap: 12px; max-width: 800px;">
-              <div style="padding: 20px; text-align: center; color: var(--ink-soft); border: 1px dashed rgba(139, 92, 246, 0.2); border-radius: 12px;">
-                <p>🔔 No new notifications</p>
-                <small>You're all caught up! Check back later for updates on your orders and messages.</small>
-              </div>
-            </div>
-          </article>
-
-          <article id="panel-profile" class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Profile Settings</h3>
-                <p>Modern identity controls, security posture, and interface dynamics.</p>
-              </div>
-            </div>
-            <div class="profile-shell">
-              <section class="profile-card glass">
-                <h4>Matrix Identity</h4>
-                <div class="field"><label>Full Name</label><input id="profileName" class="input" type="text" /></div>
-                <div class="field"><label>Email</label><input id="profileEmail" class="input" type="email" disabled /></div>
-                <div class="field"><label>Phone</label><input id="profilePhone" class="input" type="text" /></div>
-                <div class="field"><label>Company</label><input id="profileCompany" class="input" type="text" /></div>
-              </section>
-
-              <section class="profile-card glass">
-                <h4>Security Pulse</h4>
-                <div class="security-bar"><span id="securityPulseBar"></span></div>
-                <p id="securityPulseText" class="muted-note"></p>
-
-                <div class="setting-row">
-                  <div>
-                    <strong>Motion Blur & Depth</strong>
-                    <small>Enable volumetric layers and synthetic shadows.</small>
-                  </div>
-                  <button class="toggle-pill" id="toggle-motion" onclick="toggleProfileSetting('motion')"><span></span></button>
-                </div>
-
-                <div class="setting-row">
-                  <div>
-                    <strong>Auto-Sync Workflows</strong>
-                    <small>Persist workspace state across sessions.</small>
-                  </div>
-                  <button class="toggle-pill" id="toggle-sync" onclick="toggleProfileSetting('sync')"><span></span></button>
-                </div>
-
-                <div class="setting-row">
-                  <div>
-                    <strong>Dev-Console Mode</strong>
-                    <small>Expose detailed event logs in dashboard widgets.</small>
-                  </div>
-                  <button class="toggle-pill" id="toggle-dev" onclick="toggleProfileSetting('dev')"><span></span></button>
-                </div>
-
-                <div class="setting-row">
-                  <div>
-                    <strong>Live Refresh Interval</strong>
-                    <small>Adjust how frequently AI and admin widgets auto-refresh.</small>
-                  </div>
-                  <select id="liveOpsIntervalSelect" class="status-select" onchange="setLiveOpsInterval(this.value)">
-                    <option value="15000">15s</option>
-                    <option value="25000">25s</option>
-                    <option value="40000">40s</option>
-                  </select>
-                </div>
-              </section>
-            </div>
-
-            <div class="hero-actions" style="margin-top: 8px;">
-              <button class="brand-btn" onclick="saveProfile()">Save Profile</button>
-              <button class="ghost-btn" onclick="showClientPanel('workspace')">Open Workspace</button>
-            </div>
-            <div id="profileNotice" class="notice"></div>
-          </article>
-        </main>
-      </div>
-    </section>
-
-    <section id="view-admin" class="view">
-      <div class="container panel-wrap" style="grid-template-columns: 1fr;">
-        <article class="panel active">
-          <div class="panel-head">
-            <div>
-              <h3>Omio Admin Control</h3>
-              <p>Manage users, order status, and delivery workflow.</p>
-            </div>
-            <div class="hero-actions">
-              <span id="apiModeBadgeAdmin" class="api-pill"></span>
-              <span id="liveSyncBadgeAdmin" class="api-pill">Last Sync: --</span>
-              <button class="ghost-btn" onclick="scrollToClientWorkDelivery()">Work Delivery Form</button>
-              <button class="brand-btn" onclick="loadAdmin()">Refresh</button>
-              <button class="ghost-btn" onclick="logout()">Logout</button>
+            <div class="section-card">
+              <div class="section-title">📨 Message History</div>
+              <div id="adminMessageThread" class="message-thread"></div>
             </div>
           </div>
 
-          <div class="admin-action-strip">
-            <button class="status-btn" onclick="adminQuickJump('orders')">Orders Table</button>
-            <button class="status-btn" onclick="adminQuickJump('users')">Clients Table</button>
-            <button class="status-btn" onclick="adminQuickJump('pricing')">Pricing</button>
-            <button class="status-btn" onclick="adminQuickJump('delivery')">Work Delivery</button>
-            <button class="status-btn" onclick="adminQuickJump('connect')">Client Connect</button>
-            <button class="brand-btn" onclick="navigateToPage('admin.html')">Open Dedicated Admin Page</button>
+          <!-- Activity Tab -->
+          <div id="activity-tab" class="admin-section">
+            <div class="section-card">
+              <div class="section-title">📋 Live Activity</div>
+              <div class="section-subtitle">Real-time system events and operations</div>
+              <div id="adminActivityLog" style="background: rgba(10, 14, 39, 0.5); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; padding: 16px; max-height: 600px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.85rem;"></div>
+            </div>
           </div>
-
-          <div id="adminKpis" class="kpi-grid"></div>
-          <div id="adminCommandGrid" class="admin-command-grid"></div>
-
-          <article id="adminPricingPanel" class="panel" style="margin-top: 8px;">
-            <div class="panel-head">
-              <div>
-                <h3>Service Management Pricing</h3>
-                <p>Company-side monthly management amount for each service type.</p>
-              </div>
-              <button class="brand-btn" onclick="saveManagementPricingFromAdmin()">Save Pricing</button>
-            </div>
-            <div id="managementPricingAdminGrid" class="pricing-grid"></div>
-          </article>
-
-          <article id="clientWorkDeliveryPanel" class="panel" style="margin-top: 8px;">
-            <div class="panel-head">
-              <div>
-                <h3>Client Work Delivery</h3>
-                <p>Create and publish delivered work for specific clients with contact context.</p>
-              </div>
-              <span class="api-pill">Client visibility control</span>
-            </div>
-            <form onsubmit="event.preventDefault(); publishClientWork();">
-              <div class="form-grid">
-                <div class="field"><label>Client Email</label><input id="workClientEmail" class="input" type="email" required /></div>
-                <div class="field"><label>Client Phone</label><input id="workClientPhone" class="input" type="text" placeholder="+91 ..." /></div>
-              </div>
-              <div class="form-grid">
-                <div class="field"><label>Client Name</label><input id="workClientName" class="input" type="text" required /></div>
-                <div class="field"><label>Service Type</label><input id="workServiceType" class="input" type="text" placeholder="Website / App / Logo" required /></div>
-              </div>
-              <div class="field"><label>Work Title</label><input id="workTitle" class="input" type="text" required /></div>
-              <div class="field"><label>Work Summary</label><textarea id="workSummary" class="textarea" maxlength="900" required></textarea></div>
-              <div class="form-grid">
-                <div class="field"><label>Preview URL</label><input id="workPreviewUrl" class="input" type="url" placeholder="https://..." /></div>
-                <div class="field"><label>Visibility</label>
-                  <select id="workVisibility" class="status-select">
-                    <option value="private">Private (client only)</option>
-                    <option value="public">Public portfolio + client</option>
-                  </select>
-                </div>
-              </div>
-              <button class="brand-btn" type="submit">Publish Work</button>
-              <div id="workPublishNotice" class="notice"></div>
-            </form>
-            <div id="adminWorksGrid" class="works-grid" style="margin-top: 10px;"></div>
-          </article>
-
-          <article id="adminConnectPanel" class="panel" style="margin-top: 8px;">
-            <div class="panel-head">
-              <div>
-                <h3>Client Connect Console</h3>
-                <p>Message stream for text, call and video requests with anti-abuse policy.</p>
-              </div>
-            </div>
-            <form class="message-form" onsubmit="event.preventDefault(); adminArrangeCall();" style="margin-bottom: 10px;">
-              <div class="form-grid">
-                <div class="field">
-                  <label>Client</label>
-                  <select id="adminMessageClient" class="status-select"></select>
-                </div>
-                <div class="field">
-                  <label>Session Type</label>
-                  <select id="adminMessageType" class="status-select">
-                    <option value="call_scheduled">Call Scheduled</option>
-                    <option value="video_scheduled">Video Call Scheduled</option>
-                    <option value="text">Text Update</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-grid">
-                <div class="field">
-                  <label>Session Time</label>
-                  <input id="adminMessagePreferredAt" class="input" type="datetime-local" />
-                </div>
-                <div class="field">
-                  <label>Meeting Link</label>
-                  <input id="adminMessageMeetingLink" class="input" type="url" placeholder="https://meet.example.com/room" />
-                </div>
-              </div>
-              <div class="field">
-                <label>Admin Message</label>
-                <textarea id="adminMessageText" class="textarea" maxlength="900" placeholder="Share call agenda, update, or next steps"></textarea>
-              </div>
-              <button class="brand-btn" type="submit">Send To Client</button>
-              <div id="adminMessageNotice" class="notice"></div>
-            </form>
-            <div id="adminMessageThread" class="message-thread"></div>
-          </article>
-
-          <div class="filters" style="margin-top: 8px;" id="adminFilters"></div>
-          <div id="adminOrdersTable" class="table-wrap"></div>
-
-          <div style="height: 12px"></div>
-          <h3 id="adminUsersAnchor" style="font-size: 1.3rem; margin-bottom: 8px;">Clients</h3>
-          <div id="adminUsersTable" class="table-wrap"></div>
-
-          <div style="height: 12px"></div>
-          <h3 style="font-size: 1.3rem; margin-bottom: 8px; color: #4ecdc4;">🔐 Currently Logged In Users</h3>
-          <div id="loggedInUsersTable" class="table-wrap"></div>
-        </article>
+        </div>
       </div>
+
+      <script>
+        function adminSwitchTab(tabName) {
+          // Hide all tabs
+          document.querySelectorAll('.admin-section').forEach(tab => tab.classList.remove('active'));
+          document.querySelectorAll('.admin-nav-item').forEach(btn => btn.classList.remove('active'));
+          
+          // Show selected tab
+          const tabElement = document.getElementById(tabName + '-tab');
+          if (tabElement) {
+            tabElement.classList.add('active');
+          }
+          
+          // Mark button as active
+          event.target.classList.add('active');
+        }
+      </script>
     </section>
   </div>
 
@@ -7864,44 +8248,34 @@
     function updateNavigation() {
       const isLoggedIn = isUserLoggedIn();
       const userSession = getUserSession();
-      const signInBtn = document.getElementById('signInBtn');
-      const createProjectBtn = document.getElementById('createProjectBtn');
-      const userProfile = document.getElementById('userProfile');
       const welcomeBanner = document.getElementById('welcomeBanner');
       const welcomeText = document.getElementById('welcomeText');
 
+      // Show/hide welcome banner based on login state
       if (isLoggedIn && userSession) {
-        // Hide auth buttons, show user profile
-        if (signInBtn) signInBtn.style.display = 'none';
-        if (createProjectBtn) {
-          createProjectBtn.textContent = 'Create Project';
-          createProjectBtn.style.display = 'inline-block';
-        }
-        if (userProfile) {
-          userProfile.style.display = 'flex';
-        }
-        // Show animated welcome banner
         if (welcomeBanner && welcomeText) {
           welcomeText.textContent = `Welcome, ${userSession.name}!`;
           welcomeBanner.style.display = 'block';
         }
       } else {
-        // Show auth buttons, hide user profile
-        if (signInBtn) signInBtn.style.display = 'inline-block';
-        if (createProjectBtn) {
-          createProjectBtn.textContent = 'Start Project';
-          createProjectBtn.style.display = 'inline-block';
-        }
-        if (userProfile) userProfile.style.display = 'none';
         if (welcomeBanner) welcomeBanner.style.display = 'none';
       }
+
+      // Ensure renderNav() updates the buttons
+      renderNav();
     }
 
     function handleLogout() {
+      // Clear ALL session and user data
       localStorage.removeItem('omio_session');
       sessionStorage.removeItem('omio_session');
+      localStorage.removeItem('omio_user');
+      localStorage.removeItem('omio_token');
       localStorage.removeItem('omio_remember');
-      updateNavigation();
+      // Clear state
+      state.user = null;
+      state.token = '';
+      // Update navigation - this will refresh the page
       window.location.href = 'index.html';
     }
 
@@ -8170,10 +8544,8 @@
       }
 
       console.log('👤 User logged in - creating user menu');
-      const first = state.user.name?.split(' ')[0] || 'User';
       const isAdmin = state.user.role === 'admin';
       nav.innerHTML = `
-        <span style="font-size:0.8rem; color:var(--ink-soft); font-weight:700;">Hi, ${first}</span>
         <button id="dashboardBtn" class="nav-signin" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); padding: 10px 18px; color: var(--ink-soft); border: 1px solid; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Dashboard</button>
         <button id="actionBtn" class="nav-signup" style="padding: 10px 24px; background: linear-gradient(135deg, #ff5722, #ff7043); color: #fff; border: 0; border-radius: 6px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">${isAdmin ? 'Admin Panel' : 'New Order'}</button>
         <button id="logoutBtn" class="nav-signin" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.4); color: #ff5050; padding: 10px 18px; border: 1px solid; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">Logout</button>
@@ -8184,7 +8556,7 @@
       const logoutBtn = document.getElementById('logoutBtn');
       
       if (dashboardBtn) {
-        dashboardBtn.addEventListener('click', () => showView('dashboard'));
+        dashboardBtn.addEventListener('click', () => window.location.href = 'dashboard.html');
       }
       if (actionBtn) {
         actionBtn.addEventListener('click', () => {
@@ -8324,8 +8696,8 @@
 
         closeModal('authLayer');
         toast('ok', 'Logged in successfully.');
-        if (state.user.role === 'admin') showView('admin');
-        else showView('dashboard');
+        if (state.user.role === 'admin') window.location.href = 'admin.html';
+        else window.location.href = 'dashboard.html';
       } catch (e) {
         showNotice('authNotice', 'err', e.message);
       }
@@ -8395,8 +8767,20 @@
     }
 
     function logout() {
+      // Clear ALL session and user data
       setToken('');
       setUser(null);
+      localStorage.removeItem('omio_session');
+      sessionStorage.removeItem('omio_session');
+      localStorage.removeItem('omio_user');
+      localStorage.removeItem('omio_token');
+      localStorage.removeItem('omio_remember');
+      // Clear state
+      state.user = null;
+      state.token = '';
+      // Update navigation and show landing
+      updateNavigation();
+      renderNav();
       toast('info', 'Signed out.');
       showView('landing');
     }
@@ -10954,9 +11338,8 @@
 
       if (state.user?.role === 'admin') {
         showView('admin');
-      } else if (state.user) {
-        showView('dashboard');
       } else {
+        // Always show landing view (login/home page)
         showView('landing');
       }
 
@@ -10998,7 +11381,9 @@
      * Cards scale up and fade in as they come into view
      */
     function setupCardEntranceAnimations() {
-      const cards = document.querySelectorAll('.feature-card, .testimonial-card, .enhanced-card, .service-card, .portfolio-card');
+      const cards = document.querySelectorAll('.feature-card, .testimonial-card, .enhanced-card, .service-card, .portfolio-card, .neo-card, .reveal');
+      
+      if (cards.length === 0) return;
       
       cards.forEach((card, index) => {
         // Set initial state
@@ -11040,7 +11425,10 @@
       const cardGroups = document.querySelectorAll('[data-card-group]');
       
       cardGroups.forEach(group => {
-        const cards = group.querySelectorAll('.feature-card, .testimonial-card, .service-card');
+        // Target actual card classes that exist in the HTML
+        const cards = group.querySelectorAll('.neo-card, .process-card, .reveal, .portfolio-card, .website-preview-card');
+        
+        if (cards.length === 0) return;
         
         gsap.set(cards, {
           opacity: 0,

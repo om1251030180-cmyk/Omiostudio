@@ -912,27 +912,19 @@
 
       if (!isValid) return;
 
-      // Save user data
-      const userData = {
-        id: Date.now(),
-        name: name,
-        email: email,
-        phone: phone,
-        password: password,
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        let users = JSON.parse(localStorage.getItem('omio_users') || '[]');
-        
-        if (users.some(u => u.email === email)) {
-          showError('emailAddress', 'This email is already registered');
+      // Call API to register
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, phone, company: '' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          showError('emailAddress', data.error);
           return;
         }
 
-        users.push(userData);
-        localStorage.setItem('omio_users', JSON.stringify(users));
-        
         // Show success message
         const successMsg = document.getElementById('successMsg');
         successMsg.classList.add('show');
@@ -940,9 +932,11 @@
         setTimeout(() => {
           window.location.href = 'login.html';
         }, 2000);
-      } catch (err) {
-        alert('Error creating account. Please try again.');
-      }
+      })
+      .catch(err => {
+        showError('emailAddress', 'Registration failed. Try again.');
+        console.error('Signup error:', err);
+      });
     }
 
     function handlePhoneSignup(event) {
@@ -989,27 +983,19 @@
 
       if (!isValid) return;
 
-      // Save user data
-      const userData = {
-        id: Date.now(),
-        name: name,
-        email: email,
-        phone: phone,
-        password: password,
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        let users = JSON.parse(localStorage.getItem('omio_users') || '[]');
-        
-        if (users.some(u => u.email === email || u.phone === phone)) {
-          showError('phoneEmail', 'This email or phone is already registered');
+      // Call API to register
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, phone, company: '' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          showError('phoneEmail', data.error);
           return;
         }
 
-        users.push(userData);
-        localStorage.setItem('omio_users', JSON.stringify(users));
-        
         // Show success message
         const successMsg = document.getElementById('successMsg');
         successMsg.classList.add('show');
@@ -1017,9 +1003,11 @@
         setTimeout(() => {
           window.location.href = 'login.html';
         }, 2000);
-      } catch (err) {
-        alert('Error creating account. Please try again.');
-      }
+      })
+      .catch(err => {
+        showError('phoneEmail', 'Registration failed. Try again.');
+        console.error('Signup error:', err);
+      });
     }
 
     function showError(inputId, message) {

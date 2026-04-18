@@ -17,11 +17,13 @@ curl http://localhost:4000/premium-index.html
 ```
 
 **Pros:**
+
 - ✅ Original functionality stays intact
 - ✅ Easy A/B testing
 - ✅ Low risk
 
 **Cons:**
+
 - Two separate homepages
 - Duplicate code
 
@@ -41,11 +43,13 @@ npm start  # or: node server.js
 ```
 
 **Pros:**
+
 - ✅ Single homepage
 - ✅ Simplified routing
 - ✅ Better performance
 
 **Cons:**
+
 - ❌ Must integrate authentication
 - ❌ Must merge admin functionality
 
@@ -60,16 +64,16 @@ npm start  # or: node server.js
 
 ```javascript
 // Add to server.js
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   const token = req.cookies.token || req.headers.authorization;
-  
+
   if (token) {
     // User logged in - show dashboard
-    return res.sendFile(path.join(__dirname, 'index.html'));
+    return res.sendFile(path.join(__dirname, "index.html"));
   }
-  
+
   // Public visitor - show premium landing
-  res.sendFile(path.join(__dirname, 'premium-index.html'));
+  res.sendFile(path.join(__dirname, "premium-index.html"));
 });
 ```
 
@@ -111,49 +115,78 @@ async function loadContent() {
 
 ```javascript
 // GET: /api/content - Return all content for premium page
-app.get('/api/content', (req, res) => {
+app.get("/api/content", (req, res) => {
   try {
     const contentData = {
       hero: {
         title: "Design the Future",
-        subtitle: "Premium Digital Experiences Crafted with Excellence"
+        subtitle: "Premium Digital Experiences Crafted with Excellence",
       },
       pinnedSteps: [
         {
           title: "We Build Brands",
-          description: "Creating strong brand identities that resonate with your audience.",
+          description:
+            "Creating strong brand identities that resonate with your audience.",
           icon: "🎨",
           visualTitle: "Brand Design",
-          visualDescription: "Strategic brand positioning and visual identity systems."
+          visualDescription:
+            "Strategic brand positioning and visual identity systems.",
         },
         {
           title: "We Create Experiences",
-          description: "Immersive digital journeys that engage and delight users.",
+          description:
+            "Immersive digital journeys that engage and delight users.",
           icon: "✨",
           visualTitle: "User Experience",
-          visualDescription: "Intuitive interfaces designed for maximum engagement."
+          visualDescription:
+            "Intuitive interfaces designed for maximum engagement.",
         },
         {
           title: "We Design the Future",
           description: "Innovating with cutting-edge technology and vision.",
           icon: "🚀",
           visualTitle: "Innovation",
-          visualDescription: "Forward-thinking solutions for tomorrow's challenges."
-        }
+          visualDescription:
+            "Forward-thinking solutions for tomorrow's challenges.",
+        },
       ],
       services: [
-        { title: "Branding", description: "We build strong brand identities.", icon: "🎯" },
-        { title: "UI/UX Design", description: "User-first modern interfaces.", icon: "🎨" },
-        { title: "Web Development", description: "Fast, scalable websites.", icon: "💻" },
-        { title: "Mobile Apps", description: "Native and cross-platform apps.", icon: "📱" },
-        { title: "AI Solutions", description: "Smart automation systems.", icon: "🤖" },
-        { title: "Digital Strategy", description: "Comprehensive digital success.", icon: "📊" }
-      ]
+        {
+          title: "Branding",
+          description: "We build strong brand identities.",
+          icon: "🎯",
+        },
+        {
+          title: "UI/UX Design",
+          description: "User-first modern interfaces.",
+          icon: "🎨",
+        },
+        {
+          title: "Web Development",
+          description: "Fast, scalable websites.",
+          icon: "💻",
+        },
+        {
+          title: "Mobile Apps",
+          description: "Native and cross-platform apps.",
+          icon: "📱",
+        },
+        {
+          title: "AI Solutions",
+          description: "Smart automation systems.",
+          icon: "🤖",
+        },
+        {
+          title: "Digital Strategy",
+          description: "Comprehensive digital success.",
+          icon: "📊",
+        },
+      ],
     };
 
     res.json(contentData);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to load content' });
+    res.status(500).json({ error: "Failed to load content" });
   }
 });
 ```
@@ -164,10 +197,10 @@ app.get('/api/content', (req, res) => {
 
 ```javascript
 // OLD
-window.addEventListener('load', initAllAnimations);
+window.addEventListener("load", initAllAnimations);
 
 // NEW
-window.addEventListener('load', async () => {
+window.addEventListener("load", async () => {
   // Try to load from API
   await loadContent();
   // Then initialize animations
@@ -189,26 +222,26 @@ window.addEventListener('load', async () => {
   <a href="#about">About</a>
   <a href="https://instagram.com/omio.studio" target="_blank">Instagram</a>
   <a href="#contact">Contact</a>
-  
+
   <!-- Add auth button -->
   <button id="auth-toggle" class="footer-link-btn">Login</button>
 </div>
 
 <style>
-.footer-link-btn {
-  background: none;
-  border: none;
-  color: var(--text-soft);
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  font-family: var(--font-body);
-  font-size: 1rem;
-}
+  .footer-link-btn {
+    background: none;
+    border: none;
+    color: var(--text-soft);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-family: var(--font-body);
+    font-size: 1rem;
+  }
 
-.footer-link-btn:hover {
-  color: var(--primary);
-}
+  .footer-link-btn:hover {
+    color: var(--primary);
+  }
 </style>
 ```
 
@@ -219,20 +252,20 @@ window.addEventListener('load', async () => {
 ```javascript
 // Check if user is logged in
 function updateAuthButton() {
-  const token = localStorage.getItem('token');
-  const btn = document.getElementById('auth-toggle');
-  
+  const token = localStorage.getItem("token");
+  const btn = document.getElementById("auth-toggle");
+
   if (token) {
-    btn.textContent = 'Dashboard';
-    btn.onclick = () => window.location.href = '/index.html';
+    btn.textContent = "Dashboard";
+    btn.onclick = () => (window.location.href = "/index.html");
   } else {
-    btn.textContent = 'Login';
-    btn.onclick = () => window.location.href = '/admin.html';
+    btn.textContent = "Login";
+    btn.onclick = () => (window.location.href = "/admin.html");
   }
 }
 
 // Call on page load
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   updateAuthButton();
   loadContent();
   initAllAnimations();
@@ -252,7 +285,7 @@ window.addEventListener('load', () => {
 app.get('/api/services', async (req, res) => {
   try {
     const { users } = readDatabase();
-    
+
     // For now, return hardcoded services
     // Later: fetch from services collection in DB
     const services = [
@@ -263,7 +296,7 @@ app.get('/api/services', async (req, res) => {
       { id: 5, title: "AI Solutions", description: "...", icon: "🤖", price: 15000 },
       { id: 6, title: "Digital Strategy", description: "...", icon: "📊", price: 8000 }
     ];
-    
+
     res.json(services);
   } catch (error) {
     res.status(500).json({ error: 'Failed to load services' });
@@ -274,13 +307,13 @@ app.get('/api/services', async (req, res) => {
 app.get('/api/content', async (req, res) => {
   try {
     const services = await fetch(`${req.protocol}://${req.get('host')}/api/services`).then(r => r.json());
-    
+
     const contentData = {
       hero: { ... },
       pinnedSteps: [ ... ],
       services: services
     };
-    
+
     res.json(contentData);
   } catch (error) {
     res.status(500).json({ error: 'Failed to load content' });
@@ -293,6 +326,7 @@ app.get('/api/content', async (req, res) => {
 ## 🎯 Migration Steps (Phase by Phase)
 
 ### Phase 1: Testing (Today)
+
 ```bash
 # 1. Run server
 node server.js
@@ -306,6 +340,7 @@ node server.js
 ```
 
 ### Phase 2: Integration (This Week)
+
 ```bash
 # 1. Backup current index
 cp index.html index-backup-$(date +%s).html
@@ -321,6 +356,7 @@ cp index.html index-backup-$(date +%s).html
 ```
 
 ### Phase 3: Deployment (Next Week)
+
 ```bash
 # 1. Complete API integration
 # 2. Test all authentication flows
@@ -333,6 +369,7 @@ cp index.html index-backup-$(date +%s).html
 ## 🧪 Testing Checklist
 
 ### Desktop (Chrome/Firefox/Safari)
+
 - [ ] All sections scroll smoothly (60fps)
 - [ ] Animations play on scroll
 - [ ] Pinned section text changes
@@ -342,6 +379,7 @@ cp index.html index-backup-$(date +%s).html
 - [ ] CTA buttons are clickable
 
 ### Mobile (iOS/Android)
+
 - [ ] Responsive layout works
 - [ ] Touch interactions smooth
 - [ ] No layout shifts
@@ -350,6 +388,7 @@ cp index.html index-backup-$(date +%s).html
 - [ ] Scroll progress visible
 
 ### Browser DevTools
+
 - [ ] No console errors
 - [ ] Performance > 60fps
 - [ ] Network: /api/content loaded
@@ -374,7 +413,9 @@ cp index.html index-backup-$(date +%s).html
 ## 🚨 Common Issues & Solutions
 
 ### Issue: Animations not playing
+
 **Solution:**
+
 ```javascript
 // Check ScrollTrigger is registered
 gsap.registerPlugin(ScrollTrigger);
@@ -384,7 +425,9 @@ gsap.registerPlugin(ScrollTrigger);
 ```
 
 ### Issue: Content not loading from API
+
 **Solution:**
+
 ```javascript
 // Check network tab - verify /api/content returns JSON
 // Check console for fetch errors
@@ -392,7 +435,9 @@ gsap.registerPlugin(ScrollTrigger);
 ```
 
 ### Issue: Cursor glow not working
+
 **Solution:**
+
 ```javascript
 // Only shows on .interactive section hover
 // Check mouse event listeners are attached
@@ -400,7 +445,9 @@ gsap.registerPlugin(ScrollTrigger);
 ```
 
 ### Issue: Mobile layout broken
+
 **Solution:**
+
 ```css
 /* Check media queries are correct */
 /* Verify grid-template-columns changes at breakpoint */
@@ -412,17 +459,18 @@ gsap.registerPlugin(ScrollTrigger);
 ## 📞 Support & Debugging
 
 Enable debug mode:
+
 ```javascript
 // At top of script section:
 const DEBUG = true;
 
 function log(...args) {
-  if (DEBUG) console.log('[Premium]', ...args);
+  if (DEBUG) console.log("[Premium]", ...args);
 }
 
 // Use in animations:
-log('Pinned content updated to step:', index);
-log('Animation duration:', duration);
+log("Pinned content updated to step:", index);
+log("Animation duration:", duration);
 ```
 
 ---
@@ -430,6 +478,7 @@ log('Animation duration:', duration);
 ## 📈 Performance Metrics
 
 **Current Performance:**
+
 - Load time: < 2s
 - First paint: < 1s
 - Largest contentful paint: < 2s
@@ -437,10 +486,11 @@ log('Animation duration:', duration);
 - Frame rate: 60fps
 
 **Monitor with:**
+
 ```javascript
 // In console
-performance.getEntriesByType('navigation')[0];
-performance.getEntriesByType('paint');
+performance.getEntriesByType("navigation")[0];
+performance.getEntriesByType("paint");
 ```
 
 ---

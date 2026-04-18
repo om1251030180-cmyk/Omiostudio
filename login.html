@@ -721,39 +721,61 @@
         return;
       }
 
-      // Check credentials
-      try {
-        const users = JSON.parse(localStorage.getItem('omio_users') || '[]');
-        const user = users.find(u => u.email === email && u.password === password);
-
-        if (!user) {
-          showError('loginPassword', 'Invalid email or password');
+      // Call API
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          showError('loginPassword', data.error);
           return;
         }
 
         // Store session
         const sessionData = {
-          userId: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
+          userId: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role,
+          phone: data.user.phone || '',
+          company: data.user.company || '',
           loginTime: new Date().toISOString()
+        };
+
+        // Store as omio_user for consistency with index.html
+        const userData = {
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role,
+          phone: data.user.phone || '',
+          company: data.user.company || ''
         };
 
         if (rememberMe) {
           localStorage.setItem('omio_session', JSON.stringify(sessionData));
+          localStorage.setItem('omio_user', JSON.stringify(userData));
           localStorage.setItem('omio_remember', 'true');
         } else {
           sessionStorage.setItem('omio_session', JSON.stringify(sessionData));
+          localStorage.setItem('omio_user', JSON.stringify(userData));
           localStorage.removeItem('omio_remember');
         }
+
+        // Store token
+        localStorage.setItem('omio_token', data.token);
 
         // Success
         alert('Login successful!');
         window.location.href = 'index.html';
-      } catch (err) {
-        alert('Error during login. Please try again.');
-      }
+      })
+      .catch(err => {
+        showError('loginPassword', 'Connection error. Try again.');
+        console.error('Login error:', err);
+      });
     }
 
     function validateEmail(email) {
