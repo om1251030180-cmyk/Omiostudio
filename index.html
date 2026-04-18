@@ -448,17 +448,7 @@
       border-bottom-color: rgba(111, 99, 255, 0.15);
     }
 
-    .nav-wrap::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      height: 2px;
-      width: var(--scroll-progress);
-      background: linear-gradient(90deg, #6f63ff, #66e0d2, #ff8a5b);
-      box-shadow: 0 0 14px rgba(111, 99, 255, 0.34);
-      transition: width .14s linear;
-    }
+
 
     .nav {
       height: 70px;
@@ -9860,7 +9850,6 @@
       renderNav();
       initAnimations();
       wireLandingSectionTracking();
-      wireTopProgressBar();
       wireAmbientPointerEffects();
       wireScrollParallax();
       prefetchStaticPages();
