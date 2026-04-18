@@ -16,6 +16,14 @@ const cors       = require('cors');
 const path       = require('path');
 const fs         = require('fs');
 
+// Twilio client (if available)
+let twilio = null;
+try {
+  twilio = require('twilio');
+} catch (e) {
+  console.log('⚠️  Twilio not installed. SMS/WhatsApp features unavailable. Run: npm install twilio');
+}
+
 const app  = express();
 let PORT = Number(process.env.PORT) || 4000;
 const MAX_PORT_ATTEMPTS = 10;
@@ -406,6 +414,114 @@ function getCompanyLeaderEmail() {
   return process.env.COMPANY_LEADER_EMAIL || process.env.ADMIN_EMAIL || 'omiostudio.digital@gmail.com';
 }
 
+/* ─── PASSWORD RESET MESSAGE FUNCTIONS ─── */
+
+async function sendPasswordResetEmail(email, name, token, method) {
+  try {
+    const mailer = getMailer();
+    if (!mailer) {
+      console.log('⚠️  Email not configured. Token:', token);
+      return { success: false, message: 'Email not configured' };
+    }
+
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:4002'}/reset-password.html?token=${token}`;
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="margin: 0; font-size: 28px; color: #ff006e;">🔐 Password Reset Request</h1>
+        </div>
+        
+        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Hi ${name || 'there'},
+        </p>
+        
+        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          We received a request to reset your Omio Studio account password. Click the button below to create a new password. This link expires in 1 hour.
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetLink}" style="display: inline-block; background: linear-gradient(135deg, #ff006e, #ff1a7f); color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+            Reset Password
+          </a>
+        </div>
+        
+        <p style="font-size: 14px; color: #cccccc; margin-bottom: 10px;">Or use this code: <strong style="font-family: monospace; color: #00d9ff;">${token}</strong></p>
+        
+        <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 30px 0;">
+        
+        <p style="font-size: 13px; color: #999999; margin-bottom: 10px;">
+          If you didn't request this reset, you can ignore this email or contact support.
+        </p>
+        
+        <p style="font-size: 13px; color: #999999; margin: 0;">
+          © 2026 Omio Studio. All rights reserved.
+        </p>
+      </div>
+    `;
+
+    await mailer.sendMail({
+      from: getMailerFromAddress(),
+      to: email,
+      subject: '🔐 Reset Your Omio Studio Password',
+      html: htmlContent
+    });
+
+    console.log('✅ Password reset email sent to:', email);
+    return { success: true, message: 'Reset email sent' };
+  } catch (error) {
+    console.error('❌ Email sending failed:', error.message);
+    return { success: false, message: error.message };
+  }
+}
+
+async function sendPasswordResetSMS(phone, token) {
+  try {
+    if (!twilio || !process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE) {
+      console.log('⚠️  Twilio SMS not configured. Token:', token);
+      return { success: false, message: 'SMS not configured' };
+    }
+
+    const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    const message = `Your Omio Studio password reset code: ${token}. Valid for 1 hour. Do not share this code.`;
+
+    await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE,
+      to: phone
+    });
+
+    console.log('✅ Password reset SMS sent to:', phone);
+    return { success: true, message: 'SMS sent' };
+  } catch (error) {
+    console.error('❌ SMS sending failed:', error.message);
+    return { success: false, message: error.message };
+  }
+}
+
+async function sendPasswordResetWhatsApp(phone, token, name) {
+  try {
+    if (!twilio || !process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_WHATSAPP) {
+      console.log('⚠️  Twilio WhatsApp not configured. Token:', token);
+      return { success: false, message: 'WhatsApp not configured' };
+    }
+
+    const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    const message = `Hi ${name || 'there'}! 👋\n\nYour Omio Studio password reset code: *${token}*\n\n⏰ Valid for 1 hour\n🔒 Keep this code private\n\nIf you didn't request this, ignore this message.`;
+
+    await client.messages.create({
+      body: message,
+      from: `whatsapp:${process.env.TWILIO_WHATSAPP}`,
+      to: `whatsapp:${phone}`
+    });
+
+    console.log('✅ Password reset WhatsApp sent to:', phone);
+    return { success: true, message: 'WhatsApp sent' };
+  } catch (error) {
+    console.error('❌ WhatsApp sending failed:', error.message);
+    return { success: false, message: error.message };
+  }
+}
+
 async function getClientContactById(clientId) {
   const cleanId = String(clientId || '').trim();
   if (!cleanId) return null;
@@ -691,7 +807,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   try {
     const { email, method } = req.body;
     if (!email || !method) return res.status(400).json({ error: 'Email and method are required' });
-    if (!['email', 'sms', 'whatsapp'].includes(method)) return res.status(400).json({ error: 'Invalid method' });
+    if (!['email', 'sms', 'whatsapp', 'token'].includes(method)) return res.status(400).json({ error: 'Invalid method' });
 
     let user;
     if (isMongoConnected()) {
@@ -719,16 +835,31 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       }
     }
 
-    // Prepare response with token (frontend will simulate sending via chosen method)
+    // Send via selected method
+    let sendResult = { success: false };
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:4002'}/reset-password.html?token=${resetToken}`;
     
+    if (method === 'email') {
+      sendResult = await sendPasswordResetEmail(email, user.name, resetToken, method);
+    } else if (method === 'sms') {
+      if (!user.phone) return res.status(400).json({ error: 'User has no phone number on file' });
+      sendResult = await sendPasswordResetSMS(user.phone, resetToken);
+    } else if (method === 'whatsapp') {
+      if (!user.phone) return res.status(400).json({ error: 'User has no phone number on file' });
+      sendResult = await sendPasswordResetWhatsApp(user.phone, resetToken, user.name);
+    } else if (method === 'token') {
+      sendResult = { success: true, message: 'Token generated' };
+    }
+    
     res.json({
-      success: true,
-      message: `Reset link sent via ${method}`,
+      success: sendResult.success || method === 'token',
+      message: sendResult.message || `Reset code sent via ${method}`,
       token: resetToken, // For development/testing
       link: resetLink,
       expiresIn: '1 hour',
-      contact: method === 'sms' ? user.phone : method === 'whatsapp' ? user.phone : user.email
+      contact: method === 'sms' || method === 'whatsapp' ? user.phone : user.email,
+      method: method,
+      instruction: method === 'token' ? 'Use the token above. Direct URL: ' + resetLink : null
     });
   } catch(e) {
     res.status(500).json({ error: e.message });
