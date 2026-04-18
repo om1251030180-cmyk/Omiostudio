@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     :root {
       --font-body: 'Plus Jakarta Sans', sans-serif;
@@ -573,7 +574,17 @@
       border-bottom-color: rgba(111, 99, 255, 0.15);
     }
 
-
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #ffd60a 100%);
+      z-index: 1000;
+      will-change: width;
+      width: 0%;
+    }
 
     .nav {
       height: 70px;
@@ -5381,6 +5392,9 @@
   </style>
 </head>
 <body data-parallax-preset="medium">
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
+
   <div class="mesh"></div>
   <div class="blob b1"></div>
   <div class="blob b2"></div>
@@ -9911,7 +9925,82 @@
       }
     }
 
+    // ============================================
+    // PREMIUM ANIMATION FUNCTIONS
+    // ============================================
+
+    // Register ScrollTrigger plugin
+    gsap.registerPlugin(ScrollTrigger);
+
+    /**
+     * Fade-up animation on scroll
+     * Usage: animateFadeUp('.your-element')
+     */
+    function animateFadeUp(selector) {
+      const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
+      if (!element) return;
+      
+      gsap.from(element, {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        scrollTrigger: {
+          trigger: element,
+          start: "top 80%",
+          end: "top 20%",
+          scrub: 0.5,
+          markers: false
+        }
+      });
+    }
+
+    /**
+     * Stagger animation for grid items on scroll
+     * Usage: animateStaggerGrid('.card')
+     */
+    function animateStaggerGrid(selector) {
+      const items = document.querySelectorAll(selector);
+      if (!items.length) return;
+      
+      gsap.from(items, {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: selector,
+          start: "top 80%",
+          end: "top 40%",
+          scrub: 0.5,
+          markers: false
+        }
+      });
+    }
+
+    /**
+     * Initialize scroll progress bar
+     * Tracks scroll position with smooth animation
+     */
+    function initScrollProgress() {
+      const progressBar = document.querySelector('.scroll-progress');
+      if (!progressBar) return;
+
+      ScrollTrigger.create({
+        onUpdate: (self) => {
+          const progress = Math.floor(self.progress * 100);
+          gsap.to(progressBar, {
+            width: progress + '%',
+            duration: 0.5,
+            overwrite: false
+          });
+        }
+      });
+    }
+
     function initAnimations() {
+      // Initialize scroll progress bar
+      initScrollProgress();
+
       const fadeUp = document.querySelectorAll('.reveal');
       fadeUp.forEach((el) => {
         gsap.fromTo(el, { y: 26, opacity: 0 }, {
@@ -9926,6 +10015,10 @@
       gsap.from('.hero-main h1', { opacity: 0, y: 18, duration: 0.9, ease: 'power3.out' });
       gsap.from('.hero-main p', { opacity: 0, y: 12, duration: 0.9, delay: 0.12, ease: 'power3.out' });
       gsap.from('.hero-actions button', { opacity: 0, y: 12, duration: 0.7, stagger: 0.09, delay: 0.24 });
+      
+      // Enhance cards with scroll-based stagger animations
+      animateStaggerGrid('.feature-card');
+      animateStaggerGrid('.testimonial-card');
     }
 
     function wireModalClose() {
