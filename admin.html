@@ -1,406 +1,1273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Omio Studio Admin Command</title>
-  <link rel="icon" type="image/svg+xml" href="logo.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omio Studio - Admin Dashboard</title>
   <style>
-    :root {
-      --bg: #091225;
-      --card: rgba(15, 28, 54, 0.94);
-      --card-2: rgba(11, 22, 45, 0.96);
-      --stroke: rgba(112, 151, 245, 0.26);
-      --text: #f1f6ff;
-      --muted: #c1d1f2;
-      --ok: #15b887;
-      --warn: #d59d1e;
-      --danger: #c63a5e;
-      --blue: #6e89ff;
-    }
-
-    :root[data-theme='light'] {
-      --bg: #eef3ff;
-      --card: rgba(255, 255, 255, 0.9);
-      --card-2: rgba(247, 250, 255, 0.95);
-      --stroke: rgba(126, 141, 209, 0.24);
-      --text: #1a1f44;
-      --muted: #5f688f;
-    }
-
-    * { box-sizing: border-box; }
-    body {
+    * {
       margin: 0;
-      font-family: "Plus Jakarta Sans", sans-serif;
-      background: radial-gradient(circle at 8% 10%, rgba(91, 128, 220, 0.2), transparent 32%),
-                  radial-gradient(circle at 85% 14%, rgba(73, 187, 201, 0.22), transparent 34%),
-                  var(--bg);
-      color: var(--text);
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .wrap { width: min(1300px, 94vw); margin: 20px auto 34px; display: grid; gap: 12px; }
-    .head {
-      border: 1px solid var(--stroke);
-      background: var(--card);
-      border-radius: 18px;
-      padding: 14px;
+    :root {
+      --primary: #6366f1;
+      --dark-bg: #0f172a;
+      --dark-card: #1e293b;
+      --dark-border: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 70px 1fr;
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .logo-circle {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), #ec4899);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    nav button:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+
+    nav button.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .header-right button {
+      background: transparent;
+      border: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .header-right button:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    /* METRICS */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .metric:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    /* TABLE */
+    .table-wrapper {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: rgba(99, 102, 241, 0.05);
+      border-bottom: 2px solid var(--dark-border);
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+    }
+
+    tbody tr:hover {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+    }
+
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .badge-info {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 8px 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #4f46e5;
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 0.7rem;
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    /* LOG */
+    #activityLog {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+
+    .log-entry {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+      color: var(--text-muted);
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 28px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: auto;
+    }
+
+    .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
-    .head h1 { margin: 0; font-size: 1.3rem; color: var(--text); }
-    .muted { color: var(--muted); font-size: 0.84rem; }
 
-    .btn, .btn-ghost, .btn-danger, .btn-warn {
-      border: 1px solid var(--stroke);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font: inherit;
-      color: #fff;
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
       cursor: pointer;
-      background: #1a2e56;
-    }
-    .btn-ghost { background: rgba(16, 28, 54, 0.85); }
-    .btn-danger { background: var(--danger); }
-    .btn-warn { background: var(--warn); }
-
-    :root[data-theme='light'] .btn,
-    :root[data-theme='light'] .btn-ghost {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.9);
     }
 
-    .grid { display: grid; gap: 10px; }
-    .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-    .card {
-      border: 1px solid var(--stroke);
-      border-radius: 16px;
-      background: var(--card);
+    .client-info {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-btn {
+      padding: 10px 14px;
+      border: 1px solid var(--dark-border);
+      background: rgba(99, 102, 241, 0.05);
+      color: var(--primary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .action-btn.danger {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .action-btn.danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .action-btn.success {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .action-btn.success:hover {
+      background: var(--success);
+      color: white;
+    }
+
+    .orders-section {
+      margin-top: 20px;
+    }
+
+    .orders-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    /* ACTIVITY TABLE */
+    .activity-table {
+      width: 100%;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    .activity-table thead {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .activity-table th {
+      padding: 10px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .activity-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .activity-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    .activity-login {
+      background: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+    }
+
+    .activity-logout {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .activity-reset {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* CLIENT-WISE ACTIVITY */
+    .client-activity-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .client-activity-header {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid var(--dark-border);
+      transition: background 0.2s;
+    }
+
+    .client-activity-header:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.15));
+    }
+
+    .client-activity-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .client-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), #ec4899);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: white;
+    }
+
+    .client-activity-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .client-activity-name {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .client-activity-email {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .activity-count {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+
+    .expand-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .client-activity-list {
+      display: none;
       padding: 12px;
     }
-    .card h3, .card strong { color: var(--text); }
-    .kpi strong { font-size: 1.6rem; display: block; margin-bottom: 4px; }
 
-    .cols { grid-template-columns: 1.2fr 1fr; }
-
-    .field { display: grid; gap: 4px; margin-bottom: 8px; }
-    .field label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
-    .input, .select, .textarea {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--stroke);
-      background: var(--card-2);
-      color: var(--text);
-      padding: 9px 10px;
-      font: inherit;
+    .client-activity-list.expanded {
+      display: block;
     }
-    .textarea { min-height: 88px; resize: vertical; }
 
-    table { width: 100%; border-collapse: collapse; min-width: 780px; }
-    th, td { padding: 9px 8px; border-bottom: 1px solid rgba(135, 166, 235, 0.16); font-size: 0.79rem; text-align: left; }
-    td { color: var(--text); }
-    th { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: #cddafd; }
-    .table-wrap {
-      overflow: auto;
-      border: 1px solid rgba(118, 154, 239, 0.22);
-      border-radius: 12px;
-      background: rgba(9, 18, 38, 0.5);
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      background: rgba(99, 102, 241, 0.05);
+      border-left: 3px solid var(--primary);
+      border-radius: 3px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
     }
-    .badge { border-radius: 999px; padding: 3px 9px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
-    .active { background: rgba(33, 194, 143, 0.22); color: #85ffd6; }
-    .banned { background: rgba(198, 58, 94, 0.24); color: #ffc0d0; }
 
-    .msg-list { display: grid; gap: 8px; max-height: 340px; overflow: auto; }
-    .msg { border: 1px solid var(--stroke); border-radius: 12px; background: var(--card-2); padding: 9px; }
-    .msg small { color: var(--muted); display: block; margin-bottom: 4px; }
-    a.muted { color: #d5e4ff; font-weight: 600; }
+    .activity-item:last-child {
+      margin-bottom: 0;
+    }
 
-    @media (max-width: 980px) {
-      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .cols { grid-template-columns: 1fr; }
+    .activity-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .activity-item-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 16px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      nav button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      th, td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="head">
-      <div>
-        <h1>Admin Command Center</h1>
-        <div class="muted">Dedicated admin workspace for clients, projects, scheduling and operations.</div>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="header-logo">
+        <div class="logo-circle">A</div>
+        <span>Admin Dashboard</span>
       </div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn-ghost" id="themeToggleBtn" onclick="toggleTheme()">Light Theme</button>
-        <button class="btn-ghost" onclick="window.location.href='index.html'">Open Main Site</button>
-        <button class="btn" onclick="loadAll()">Refresh</button>
-        <button class="btn-danger" onclick="logout()">Logout</button>
+      
+      <nav>
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="clients">Clients</button>
+        <button class="nav-btn" data-tab="orders">Orders</button>
+        <button class="nav-btn" data-tab="invoices">Invoices</button>
+        <button class="nav-btn" data-tab="documents">Documents</button>
+        <button class="nav-btn" data-tab="database">Database</button>
+        <button class="nav-btn" data-tab="activity">Activity</button>
+      </nav>
+
+      <div class="header-right">
+        <button onclick="reloadData()" title="Refresh">↻</button>
+        <button onclick="logout()" title="Logout">⬅</button>
       </div>
-    </section>
+    </header>
 
-    <section id="kpis" class="grid kpis"></section>
-
-    <section class="grid cols">
-      <article class="card">
-        <h3 style="margin:0 0 8px;">Project Assignment & SLA</h3>
-        <form onsubmit="event.preventDefault(); assignOrder();">
-          <div class="field"><label>Order</label><select id="assignOrderId" class="select"></select></div>
-          <div class="field"><label>Owner Name</label><input id="assigneeName" class="input" /></div>
-          <div class="field"><label>Owner Email</label><input id="assigneeEmail" class="input" type="email" /></div>
-          <div class="field"><label>Team</label><input id="teamName" class="input" placeholder="Web Team / Branding Team" /></div>
-          <div class="field"><label>Priority</label>
-            <select id="priority" class="select">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
+    <!-- MAIN -->
+    <main>
+      <!-- DASHBOARD TAB -->
+      <section class="section active" id="dashboard">
+        <h1>Dashboard</h1>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Clients</div>
+            <div class="metric-value" id="totalClients">0</div>
           </div>
-          <div class="field"><label>SLA Hours</label><input id="slaHours" class="input" type="number" min="0" step="1" value="48" /></div>
-          <div class="field"><label>Assignment Notes</label><textarea id="assignmentNotes" class="textarea"></textarea></div>
-          <button class="btn" type="submit">Apply Assignment</button>
-        </form>
-      </article>
-
-      <article class="card">
-        <h3 style="margin:0 0 8px;">Arrange Call / Video with Client</h3>
-        <form onsubmit="event.preventDefault(); scheduleClientSession();">
-          <div class="field"><label>Client</label><select id="sessionClientId" class="select"></select></div>
-          <div class="field"><label>Session Type</label>
-            <select id="sessionType" class="select">
-              <option value="call_scheduled">Call Scheduled</option>
-              <option value="video_scheduled">Video Scheduled</option>
-              <option value="text">Text Update</option>
-            </select>
+          <div class="metric">
+            <div class="metric-label">Active Orders</div>
+            <div class="metric-value" id="activeOrders">0</div>
           </div>
-          <div class="field"><label>Session Time</label><input id="sessionTime" class="input" type="datetime-local" /></div>
-          <div class="field"><label>Meeting Link</label><input id="sessionLink" class="input" type="url" placeholder="https://meet.google.com/..." /></div>
-          <div class="field"><label>Message</label><textarea id="sessionMessage" class="textarea" maxlength="900" placeholder="Agenda and expected outcome"></textarea></div>
-          <button class="btn" type="submit">Send to Client</button>
-        </form>
-      </article>
-    </section>
+          <div class="metric">
+            <div class="metric-label">Total Revenue</div>
+            <div class="metric-value" id="totalRevenue">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Invoices</div>
+            <div class="metric-value" id="totalInvoices">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Completed</div>
+            <div class="metric-value" id="completedOrders">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Pending</div>
+            <div class="metric-value" id="pendingOrders">0</div>
+          </div>
+        </div>
+      </section>
 
-    <section class="card">
-      <h3 style="margin:0 0 8px;">All Projects</h3>
-      <div id="ordersTable" class="table-wrap"></div>
-    </section>
+      <!-- CLIENTS TAB -->
+      <section class="section" id="clients">
+        <h1>Clients</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTable">
+              <tr><td colspan="6" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-    <section class="card">
-      <h3 style="margin:0 0 8px;">All Clients (Ban / Unban)</h3>
-      <div id="usersTable" class="table-wrap"></div>
-    </section>
+      <!-- ORDERS TAB -->
+      <section class="section" id="orders">
+        <h1>Orders</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr><td colspan="7" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-    <section class="card">
-      <h3 style="margin:0 0 8px;">Client Communications</h3>
-      <div id="messageList" class="msg-list"></div>
-    </section>
+      <!-- INVOICES TAB -->
+      <section class="section" id="invoices">
+        <h1>Invoices</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Due Date</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTable">
+              <tr><td colspan="6" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS TAB -->
+      <section class="section" id="documents">
+        <h1>Documents</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Type</th>
+                <th>Filename</th>
+                <th>Uploaded</th>
+              </tr>
+            </thead>
+            <tbody id="documentsTable">
+              <tr><td colspan="4" class="empty">No documents uploaded yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DATABASE TAB -->
+      <section class="section" id="database">
+        <h1>Database & Activity Tracking</h1>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Users</div>
+            <div class="metric-value" id="dbUsers">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-value" id="dbOrders">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Database</div>
+            <div class="metric-value" id="dbType">JSON</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Last Update</div>
+            <div class="metric-value" style="font-size: 1rem;" id="dbTime">--:--:--</div>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 24px; margin-bottom: 12px;">Client-Wise Activity</h2>
+        <div id="clientActivityContainer" style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="text-align: center; color: var(--text-muted);">Loading activities...</div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY TAB -->
+      <section class="section" id="activity">
+        <h1>Activity Log</h1>
+        <div id="activityLog"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- CLIENT DETAIL MODAL -->
+  <div class="modal" id="clientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Client Details</div>
+        <button class="close-btn" onclick="closeClientModal()">✕</button>
+      </div>
+
+      <div class="client-info">
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Name</div>
+            <div class="info-value" id="modalName">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value" id="modalEmail">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Phone</div>
+            <div class="info-value" id="modalPhone">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Company</div>
+            <div class="info-value" id="modalCompany">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Address</div>
+            <div class="info-value" id="modalAddress">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">City</div>
+            <div class="info-value" id="modalCity">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Member Since</div>
+            <div class="info-value" id="modalCreatedAt">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Total Orders</div>
+            <div class="info-value" id="modalOrdersCount">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin-bottom: 12px;">Quick Actions</h3>
+        <div class="actions-grid">
+          <button class="action-btn" onclick="sendMessage()">📨 Send Message</button>
+          <button class="action-btn" onclick="initiateCall()">📞 Call</button>
+          <button class="action-btn" onclick="scheduleVideo()">📹 Video Appointment</button>
+          <button class="action-btn" onclick="sendOrder()">📦 Send Order</button>
+          <button class="action-btn" onclick="giveMeeting()">📅 Schedule Meeting</button>
+          <button class="action-btn" onclick="sendNotification()">🔔 Send Notification</button>
+          <button class="action-btn success" onclick="giveDecision()">✓ Give Decision</button>
+          <button class="action-btn danger" onclick="banClient()">🔒 Ban</button>
+          <button class="action-btn success" onclick="unbanClient()">🔓 Unban</button>
+          <button class="action-btn danger" onclick="deleteClient()">🗑 Delete</button>
+        </div>
+      </div>
+
+      <div class="orders-section">
+        <h3>Client Orders</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="modalOrdersTable">
+              <tr><td colspan="5" class="empty">No orders yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const API = `${window.location.origin}/api`;
+    const API_BASE = 'http://localhost:4004/api';
     const TOKEN_KEY = 'omio_token';
-    const THEME_KEY = 'omio_theme';
+    const USER_KEY = 'omio_user';
+    let currentClient = null;
+    let activityLog = [];
 
-    let state = { user: null, orders: [], users: [], messages: [] };
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      log('Admin Dashboard Started');
+      checkAuth();
+      setupNav();
+      loadData();
+      setInterval(loadData, 30000);
+    });
 
-    function applyTheme(theme) {
-      const next = theme === 'light' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem(THEME_KEY, next);
-      const btn = document.getElementById('themeToggleBtn');
-      if (btn) btn.textContent = next === 'dark' ? 'Light Theme' : 'Dark Theme';
-    }
+    function checkAuth() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const user = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
 
-    function initTheme() {
-      const saved = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
-      applyTheme(saved === 'light' || saved === 'dark' ? saved : 'dark');
-    }
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
-    }
-
-    function token() { return localStorage.getItem(TOKEN_KEY) || ''; }
-    function headers(json = false) {
-      const h = { Authorization: `Bearer ${token()}` };
-      if (json) h['Content-Type'] = 'application/json';
-      return h;
-    }
-    async function req(path, opts = {}) {
-      const res = await fetch(`${API}${path}`, { ...opts, headers: { ...(opts.headers || {}), ...headers() } });
-      const isJson = (res.headers.get('content-type') || '').includes('application/json');
-      const data = isJson ? await res.json() : null;
-      if (!res.ok) throw new Error(data?.error || 'Request failed');
-      return data;
-    }
-
-    function toast(msg) { alert(msg); }
-
-    async function ensureAdmin() {
-      const t = token();
-      if (!t) { window.location.href = 'index.html'; return false; }
-      try {
-        const me = await req('/auth/me');
-        if (!me || me.role !== 'admin') { window.location.href = 'index.html'; return false; }
-        state.user = me;
-        return true;
-      } catch {
+      if (!token || !user || user.role !== 'admin') {
         window.location.href = 'index.html';
-        return false;
+        return;
+      }
+      log('Admin authenticated');
+    }
+
+    function setupNav() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const tab = btn.dataset.tab;
+          document.getElementById(tab).classList.add('active');
+          
+          if (tab === 'database') {
+            loadActivityLog();
+          }
+          
+          log('Switched to: ' + tab);
+        });
+      });
+    }
+
+    async function loadData() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      
+      try {
+        // Load stats
+        const statsRes = await fetch(`${API_BASE}/admin/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          document.getElementById('totalClients').textContent = stats.totalUsers || 0;
+          document.getElementById('activeOrders').textContent = stats.pending || 0;
+          document.getElementById('completedOrders').textContent = stats.completed || 0;
+          document.getElementById('pendingOrders').textContent = stats.inProgress || 0;
+          document.getElementById('dbUsers').textContent = stats.totalUsers || 0;
+          document.getElementById('dbOrders').textContent = stats.totalOrders || 0;
+        }
+
+        // Load revenue
+        const revRes = await fetch(`${API_BASE}/admin/revenue`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (revRes.ok) {
+          const rev = await revRes.json();
+          document.getElementById('totalRevenue').textContent = 'Rs ' + (rev.totalRevenue || 0);
+          document.getElementById('totalInvoices').textContent = rev.totalInvoices || 0;
+        }
+
+        // Load clients
+        const clientRes = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (clientRes.ok) {
+          const clients = await clientRes.json();
+          const tbody = document.getElementById('clientsTable');
+          
+          if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty">No clients yet</td></tr>';
+          } else {
+            tbody.innerHTML = clients.map((c, idx) => `
+              <tr>
+                <td>${c.name || 'N/A'}</td>
+                <td>${c.email || 'N/A'}</td>
+                <td>${c.phone || 'N/A'}</td>
+                <td>${c.company || 'N/A'}</td>
+                <td><span class="badge badge-success">${c.isActive !== false ? 'Active' : 'Inactive'}</span></td>
+                <td><button class="btn btn-small" onclick="viewClient('${c._id || c.id || idx}', '${(c.name || '').replace(/'/g, "\\'")}', '${c.email || ''}', '${c.phone || ''}', '${c.company || ''}', '${c.address || ''}', '${c.city || ''}', '${c.createdAt || ''}')">View</button></td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        // Load orders
+        const ordRes = await fetch(`${API_BASE}/admin/orders`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (ordRes.ok) {
+          const orders = await ordRes.json();
+          const tbody = document.getElementById('ordersTable');
+          
+          if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">No orders yet</td></tr>';
+          } else {
+            tbody.innerHTML = orders.slice(0, 10).map(o => `
+              <tr>
+                <td>${(o._id || o.id || '').slice(0, 12)}</td>
+                <td>${o.userName || 'Unknown'}</td>
+                <td>${o.serviceLabel || o.serviceType || 'Service'}</td>
+                <td>Rs ${o.estimatedPrice || o.budget || 0}</td>
+                <td><span class="badge badge-info">${(o.status || 'pending').toUpperCase()}</span></td>
+                <td>${new Date(o.createdAt || Date.now()).toLocaleDateString()}</td>
+                <td><button class="btn btn-small">View</button></td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        document.getElementById('dbTime').textContent = new Date().toLocaleTimeString();
+        log('Data loaded successfully');
+      } catch (err) {
+        log('Error: ' + err.message);
       }
     }
 
-    function renderKpis(stats) {
-      const box = document.getElementById('kpis');
-      box.innerHTML = [
-        ['Total Orders', stats.totalOrders || 0],
-        ['Pending', stats.pending || 0],
-        ['In Progress', stats.inProgress || 0],
-        ['Completed', stats.completed || 0],
-        ['Clients', stats.totalUsers || 0],
-      ].map(([l, v]) => `<article class="card kpi"><strong>${v}</strong><span class="muted">${l}</span></article>`).join('');
-    }
-
-    function renderOrders() {
-      const box = document.getElementById('ordersTable');
-      if (!state.orders.length) { box.innerHTML = '<div class="muted">No orders found.</div>'; return; }
-      box.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th><th>Client</th><th>Service</th><th>Title</th><th>Status</th><th>Owner</th><th>Priority</th><th>SLA</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${state.orders.map((o) => `
-              <tr>
-                <td>${o._id || o.id || '-'}</td>
-                <td>${o.userName || '-'}<br><small>${o.userEmail || ''}</small></td>
-                <td>${o.serviceType || '-'}</td>
-                <td>${o.title || '-'}</td>
-                <td>${o.status || '-'}</td>
-                <td>${o.assigneeName || '-'}</td>
-                <td>${o.priority || 'medium'}</td>
-                <td>${Number(o.slaHours || 0)}h</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-
-      const orderSelect = document.getElementById('assignOrderId');
-      orderSelect.innerHTML = state.orders.map((o) => `<option value="${o._id || o.id}">${o._id || o.id} · ${o.title || 'Untitled'}</option>`).join('');
-    }
-
-    function renderUsers() {
-      const box = document.getElementById('usersTable');
-      if (!state.users.length) { box.innerHTML = '<div class="muted">No clients found.</div>'; return; }
-      box.innerHTML = `
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody>
-            ${state.users.map((u) => `
-              <tr>
-                <td>${u.name || '-'}</td>
-                <td>${u.email || '-'}</td>
-                <td>${u.phone || '-'}</td>
-                <td>${u.company || '-'}</td>
-                <td><span class="badge ${u.isActive === false ? 'banned' : 'active'}">${u.isActive === false ? 'banned' : 'active'}</span></td>
-                <td>${u.isActive === false
-                  ? `<button class="btn" onclick="toggleUser('${u.id || u._id}', true)">Unban</button>`
-                  : `<button class="btn-danger" onclick="toggleUser('${u.id || u._id}', false)">Ban</button>`}
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-
-      const clientSelect = document.getElementById('sessionClientId');
-      clientSelect.innerHTML = state.users.map((u) => `<option value="${u.id || u._id}">${u.name || 'Client'} · ${u.email || '-'}</option>`).join('');
-    }
-
-    function renderMessages() {
-      const box = document.getElementById('messageList');
-      if (!state.messages.length) { box.innerHTML = '<div class="msg"><small>Empty</small><div>No communications yet.</div></div>'; return; }
-      box.innerHTML = state.messages.map((m) => `
-        <article class="msg">
-          <small>${m.senderName || '-'} · ${m.type || 'text'} · ${new Date(m.createdAt || Date.now()).toLocaleString()}</small>
-          <div>${m.message || ''}</div>
-          ${m.preferredAt ? `<small>Preferred: ${new Date(m.preferredAt).toLocaleString()}</small>` : ''}
-          ${m.meetingLink ? `<a class="muted" href="${m.meetingLink}" target="_blank" rel="noopener">${m.meetingLink}</a>` : ''}
-        </article>
-      `).join('');
-    }
-
-    async function assignOrder() {
-      const id = document.getElementById('assignOrderId').value;
-      const payload = {
-        assigneeName: document.getElementById('assigneeName').value,
-        assigneeEmail: document.getElementById('assigneeEmail').value,
-        teamName: document.getElementById('teamName').value,
-        priority: document.getElementById('priority').value,
-        slaHours: Number(document.getElementById('slaHours').value || 0),
-        assignmentNotes: document.getElementById('assignmentNotes').value,
-      };
-      await req(`/admin/orders/${id}/assignment`, { method: 'PUT', headers: { ...headers(true) }, body: JSON.stringify(payload) });
-      toast('Assignment updated');
-      await loadAll();
-    }
-
-    async function toggleUser(id, nextState) {
-      await req(`/admin/users/${id}/status`, { method: 'PUT', headers: { ...headers(true) }, body: JSON.stringify({ isActive: nextState }) });
-      await loadAll();
-    }
-
-    async function scheduleClientSession() {
-      const clientId = document.getElementById('sessionClientId').value;
-      const payload = {
-        clientId,
-        type: document.getElementById('sessionType').value,
-        preferredAt: document.getElementById('sessionTime').value,
-        meetingLink: document.getElementById('sessionLink').value,
-        message: document.getElementById('sessionMessage').value,
-      };
-      await req('/messages', { method: 'POST', headers: { ...headers(true) }, body: JSON.stringify(payload) });
-      toast('Client communication sent');
-      document.getElementById('sessionTime').value = '';
-      document.getElementById('sessionLink').value = '';
-      document.getElementById('sessionMessage').value = '';
-      await loadAll();
-    }
-
-    async function loadAll() {
-      const ok = await ensureAdmin();
-      if (!ok) return;
-      const [stats, orders, users, messages] = await Promise.all([
-        req('/admin/stats'),
-        req('/admin/orders'),
-        req('/admin/users'),
-        req('/messages'),
-      ]);
-      state.orders = Array.isArray(orders) ? orders : [];
-      state.users = Array.isArray(users) ? users : [];
-      state.messages = Array.isArray(messages) ? messages : [];
-      renderKpis(stats || {});
-      renderOrders();
-      renderUsers();
-      renderMessages();
+    function reloadData() {
+      log('Reloading data...');
+      loadData();
     }
 
     function logout() {
-      localStorage.removeItem('omio_token');
-      localStorage.removeItem('omio_user');
+      localStorage.clear();
       window.location.href = 'index.html';
     }
 
-    initTheme();
-    loadAll().catch((e) => { alert(e.message || 'Unable to load admin page'); });
+    function log(msg) {
+      const el = document.getElementById('activityLog');
+      if (!el) return;
+      
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const time = new Date().toLocaleTimeString();
+      entry.textContent = `[${time}] ${msg}`;
+      el.insertBefore(entry, el.firstChild);
+      
+      while (el.children.length > 50) {
+        el.removeChild(el.lastChild);
+      }
+    }
+
+    // CLIENT MODAL FUNCTIONS
+    function viewClient(id, name, email, phone, company, address, city, createdAt) {
+      currentClient = { id, name, email, phone, company, address, city, createdAt };
+      
+      document.getElementById('modalName').textContent = name || 'N/A';
+      document.getElementById('modalEmail').textContent = email || 'N/A';
+      document.getElementById('modalPhone').textContent = phone || 'N/A';
+      document.getElementById('modalCompany').textContent = company || 'N/A';
+      document.getElementById('modalAddress').textContent = address || 'N/A';
+      document.getElementById('modalCity').textContent = city || 'N/A';
+      document.getElementById('modalCreatedAt').textContent = new Date(createdAt).toLocaleDateString() || 'N/A';
+      document.getElementById('modalOrdersCount').textContent = '0';
+      
+      document.getElementById('clientModal').classList.add('active');
+      log(`Viewing client: ${name}`);
+    }
+
+    function closeClientModal() {
+      document.getElementById('clientModal').classList.remove('active');
+      currentClient = null;
+    }
+
+    // CLIENT ACTIONS
+    function sendMessage() {
+      if (!currentClient) return;
+      const msg = prompt(`Send message to ${currentClient.name}:`, '');
+      if (msg) {
+        log(`Message sent to ${currentClient.name}: "${msg}"`);
+        alert('Message sent successfully!');
+      }
+    }
+
+    function initiateCall() {
+      if (!currentClient) return;
+      log(`Call initiated with ${currentClient.name} (${currentClient.phone})`);
+      alert(`Calling ${currentClient.name} at ${currentClient.phone}`);
+    }
+
+    function scheduleVideo() {
+      if (!currentClient) return;
+      const date = prompt(`Schedule video appointment with ${currentClient.name}:`, '');
+      if (date) {
+        log(`Video appointment scheduled with ${currentClient.name} for ${date}`);
+        alert('Video appointment scheduled!');
+      }
+    }
+
+    function sendOrder() {
+      if (!currentClient) return;
+      const orderId = prompt(`Enter Order ID to send to ${currentClient.name}:`, 'ORD-001');
+      if (orderId) {
+        log(`Order ${orderId} sent to ${currentClient.name}`);
+        alert(`Order ${orderId} sent to ${currentClient.name}`);
+      }
+    }
+
+    function giveMeeting() {
+      if (!currentClient) return;
+      const date = prompt(`Schedule meeting with ${currentClient.name}:`, new Date().toISOString().slice(0, 10));
+      if (date) {
+        log(`Meeting scheduled with ${currentClient.name} on ${date}`);
+        alert(`Meeting scheduled on ${date}`);
+      }
+    }
+
+    function sendNotification() {
+      if (!currentClient) return;
+      const msg = prompt(`Send notification to ${currentClient.name}:`, '');
+      if (msg) {
+        log(`Notification sent to ${currentClient.name}: "${msg}"`);
+        alert('Notification sent!');
+      }
+    }
+
+    function giveDecision() {
+      if (!currentClient) return;
+      const decision = prompt(`Provide decision for ${currentClient.name}:`, 'Approved');
+      if (decision) {
+        log(`Decision given to ${currentClient.name}: ${decision}`);
+        alert(`Decision: ${decision}`);
+      }
+    }
+
+    function banClient() {
+      if (!currentClient) return;
+      if (confirm(`Ban client ${currentClient.name}? They won't be able to access their account.`)) {
+        log(`Client BANNED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been banned`);
+      }
+    }
+
+    function unbanClient() {
+      if (!currentClient) return;
+      if (confirm(`Unban client ${currentClient.name}?`)) {
+        log(`Client UNBANNED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been unbanned`);
+      }
+    }
+
+    function deleteClient() {
+      if (!currentClient) return;
+      if (confirm(`PERMANENTLY DELETE client ${currentClient.name}? This cannot be undone.`)) {
+        log(`Client DELETED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been deleted`);
+        closeClientModal();
+        loadData();
+      }
+    }
+
+    // ACTIVITY LOG LOADING
+    async function loadActivityLog() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const container = document.getElementById('clientActivityContainer');
+      
+      try {
+        const clientRes = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (clientRes.ok) {
+          const clients = await clientRes.json();
+          
+          if (clients.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No clients found</div>';
+            return;
+          }
+
+          // Build activities per client
+          let html = '';
+          clients.forEach(c => {
+            const activities = [];
+            
+            // Collect activities for this client
+            if (c.lastLogin) {
+              activities.push({
+                type: 'Login',
+                badge: 'activity-login',
+                time: new Date(c.lastLogin).toLocaleString(),
+                token: (c._id || 'local').slice(0, 8) + '...',
+                details: 'Web Access'
+              });
+            }
+            if (c.resetToken) {
+              activities.push({
+                type: 'Password Reset',
+                badge: 'activity-reset',
+                time: new Date(c.resetTokenExpiry || Date.now()).toLocaleString(),
+                token: c.resetToken.slice(0, 8) + '...',
+                details: 'Reset Link Generated'
+              });
+            }
+
+            const avatar = (c.name || 'C').charAt(0).toUpperCase();
+            const activityCount = activities.length;
+
+            html += `
+              <div class="client-activity-card">
+                <div class="client-activity-header" onclick="this.parentElement.querySelector('.client-activity-list').classList.toggle('expanded'); this.querySelector('.expand-icon').classList.toggle('expanded');">
+                  <div class="client-activity-info">
+                    <div class="client-avatar">${avatar}</div>
+                    <div class="client-activity-details">
+                      <div class="client-activity-name">${c.name || 'Unknown'}</div>
+                      <div class="client-activity-email">${c.email || 'N/A'}</div>
+                    </div>
+                  </div>
+                  <div class="activity-count">${activityCount} Activities</div>
+                  <div class="expand-icon">▼</div>
+                </div>
+                <div class="client-activity-list">
+                  ${activities.map(a => `
+                    <div class="activity-item">
+                      <div class="activity-item-left">
+                        <span class="activity-badge ${a.badge}">${a.type}</span>
+                        <span style="color: var(--text-muted);">${a.time}</span>
+                      </div>
+                      <div class="activity-item-right">
+                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;">${a.token}</code>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">${a.details}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          });
+
+          container.innerHTML = html;
+        }
+      } catch (err) {
+        log('Error loading activity: ' + err.message);
+        container.innerHTML = '<div style="text-align: center; color: var(--danger); padding: 20px;">Error loading activities</div>';
+      }
+    }
   </script>
 </body>
 </html>

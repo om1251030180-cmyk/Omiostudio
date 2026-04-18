@@ -69,56 +69,203 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 /* ─── SCHEMAS ─── */
 const UserSchema = new mongoose.Schema({
+  // Basic Info
   name:      { type: String, required: true, trim: true },
   email:     { type: String, required: true, unique: true, lowercase: true, trim: true },
   password:  { type: String, required: true, minlength: 6 },
-  role:      { type: String, enum: ['client', 'admin'], default: 'client' },
+  
+  // Profile Info
   phone:     { type: String, default: '' },
   company:   { type: String, default: '' },
   avatar:    { type: String, default: '' },
+  address:   { type: String, default: '' },
+  city:      { type: String, default: '' },
+  country:   { type: String, default: '' },
+  website:   { type: String, default: '' },
+  
+  // Account Info
+  role:      { type: String, enum: ['client', 'admin'], default: 'client' },
   isActive:  { type: Boolean, default: true },
+  
+  // Security
   resetToken: { type: String, default: null },
   resetTokenExpiry: { type: Date, default: null },
+  
+  // Stats
+  totalOrders: { type: Number, default: 0 },
+  totalSpent: { type: Number, default: 0 },
+  lastLogin: { type: Date, default: null },
+  
+  // Metadata
+  metadata: {
+    preferences: mongoose.Schema.Types.Mixed,
+    notifications: { type: Boolean, default: true },
+    receiveEmails: { type: Boolean, default: true }
+  }
 }, { timestamps: true });
 
 const OrderSchema = new mongoose.Schema({
+  // User Reference
   userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  userName:      String,
-  userEmail:     String,
+  userName:      { type: String, required: true },
+  userEmail:     { type: String, required: true },
+  userPhone:     { type: String, default: '' },
+  userCompany:   { type: String, default: '' },
+  
+  // Service Info
   serviceType:   { type: String, required: true },
-  serviceLabel:  String,
-  customService: String,
-  managementRequired: { type: Boolean, default: false },
-  managementMonths: { type: Number, default: 0 },
-  managementMonthlyFee: { type: Number, default: 0 },
-  managementAmount: String,
-  brief: mongoose.Schema.Types.Mixed,
-  clientContactMethod: String,
-  clientContactTime: String,
+  serviceLabel:  { type: String, default: '' },
+  customService: { type: String, default: '' },
   title:         { type: String, required: true },
   description:   { type: String, required: true },
-  budget:        String,
-  deadline:      String,
-  references:    String,
+  
+  // Financial Info
+  budget:        { type: Number, default: 0 },
+  estimatedPrice: { type: Number, default: 0 },
+  finalPrice:    { type: Number, default: 0 },
+  
+  // Dates
+  deadline:      { type: Date, default: null },
+  startDate:     { type: Date, default: null },
+  completionDate: { type: Date, default: null },
+  
+  // Details
+  references:    { type: String, default: '' },
   files:         [String],
+  deliveryFiles: [String],
+  
+  // Status & Management
   status:        { type: String, enum: ['pending','in_progress','review','completed','cancelled'], default: 'pending' },
+  priority:      { type: String, enum: ['low', 'medium', 'high', 'urgent'], default: 'medium' },
   adminNotes:    { type: String, default: '' },
+  
+  // Assignment Info
   assigneeName:  { type: String, default: '' },
   assigneeEmail: { type: String, default: '' },
   teamName:      { type: String, default: '' },
-  priority:      { type: String, default: 'medium' },
   slaHours:      { type: Number, default: 0 },
   assignmentNotes: { type: String, default: '' },
-  assignmentUpdatedAt: String,
-  estimatedPrice:String,
-  deliveryFiles: [String],
+  assignmentUpdatedAt: { type: Date, default: null },
+  
+  // Management
+  managementRequired: { type: Boolean, default: false },
+  managementMonths: { type: Number, default: 0 },
+  managementMonthlyFee: { type: Number, default: 0 },
+  
+  // Workflow & Payment
   workflowStage: { type: String, default: 'awaiting_company_acceptance' },
   workflowRules: [String],
   companyAccepted: { type: Boolean, default: false },
-  acceptance: { type: mongoose.Schema.Types.Mixed, default: {} },
-  payment: { type: mongoose.Schema.Types.Mixed, default: {} },
-  revisionPolicy: { type: mongoose.Schema.Types.Mixed, default: {} },
-  tracking: { type: [mongoose.Schema.Types.Mixed], default: [] },
+  
+  // Payment Structure
+  payment: {
+    currency: { type: String, default: 'INR' },
+    quotedTotal: { type: Number, default: 0 },
+    advanceRequiredPercent: { type: Number, default: 50 },
+    advanceRequiredAmount: { type: Number, default: 0 },
+    advancePaidAmount: { type: Number, default: 0 },
+    advancePaidAt: { type: Date, default: null },
+    remainingAmount: { type: Number, default: 0 },
+    remainingPaidAmount: { type: Number, default: 0 },
+    remainingPaidAt: { type: Date, default: null },
+    fullyPaid: { type: Boolean, default: false },
+    transactions: [{
+      type: String,
+      amount: Number,
+      date: Date,
+      method: String,
+      transactionId: String,
+      status: String
+    }]
+  },
+  
+  // Revisions
+  revisionPolicy: {
+    freeIncluded: { type: Number, default: 1 },
+    freeUsed: { type: Number, default: 0 },
+    paidRevisionCount: { type: Number, default: 0 },
+    totalRevisionCharges: { type: Number, default: 0 },
+    requests: [{
+      number: Number,
+      requestedAt: Date,
+      description: String,
+      isPaid: Boolean,
+      amount: Number
+    }]
+  },
+  
+  // Tracking
+  tracking: [{
+    stage: String,
+    label: String,
+    note: String,
+    actorName: String,
+    actorRole: String,
+    timestamp: Date
+  }],
+  
+  // Acceptance
+  acceptance: {
+    acceptedAt: Date,
+    acceptedBy: String,
+    terms: String,
+    notes: String
+  },
+  
+  // Brief & Requirements
+  brief: mongoose.Schema.Types.Mixed,
+  clientContactMethod: { type: String, default: 'email' },
+  clientContactTime: { type: String, default: '' },
+  
+}, { timestamps: true });
+
+const InvoiceSchema = new mongoose.Schema({
+  invoiceNumber: { type: String, required: true, unique: true },
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+  userId:  { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  
+  // Client Info
+  clientName: String,
+  clientEmail: String,
+  clientPhone: String,
+  clientCompany: String,
+  
+  // Invoice Details
+  amount: { type: Number, required: true },
+  currency: { type: String, default: 'INR' },
+  issueDate: { type: Date, default: Date.now },
+  dueDate: { type: Date, required: true },
+  paymentTerms: String,
+  
+  // Items/Services
+  items: [{
+    description: String,
+    quantity: Number,
+    rate: Number,
+    amount: Number
+  }],
+  
+  // Status
+  status: { type: String, enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'], default: 'draft' },
+  
+  // Payment Info
+  paidAmount: { type: Number, default: 0 },
+  paidAt: { type: Date, default: null },
+  paymentMethod: { type: String, default: '' },
+  
+  // Notes
+  notes: String,
+  terms: String,
+  
+}, { timestamps: true });
+
+const SessionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  token: { type: String, required: true },
+  ipAddress: String,
+  userAgent: String,
+  expiresAt: { type: Date, required: true },
+  revokedAt: { type: Date, default: null }
 }, { timestamps: true });
 
 const AppSettingSchema = new mongoose.Schema({
@@ -151,10 +298,12 @@ const MessageSchema = new mongoose.Schema({
   meetingLink: String,
 }, { timestamps: true });
 
-let User, Order, AppSetting, WorkItem, Message;
+let User, Order, Invoice, Session, AppSetting, WorkItem, Message;
 try {
   User  = mongoose.model('User', UserSchema);
   Order = mongoose.model('Order', OrderSchema);
+  Invoice = mongoose.model('Invoice', InvoiceSchema);
+  Session = mongoose.model('Session', SessionSchema);
   AppSetting = mongoose.model('AppSetting', AppSettingSchema);
   WorkItem = mongoose.model('WorkItem', WorkItemSchema);
   Message = mongoose.model('Message', MessageSchema);
@@ -163,9 +312,23 @@ try {
 /* ─── JSON FALLBACK STORAGE ─── */
 const DB_PATH = './db.json';
 function getDB() {
-  if (!fs.existsSync(DB_PATH)) fs.writeFileSync(DB_PATH, JSON.stringify({ users: [], orders: [], works: [], messages: [], settings: {} }));
+  if (!fs.existsSync(DB_PATH)) {
+    fs.writeFileSync(DB_PATH, JSON.stringify({
+      users: [],
+      orders: [],
+      invoices: [],
+      sessions: [],
+      works: [],
+      messages: [],
+      settings: {}
+    }, null, 2));
+  }
   const data = JSON.parse(fs.readFileSync(DB_PATH));
   if (!data.settings || typeof data.settings !== 'object') data.settings = {};
+  if (!Array.isArray(data.users)) data.users = [];
+  if (!Array.isArray(data.orders)) data.orders = [];
+  if (!Array.isArray(data.invoices)) data.invoices = [];
+  if (!Array.isArray(data.sessions)) data.sessions = [];
   if (!Array.isArray(data.works)) data.works = [];
   if (!Array.isArray(data.messages)) data.messages = [];
   return data;
@@ -360,18 +523,55 @@ async function seedAdmin() {
         email:    process.env.ADMIN_EMAIL || 'admin@omio.studio',
         password: hash,
         role:     'admin',
-        company:  'Omio Studio'
+        phone:    '+91-9876543210',
+        company:  'Omio Studio',
+        address:  'Digital Creative Hub',
+        city:     'India',
+        country:  'India',
+        website:  'https://omio.studio',
+        isActive: true,
+        totalOrders: 0,
+        totalSpent: 0,
+        lastLogin: new Date(),
+        metadata: {
+          notifications: true,
+          receiveEmails: true
+        }
       });
       console.log('✅ Admin user seeded:', process.env.ADMIN_EMAIL || 'admin@omio.studio');
     }
   } catch(e) { console.log('Admin seed error:', e.message); }
 }
+
 function seedAdminJson() {
   const db = getDB();
   if (!db.users.find(u => u.email === 'admin@omio.studio')) {
-    db.users.push({ id: 'admin_1', name: 'Om (Admin)', email: 'admin@omio.studio', password: 'admin123', role: 'admin', company: 'Omio Studio', createdAt: new Date().toISOString() });
+    db.users.push({
+      id: 'admin_1',
+      name: 'Om (Admin)',
+      email: 'admin@omio.studio',
+      password: 'admin123',
+      phone: '+91-9876543210',
+      company: 'Omio Studio',
+      address: 'Digital Creative Hub',
+      city: 'India',
+      country: 'India',
+      website: 'https://omio.studio',
+      role: 'admin',
+      isActive: true,
+      totalOrders: 0,
+      totalSpent: 0,
+      lastLogin: new Date().toISOString(),
+      metadata: {
+        notifications: true,
+        receiveEmails: true,
+        preferences: {}
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
     saveDB(db);
-    console.log('✅ Admin seeded in JSON store');
+    console.log('✅ Admin seeded in JSON store with complete profile');
   }
 }
 
@@ -777,28 +977,93 @@ app.get('/api/auth/me', auth, async (req, res) => {
   try {
     if (isMongoConnected()) {
       const user = await User.findById(req.user.id).select('-password');
-      return res.json(user);
+      const orders = await Order.find({ userId: req.user.id });
+      return res.json({ ...user.toObject(), ordersCount: orders.length });
     }
     const db = getDB();
     const user = db.users.find(u => u.id === req.user.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
     const { password: _, ...safe } = user;
-    res.json(safe);
+    const ordersCount = (db.orders || []).filter(o => o.userId === req.user.id).length;
+    res.json({ ...safe, ordersCount });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Update profile
+// Get complete user profile with all data
+app.get('/api/users/:userId/complete', auth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const user = await User.findById(req.params.userId).select('-password');
+      const orders = await Order.find({ userId: req.params.userId });
+      const invoices = await Invoice.find({ userId: req.params.userId });
+      
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      
+      return res.json({
+        user: user.toObject(),
+        orders: orders.map(o => o.toObject()),
+        invoices: invoices.map(i => i.toObject()),
+        stats: {
+          totalOrders: orders.length,
+          totalInvoices: invoices.length,
+          totalSpent: invoices.reduce((sum, inv) => sum + inv.amount, 0)
+        }
+      });
+    }
+    
+    const db = getDB();
+    const user = db.users.find(u => u.id === req.params.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    const { password: _, ...safeUser } = user;
+    const orders = (db.orders || []).filter(o => o.userId === req.params.userId);
+    const invoices = (db.invoices || []).filter(i => i.userId === req.params.userId);
+    
+    res.json({
+      user: safeUser,
+      orders,
+      invoices,
+      stats: {
+        totalOrders: orders.length,
+        totalInvoices: invoices.length,
+        totalSpent: invoices.reduce((sum, inv) => sum + (inv.amount || 0), 0)
+      }
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Update profile with all fields
 app.put('/api/auth/profile', auth, async (req, res) => {
   try {
-    const { name, phone, company } = req.body;
+    const { name, phone, company, address, city, country, website, avatar } = req.body;
     if (isMongoConnected()) {
-      const user = await User.findByIdAndUpdate(req.user.id, { name, phone, company }, { new: true }).select('-password');
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { name, phone, company, address, city, country, website, avatar, lastLogin: new Date() },
+        { new: true }
+      ).select('-password');
       return res.json(user);
     }
     const db = getDB();
     const idx = db.users.findIndex(u => u.id === req.user.id);
-    if (idx > -1) { db.users[idx] = { ...db.users[idx], name, phone, company }; saveDB(db); }
-    res.json({ success: true });
+    if (idx > -1) {
+      db.users[idx] = {
+        ...db.users[idx],
+        name,
+        phone,
+        company,
+        address,
+        city,
+        country,
+        website,
+        avatar,
+        lastLogin: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      saveDB(db);
+      const { password: _, ...safe } = db.users[idx];
+      return res.json(safe);
+    }
+    res.status(404).json({ error: 'User not found' });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -1640,6 +1905,294 @@ app.get('/api/admin/stats', adminAuth, async (req, res) => {
       inProgress:  db.orders.filter(o => o.status === 'in_progress').length,
       completed:   db.orders.filter(o => o.status === 'completed').length,
       totalUsers:  db.users.filter(u => u.role !== 'admin').length,
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get all clients
+app.get('/api/admin/clients', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const clients = await User.find({ role: 'client' }).select('-password').sort({ createdAt: -1 });
+      return res.json(clients);
+    }
+    const db = getDB();
+    const clients = db.users.filter(u => u.role === 'client').map(u => {
+      const { password: _, ...safe } = u;
+      return safe;
+    });
+    res.json(clients);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get all orders
+app.get('/api/admin/orders', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const orders = await Order.find().sort({ createdAt: -1 }).populate('userId', 'name email company');
+      return res.json(orders);
+    }
+    const db = getDB();
+    res.json(db.orders || []);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get single order
+app.get('/api/admin/orders/:id', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const order = await Order.findById(req.params.id).populate('userId', 'name email company phone');
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+      return res.json(order);
+    }
+    const db = getDB();
+    const order = (db.orders || []).find(o => o.id === req.params.id);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json(order);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get revenue summary
+app.get('/api/admin/revenue', adminAuth, async (req, res) => {
+  try {
+    const invoices = [];
+    let totalRevenue = 0;
+    
+    if (isMongoConnected()) {
+      // Calculate from payment data in orders
+      const orders = await Order.find({ 'payment.fullyPaid': true });
+      totalRevenue = orders.reduce((sum, o) => sum + (o.payment?.remainingPaidAmount || 0), 0);
+    } else {
+      const db = getDB();
+      const orders = (db.orders || []).filter(o => o.payment?.fullyPaid);
+      totalRevenue = orders.reduce((sum, o) => sum + (o.payment?.remainingPaidAmount || 0), 0);
+    }
+
+    res.json({
+      totalRevenue: Math.round(totalRevenue),
+      totalInvoices: invoices.length,
+      paidInvoices: invoices.filter(i => i.status === 'paid').length,
+      pendingInvoices: invoices.filter(i => i.status === 'pending').length,
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get documents (from uploads)
+app.get('/api/admin/documents', adminAuth, async (req, res) => {
+  try {
+    const uploadsDir = './uploads';
+    if (!fs.existsSync(uploadsDir)) {
+      return res.json([]);
+    }
+    
+    const files = fs.readdirSync(uploadsDir);
+    const documents = files.map(file => {
+      const stat = fs.statSync(path.join(uploadsDir, file));
+      return {
+        id: file,
+        fileName: file,
+        size: stat.size,
+        uploadedAt: stat.birthtime,
+        url: `/uploads/${file}`
+      };
+    });
+    
+    res.json(documents.sort((a, b) => b.uploadedAt - a.uploadedAt));
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get active sessions
+app.get('/api/admin/sessions', adminAuth, async (req, res) => {
+  try {
+    // In production, you'd query an actual sessions table
+    // For now, return currently logged-in admin
+    res.json([
+      {
+        id: 'sess_admin_' + Date.now(),
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role,
+        token: req.headers.authorization?.split(' ')[1]?.slice(0, 20) + '...',
+        lastActive: new Date().toISOString()
+      }
+    ]);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get password reset tokens
+app.get('/api/admin/reset-tokens', adminAuth, async (req, res) => {
+  try {
+    const tokens = [];
+    
+    if (isMongoConnected()) {
+      const usersWithTokens = await User.find({ resetToken: { $ne: null } }).select('email resetToken resetTokenExpiry');
+      tokens.push(...usersWithTokens.map(u => ({
+        email: u.email,
+        token: u.resetToken?.slice(0, 20) + '...',
+        createdAt: u.updatedAt || new Date(),
+        expiresAt: u.resetTokenExpiry || new Date(Date.now() + 3600000),
+        status: new Date(u.resetTokenExpiry) > new Date() ? 'Active' : 'Expired'
+      })));
+    } else {
+      const db = getDB();
+      (db.users || []).forEach(u => {
+        if (u.resetToken) {
+          tokens.push({
+            email: u.email,
+            token: u.resetToken?.slice(0, 20) + '...',
+            createdAt: u.updatedAt || new Date(),
+            expiresAt: u.resetTokenExpiry || new Date(Date.now() + 3600000),
+            status: 'Active'
+          });
+        }
+      });
+    }
+    
+    res.json(tokens);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get database statistics
+app.get('/api/admin/database-stats', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const [userCount, orderCount, clientCount] = await Promise.all([
+        User.countDocuments(),
+        Order.countDocuments(),
+        User.countDocuments({ role: 'client' })
+      ]);
+      
+      return res.json({
+        totalUsers: userCount,
+        totalOrders: orderCount,
+        totalClients: clientCount,
+        database: 'MongoDB',
+        lastUpdated: new Date().toISOString()
+      });
+    }
+    
+    const db = getDB();
+    res.json({
+      totalUsers: (db.users || []).length,
+      totalOrders: (db.orders || []).length,
+      totalClients: (db.users || []).filter(u => u.role === 'client').length,
+      database: 'JSON',
+      lastUpdated: new Date().toISOString()
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Export all data (backup)
+app.get('/api/admin/export-data', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const users = await User.find().select('-password');
+      const orders = await Order.find();
+      const invoices = await Invoice.find();
+      const sessions = await Session.find();
+      
+      return res.json({
+        exportedAt: new Date().toISOString(),
+        database: 'MongoDB',
+        data: {
+          users: users.map(u => u.toObject()),
+          orders: orders.map(o => o.toObject()),
+          invoices: invoices.map(i => i.toObject()),
+          sessions: sessions.map(s => s.toObject()),
+          stats: {
+            totalUsers: users.length,
+            totalOrders: orders.length,
+            totalInvoices: invoices.length
+          }
+        }
+      });
+    }
+    
+    const db = getDB();
+    const users = db.users.map(u => {
+      const { password: _, ...safe } = u;
+      return safe;
+    });
+    
+    res.json({
+      exportedAt: new Date().toISOString(),
+      database: 'JSON',
+      data: {
+        users,
+        orders: db.orders || [],
+        invoices: db.invoices || [],
+        sessions: db.sessions || [],
+        stats: {
+          totalUsers: users.length,
+          totalOrders: (db.orders || []).length,
+          totalInvoices: (db.invoices || []).length
+        }
+      }
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get user with all related data
+app.get('/api/admin/users/:userId', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const user = await User.findById(req.params.userId).select('-password');
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      
+      const orders = await Order.find({ userId: req.params.userId });
+      const invoices = await Invoice.find({ userId: req.params.userId });
+      
+      return res.json({
+        user: user.toObject(),
+        orders: orders.map(o => o.toObject()),
+        invoices: invoices.map(i => i.toObject())
+      });
+    }
+    
+    const db = getDB();
+    const user = db.users.find(u => u.id === req.params.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const { password: _, ...safeUser } = user;
+    const orders = (db.orders || []).filter(o => o.userId === req.params.userId);
+    const invoices = (db.invoices || []).filter(i => i.userId === req.params.userId);
+    
+    res.json({
+      user: safeUser,
+      orders,
+      invoices
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Get complete order details with all related data
+app.get('/api/admin/orders/:orderId/complete', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const order = await Order.findById(req.params.orderId).populate('userId', '-password');
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+      
+      const invoices = await Invoice.find({ orderId: req.params.orderId });
+      
+      return res.json({
+        order: order.toObject(),
+        invoices: invoices.map(i => i.toObject()),
+        tracking: order.tracking || []
+      });
+    }
+    
+    const db = getDB();
+    const order = (db.orders || []).find(o => o.id === req.params.orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    
+    const user = db.users.find(u => u.id === order.userId);
+    const invoices = (db.invoices || []).filter(i => i.orderId === req.params.orderId);
+    
+    res.json({
+      order,
+      user: user ? { ...user, password: undefined } : null,
+      invoices,
+      tracking: order.tracking || []
     });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
