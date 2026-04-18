@@ -5317,9 +5317,13 @@
         </div>
 
         <!-- Right: Auth Buttons -->
-        <div class="nav-right">
-          <button class="nav-signin" onclick="openAuthModal('login')">Sign in</button>
-          <button class="nav-signup" onclick="openOrderModal()">Start Project</button>
+        <div class="nav-right" id="navRight">
+          <button class="nav-signin" onclick="openAuthModal('login')" id="signInBtn">Sign in</button>
+          <button class="nav-signup" onclick="openOrderModal()" id="createProjectBtn">Start Project</button>
+          <div id="userProfile" style="display: none; display: flex; align-items: center; gap: 12px;">
+            <span id="userName" style="color: var(--dark-text-soft); font-size: 0.9rem;"></span>
+            <button class="nav-signin" onclick="handleLogout()" style="background: rgba(255, 107, 107, 0.2); border-color: #ff6b6b;">Logout</button>
+          </div>
         </div>
       </div>
     </div>
@@ -6928,19 +6932,71 @@
       if (!document.querySelector('.modal-layer.open')) document.body.classList.remove('modal-open');
     }
 
+    function isUserLoggedIn() {
+      return localStorage.getItem('omio_session') !== null || sessionStorage.getItem('omio_session') !== null;
+    }
+
+    function getUserSession() {
+      const session = localStorage.getItem('omio_session') || sessionStorage.getItem('omio_session');
+      return session ? JSON.parse(session) : null;
+    }
+
+    function updateNavigation() {
+      const isLoggedIn = isUserLoggedIn();
+      const userSession = getUserSession();
+      const signInBtn = document.getElementById('signInBtn');
+      const createProjectBtn = document.getElementById('createProjectBtn');
+      const userProfile = document.getElementById('userProfile');
+      const userName = document.getElementById('userName');
+
+      if (isLoggedIn && userSession) {
+        // Hide auth buttons, show user profile
+        if (signInBtn) signInBtn.style.display = 'none';
+        if (createProjectBtn) {
+          createProjectBtn.textContent = 'Create Project';
+          createProjectBtn.style.display = 'inline-block';
+        }
+        if (userProfile) {
+          userProfile.style.display = 'flex';
+          userName.textContent = `Welcome, ${userSession.name}!`;
+        }
+      } else {
+        // Show auth buttons, hide user profile
+        if (signInBtn) signInBtn.style.display = 'inline-block';
+        if (createProjectBtn) {
+          createProjectBtn.textContent = 'Start Project';
+          createProjectBtn.style.display = 'inline-block';
+        }
+        if (userProfile) userProfile.style.display = 'none';
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('omio_session');
+      sessionStorage.removeItem('omio_session');
+      localStorage.removeItem('omio_remember');
+      updateNavigation();
+      window.location.href = 'index.html';
+    }
+
     function openAuthModal(tab = 'login') {
-      switchAuthTab(tab);
-      clearNotice('authNotice');
-      openModal('authLayer');
+      // Redirect to login or signup page instead of modal
+      if (tab === 'signup') {
+        window.location.href = 'signup.html';
+      } else {
+        window.location.href = 'login.html';
+      }
     }
 
     function openOrderModal(shortServiceId = '') {
-      if (!state.user) {
-        openAuthModal('login');
-        toast('info', 'Please login first to create an order.');
+      // Check if user is logged in
+      if (!isUserLoggedIn()) {
+        window.location.href = 'login.html';
         return;
       }
-      if (state.user.role === 'admin') {
+
+      const userSession = getUserSession();
+      if (state.user && state.user.role === 'admin') {
         toast('info', 'Admin accounts cannot place client orders.');
         return;
       }
@@ -9795,6 +9851,7 @@
 
     async function boot() {
       initTheme();
+      updateNavigation();
       seedLocalAdminIfNeeded();
       loadManagementPricing();
       syncRoleAccessUI();

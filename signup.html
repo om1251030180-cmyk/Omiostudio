@@ -988,8 +988,16 @@
       }, { once: true });
     }
 
+    function checkUserAlreadyLoggedIn() {
+      const session = localStorage.getItem('omio_session') || sessionStorage.getItem('omio_session');
+      if (session) {
+        window.location.href = 'index.html';
+      }
+    }
+
     // Initialize theme
     applyTheme(getStoredTheme() || getPreferredTheme());
+    checkUserAlreadyLoggedIn();
   </script>
 </body>
 </html>
