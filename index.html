@@ -5593,27 +5593,33 @@
     .testimonials-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
+      gap: 28px;
       max-width: 1400px;
       margin: 0 auto;
+      padding: 0 20px;
+      width: 100%;
+      min-height: 400px;
     }
 
+    /* Social Media Style Testimonial Cards */
     .testimonial-review-card {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(111, 99, 255, 0.08));
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      border-radius: 16px;
-      padding: 32px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(111, 99, 255, 0.12) 100%);
+      border: 1.5px solid rgba(168, 85, 247, 0.3);
+      border-radius: 20px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      backdrop-filter: blur(10px);
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      gap: 18px;
+      backdrop-filter: blur(12px);
+      transition: all 0.45s cubic-bezier(0.23, 1, 0.320, 1);
       cursor: pointer;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       transform-style: preserve-3d;
-      perspective: 1000px;
-      will-change: transform, opacity;
+      perspective: 1200px;
+      will-change: transform, opacity, box-shadow;
+      min-height: 280px;
+      box-shadow: 0 8px 32px rgba(111, 99, 255, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     }
 
     .testimonial-review-card::before {
@@ -5623,9 +5629,11 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.6s ease;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      border-radius: 20px;
+      transition: left 0.8s cubic-bezier(0.23, 1, 0.320, 1);
       z-index: 0;
+      pointer-events: none;
     }
 
     .testimonial-review-card:hover::before {
@@ -5633,67 +5641,78 @@
     }
 
     .testimonial-review-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(139, 92, 246, 0.4);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(111, 99, 255, 0.12));
-      box-shadow: 0 20px 50px rgba(111, 99, 255, 0.2);
+      transform: translateY(-12px) scale(1.02);
+      border-color: rgba(168, 85, 247, 0.6);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(111, 99, 255, 0.18) 100%);
+      box-shadow: 0 32px 64px rgba(111, 99, 255, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
 
     .testimonial-content {
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
     }
 
     .testimonial-stars {
       display: flex;
-      gap: 4px;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
+      gap: 6px;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
     }
 
     .testimonial-text {
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: var(--ink-soft);
-      font-weight: 300;
-      min-height: 100px;
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 400;
+      min-height: 120px;
       display: -webkit-box;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      font-style: italic;
+      letter-spacing: 0.3px;
     }
 
     .testimonial-meta {
-      border-top: 1px solid rgba(139, 92, 246, 0.15);
+      border-top: 1px solid rgba(168, 85, 247, 0.2);
       padding-top: 16px;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
     }
 
     .testimonial-name {
-      font-weight: 600;
-      color: var(--ink);
-      font-size: 0.95rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 1rem;
     }
 
     .testimonial-source {
-      font-size: 0.85rem;
-      color: var(--ink-soft);
+      font-size: 0.9rem;
+      color: rgba(168, 85, 247, 0.8);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-weight: 500;
     }
 
     .source-icon {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.9rem;
       font-weight: 700;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.3);
     }
 
     .source-ios {
@@ -11033,22 +11052,30 @@
     function renderPremiumTestimonials() {
       const grid = document.getElementById('testimonials-grid');
       if (!grid) {
-        console.warn('Testimonials grid not found');
+        console.error('❌ Testimonials grid element not found!');
         return;
       }
 
+      // Verify we have testimonials data
+      if (!premiumTestimonials || premiumTestimonials.length === 0) {
+        console.error('❌ No testimonials data available!');
+        return;
+      }
+
+      console.log('✅ Rendering', premiumTestimonials.length, 'testimonials...');
+
       // Generate testimonials HTML
       grid.innerHTML = premiumTestimonials.map((testimonial, index) => `
-        <div class="testimonial-review-card" data-testimonial="${index}">
+        <div class="testimonial-review-card" data-testimonial="${index}" style="opacity: 0;">
           <div class="testimonial-content">
-            <div class="testimonial-stars">
+            <div class="testimonial-stars" title="Rating: ${testimonial.stars}/5">
               ${'⭐'.repeat(testimonial.stars)}
             </div>
             <p class="testimonial-text">"${testimonial.text}"</p>
             <div class="testimonial-meta">
               <div class="testimonial-name">${testimonial.name}</div>
               <div class="testimonial-source">
-                <span class="source-icon ${testimonial.source.includes('iOS') ? 'source-ios' : testimonial.source.includes('Android') ? 'source-android' : 'source-web'}">
+                <span class="source-icon" title="${testimonial.source}">
                   ${testimonial.source.includes('iOS') ? '🍎' : testimonial.source.includes('Android') ? '🤖' : '🌐'}
                 </span>
                 ${testimonial.source}
@@ -11058,47 +11085,56 @@
         </div>
       `).join('');
 
-      console.log('Testimonials rendered:', grid.querySelectorAll('.testimonial-review-card').length);
+      console.log('✅ HTML injected. Cards count:', grid.querySelectorAll('.testimonial-review-card').length);
 
-      // Immediately animate testimonials with stagger
-      const testimonialCards = grid.querySelectorAll('.testimonial-review-card');
-      
-      // Set initial state
-      gsap.set(testimonialCards, {
-        opacity: 0,
-        y: 30,
-        scale: 0.95
-      });
+      // Wait a tick and then animate
+      requestAnimationFrame(() => {
+        const testimonialCards = grid.querySelectorAll('.testimonial-review-card');
+        
+        if (testimonialCards.length === 0) {
+          console.error('❌ No cards found after rendering!');
+          return;
+        }
 
-      // Animate each card
-      gsap.to(testimonialCards, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: 'elastic.out(1, 0.75)',
-        delay: 0.2
-      });
+        console.log('✅ Animating', testimonialCards.length, 'cards...');
 
-      // Also setup scroll trigger animations
-      testimonialCards.forEach((card, index) => {
-        gsap.fromTo(card, 
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            delay: index * 0.05,
+        // Set initial state
+        gsap.set(testimonialCards, {
+          opacity: 0,
+          y: 40,
+          scale: 0.90
+        });
+
+        // Animate all cards with stagger
+        gsap.to(testimonialCards, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: 'elastic.out(1.2, 0.8)',
+          delay: 0.15
+        });
+
+        // Add individual scroll-triggered animations
+        testimonialCards.forEach((card, index) => {
+          gsap.to(card, {
             scrollTrigger: {
               trigger: card,
-              start: 'top 90%',
-              end: 'top 70%',
-              scrub: false,
-              markers: false
+              start: 'top 85%',
+              end: 'top 60%',
+              scrub: 1,
+              onEnter: () => {
+                gsap.to(card, {
+                  duration: 0.5,
+                  boxShadow: '0 32px 64px rgba(111, 99, 255, 0.3)'
+                });
+              }
             }
-          }
-        );
+          });
+        });
+
+        console.log('✅ All testimonials animated successfully!');
       });
     }
 
