@@ -69,6 +69,8 @@ const UserSchema = new mongoose.Schema({
   company:   { type: String, default: '' },
   avatar:    { type: String, default: '' },
   isActive:  { type: Boolean, default: true },
+  resetToken: { type: String, default: null },
+  resetTokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
 
 const OrderSchema = new mongoose.Schema({
@@ -682,6 +684,124 @@ app.put('/api/auth/profile', auth, async (req, res) => {
     if (idx > -1) { db.users[idx] = { ...db.users[idx], name, phone, company }; saveDB(db); }
     res.json({ success: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Forgot Password - Request reset link
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email, method } = req.body;
+    if (!email || !method) return res.status(400).json({ error: 'Email and method are required' });
+    if (!['email', 'sms', 'whatsapp'].includes(method)) return res.status(400).json({ error: 'Invalid method' });
+
+    let user;
+    if (isMongoConnected()) {
+      user = await User.findOne({ email });
+    } else {
+      const db = getDB();
+      user = db.users.find(u => u.email === email);
+    }
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Generate reset token (6 character alphanumeric)
+    const resetToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const resetTokenExpiry = Date.now() + (3600 * 1000); // 1 hour expiry
+
+    if (isMongoConnected()) {
+      await User.findByIdAndUpdate(user._id, { resetToken, resetTokenExpiry });
+    } else {
+      const db = getDB();
+      const idx = db.users.findIndex(u => u.email === email);
+      if (idx > -1) {
+        db.users[idx].resetToken = resetToken;
+        db.users[idx].resetTokenExpiry = resetTokenExpiry;
+        saveDB(db);
+      }
+    }
+
+    // Prepare response with token (frontend will simulate sending via chosen method)
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:4002'}/reset-password.html?token=${resetToken}`;
+    
+    res.json({
+      success: true,
+      message: `Reset link sent via ${method}`,
+      token: resetToken, // For development/testing
+      link: resetLink,
+      expiresIn: '1 hour',
+      contact: method === 'sms' ? user.phone : method === 'whatsapp' ? user.phone : user.email
+    });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Verify Reset Token
+app.post('/api/auth/verify-reset-token', async (req, res) => {
+  try {
+    const { token, email } = req.body;
+    if (!token || !email) return res.status(400).json({ error: 'Token and email are required' });
+
+    let user;
+    if (isMongoConnected()) {
+      user = await User.findOne({ email });
+    } else {
+      const db = getDB();
+      user = db.users.find(u => u.email === email);
+    }
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (user.resetToken !== token) return res.status(400).json({ error: 'Invalid token' });
+    if (Date.now() > user.resetTokenExpiry) return res.status(400).json({ error: 'Token expired' });
+
+    res.json({ success: true, message: 'Token valid', email });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Reset Password with Token
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, email, newPassword } = req.body;
+    if (!token || !email || !newPassword) return res.status(400).json({ error: 'Token, email, and new password are required' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+    let user;
+    if (isMongoConnected()) {
+      user = await User.findOne({ email });
+    } else {
+      const db = getDB();
+      user = db.users.find(u => u.email === email);
+    }
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (user.resetToken !== token) return res.status(400).json({ error: 'Invalid token' });
+    if (Date.now() > user.resetTokenExpiry) return res.status(400).json({ error: 'Token expired' });
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    if (isMongoConnected()) {
+      await User.findByIdAndUpdate(user._id, {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null
+      });
+    } else {
+      const db = getDB();
+      const idx = db.users.findIndex(u => u.email === email);
+      if (idx > -1) {
+        db.users[idx].password = hashedPassword;
+        db.users[idx].resetToken = null;
+        db.users[idx].resetTokenExpiry = null;
+        saveDB(db);
+      }
+    }
+
+    res.json({ success: true, message: 'Password reset successfully' });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 /* ─── ORDER ROUTES ─── */
