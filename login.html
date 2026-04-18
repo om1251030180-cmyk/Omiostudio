@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In - Omio Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6f63ff;
+      --primary-light: #7b7cff;
+      --primary-dark: #5a4ce3;
+      --secondary: #66e0d2;
+      --accent: #ff5722;
+      --dark-bg: #0a0e27;
+      --dark-surface: #1a1f44;
+      --dark-text: #ffffff;
+      --dark-text-soft: #a0a8c8;
+      --dark-border: rgba(139, 92, 246, 0.15);
+      --light-bg: #f0f5ff;
+      --light-surface: #ffffff;
+      --light-text: #1a1f44;
+      --light-text-soft: #666666;
+      --light-border: rgba(111, 99, 255, 0.15);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--dark-bg);
+      color: var(--dark-text);
+      overflow: hidden;
+    }
+
+    body[data-theme='light'] {
+      background: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    .login-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left Panel - Form */
+    .login-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 40px;
+      background: var(--dark-surface);
+      position: relative;
+      z-index: 10;
+    }
+
+    body[data-theme='light'] .login-panel {
+      background: var(--light-surface);
+    }
+
+    .login-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(111, 99, 255, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(102, 224, 210, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .login-content {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .login-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .login-logo img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .login-brand {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .login-brand {
+      color: var(--light-text-soft);
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: var(--dark-text-soft);
+      margin-bottom: 32px;
+    }
+
+    body[data-theme='light'] .login-subtitle {
+      color: var(--light-text-soft);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .form-label {
+      color: var(--light-text-soft);
+    }
+
+    .form-input {
+      padding: 12px 16px;
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--dark-text);
+      font-size: 0.95rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .form-input::placeholder {
+      color: var(--dark-text-soft);
+      opacity: 0.6;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      background: rgba(139, 92, 246, 0.12);
+      box-shadow: 0 0 0 3px rgba(111, 99, 255, 0.1);
+    }
+
+    body[data-theme='light'] .form-input {
+      background: rgba(111, 99, 255, 0.06);
+      border-color: var(--light-border);
+      color: var(--light-text);
+    }
+
+    body[data-theme='light'] .form-input::placeholder {
+      color: var(--light-text-soft);
+    }
+
+    body[data-theme='light'] .form-input:focus {
+      background: rgba(111, 99, 255, 0.1);
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .forgot-password {
+      font-size: 0.85rem;
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password:hover {
+      color: var(--secondary);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s var(--ease);
+      box-shadow: 0 8px 24px rgba(111, 99, 255, 0.3);
+      margin-bottom: 16px;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(111, 99, 255, 0.4);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--dark-text-soft);
+      font-size: 0.85rem;
+    }
+
+    body[data-theme='light'] .divider {
+      color: var(--light-text-soft);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--dark-border);
+    }
+
+    body[data-theme='light'] .divider::before,
+    body[data-theme='light'] .divider::after {
+      background: var(--light-border);
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .social-button {
+      padding: 12px 16px;
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-button:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    body[data-theme='light'] .social-button {
+      background: rgba(111, 99, 255, 0.06);
+      border-color: var(--light-border);
+    }
+
+    body[data-theme='light'] .social-button:hover {
+      background: rgba(111, 99, 255, 0.12);
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--dark-text-soft);
+    }
+
+    body[data-theme='light'] .signup-link {
+      color: var(--light-text-soft);
+    }
+
+    .signup-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .signup-link a:hover {
+      color: var(--secondary);
+    }
+
+    /* Right Panel - Visual */
+    .brand-panel {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      filter: blur(40px);
+    }
+
+    .brand-panel::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+      filter: blur(30px);
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #fff;
+    }
+
+    .brand-icon {
+      font-size: 3.5rem;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .brand-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .brand-description {
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.95;
+      margin-bottom: 32px;
+      max-width: 320px;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1050px) {
+      .login-container {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-panel {
+        display: none;
+      }
+
+      .login-panel {
+        padding: 40px 20px;
+      }
+
+      .login-content {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-panel {
+        padding: 30px 20px;
+        justify-content: flex-start;
+        padding-top: 60px;
+      }
+
+      .login-title {
+        font-size: 1.6rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.85rem;
+      }
+
+      .social-buttons {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1px solid var(--dark-border);
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--dark-text);
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+    }
+
+    body[data-theme='light'] .theme-toggle {
+      border-color: var(--light-border);
+      background: rgba(111, 99, 255, 0.06);
+    }
+
+    body[data-theme='light'] .theme-toggle:hover {
+      background: rgba(111, 99, 255, 0.12);
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+
+  <div class="login-container">
+    <!-- Left Panel - Login Form -->
+    <div class="login-panel">
+      <div class="login-content">
+        <!-- Header -->
+        <div class="login-header">
+          <div class="login-logo"><img src="logo.svg" alt="Omio" /></div>
+          <div class="login-brand">Omio Studio</div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="login-title">Welcome back</h1>
+        <p class="login-subtitle">Sign in to explore our design studio and manage your projects.</p>
+
+        <!-- Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" placeholder="Enter your email" required />
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" placeholder="Enter your password" required />
+          </div>
+
+          <!-- Remember & Forgot -->
+          <div class="form-row">
+            <label class="checkbox-label">
+              <input type="checkbox" />
+              <span>Remember for 30 days</span>
+            </label>
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </div>
+
+          <!-- Sign In Button -->
+          <button type="submit" class="login-button">Sign In</button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">Or continue with</div>
+
+        <!-- Social Buttons -->
+        <div class="social-buttons">
+          <button class="social-button" title="Sign in with Google">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.91 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+            </svg>
+          </button>
+          <button class="social-button" title="Sign in with GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </button>
+          <button class="social-button" title="Sign in with Apple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.05 2.29.89 3.08.89.79 0 2.38-1.1 4.02-.92 1.71.14 2.99.82 3.77 2.01-3.54 2.08-2.83 6.86.5 8.1-.64 1.86-1.73 2.84-3.37 3.59z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Sign Up Link -->
+        <p class="signup-link">
+          Don't have an account? <a href="signup.html">Sign up</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Panel - Brand -->
+    <div class="brand-panel">
+      <div class="brand-content">
+        <div class="brand-icon">✨</div>
+        <h2 class="brand-title">Welcome to Omio Studio</h2>
+        <p class="brand-description">Premium design and development services for ambitious businesses worldwide.</p>
+        
+        <div class="brand-features">
+          <div class="feature-item">
+            <div class="feature-icon">🎨</div>
+            <span>Custom brand design</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌐</div>
+            <span>Web & app development</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <span>Project tracking dashboard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const THEME_KEY = 'omio_theme';
+
+    function getStoredTheme() {
+      try {
+        const value = (localStorage.getItem(THEME_KEY) || '').toLowerCase();
+        return value === 'dark' || value === 'light' ? value : '';
+      } catch {
+        return '';
+      }
+    }
+
+    function getPreferredTheme() {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+      return 'light';
+    }
+
+    function applyTheme(theme) {
+      const next = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch {}
+      updateThemeButton();
+    }
+
+    function updateThemeButton() {
+      const btn = document.querySelector('.theme-toggle');
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      btn.textContent = current === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      alert('Login functionality would be implemented here');
+      // In a real app, this would make an API call
+    }
+
+    // Initialize theme
+    applyTheme(getStoredTheme() || getPreferredTheme());
+  </script>
+</body>
+</html>
