@@ -790,9 +790,9 @@
       position: relative;
       overflow: hidden;
       border-radius: 20px;
-      background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(245, 248, 255, 0.68));
-      border: 1px solid rgba(152, 166, 228, 0.26);
-      box-shadow: 10px 10px 26px rgba(149, 165, 225, 0.35), -8px -8px 21px rgba(255, 255, 255, 0.92);
+      background: linear-gradient(160deg, rgba(26, 26, 26, 0.8), rgba(15, 15, 15, 0.9));
+      border: 1px solid rgba(255, 0, 110, 0.15);
+      box-shadow: 0 8px 24px rgba(255, 0, 110, 0.1), 0 2px 8px rgba(0, 217, 255, 0.08);
     }
 
     .neo-card::before {
@@ -800,7 +800,8 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: linear-gradient(140deg, rgba(255, 255, 255, 0.38), transparent 40%, rgba(111, 99, 255, 0.08));
+      background: linear-gradient(140deg, rgba(255, 0, 110, 0.08), transparent 40%, rgba(0, 217, 255, 0.05));
+      opacity: 0.5;
     }
 
     .services-grid article,
@@ -1706,9 +1707,9 @@
       content: '';
       position: absolute;
       inset: -50%;
-      background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.34) 50%, transparent 70%);
+      background: linear-gradient(100deg, transparent 30%, rgba(0, 217, 255, 0.15) 50%, transparent 70%);
       transform: translateX(-65%);
-      animation: miniShimmer 2.8s linear infinite;
+      animation: miniShimmer 3.5s linear infinite;
     }
 
     .mini-hero strong,
@@ -4885,6 +4886,17 @@
     }
 
     /* Light theme adjustments */
+    :root[data-theme='light'] .neo-card {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(245, 250, 255, 0.9));
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    :root[data-theme='light'] .neo-card::before {
+      background: linear-gradient(140deg, rgba(111, 99, 255, 0.04), transparent 40%, rgba(102, 224, 210, 0.03));
+      opacity: 0.4;
+    }
+
     :root[data-theme='light'] .feature-card {
       background: linear-gradient(145deg, rgba(245, 248, 255, 0.8), rgba(111, 99, 255, 0.06));
       border-color: rgba(111, 99, 255, 0.15);
