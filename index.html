@@ -4567,6 +4567,497 @@
         animation: none;
       }
     }
+
+    /* ═══════════════════════════════════════════════════
+       REDESIGNED HOMEPAGE STYLES
+       ═════════════════════════════════════════════════ */
+
+    /* Hero Section */
+    .redesigned-hero {
+      padding: 80px 0 100px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(236, 72, 153, 0.05) 100%);
+      border-radius: 32px;
+      margin-top: 20px;
+    }
+
+    .hero-content {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(111, 99, 255, 0.12);
+      border: 1px solid rgba(111, 99, 255, 0.24);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2);
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      color: var(--ink);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .gradient-highlight {
+      background: linear-gradient(135deg, #6f63ff, #66e0d2, #ff985f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .cta-primary {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2);
+      color: #fff;
+      border: 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 24px rgba(111, 99, 255, 0.3);
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(111, 99, 255, 0.4);
+    }
+
+    .cta-secondary {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cta-secondary:hover {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(111, 99, 255, 0.1);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    /* Section Header */
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .section-header p {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .feature-card {
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid rgba(111, 99, 255, 0.1);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(111, 99, 255, 0.08));
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(111, 99, 255, 0.3);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(111, 99, 255, 0.12));
+      box-shadow: 0 12px 40px rgba(111, 99, 255, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .feature-card p {
+      color: var(--ink-soft);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .feature-link {
+      color: #6f63ff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .feature-link:hover {
+      color: #66e0d2;
+      transform: translateX(4px);
+    }
+
+    /* Services Grid Redesigned */
+    .services-grid-redesigned {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+      margin-bottom: 80px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .testimonial-card {
+      padding: 28px;
+      border-radius: 16px;
+      border: 1px solid rgba(111, 99, 255, 0.1);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(111, 99, 255, 0.05));
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .testimonial-card:hover {
+      border-color: rgba(111, 99, 255, 0.3);
+      transform: translateY(-4px);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(111, 99, 255, 0.08));
+    }
+
+    .testimonial-stars {
+      font-size: 1.2rem;
+      color: #ffd60a;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(111, 99, 255, 0.1);
+    }
+
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .author-name {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    .author-role {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    /* Stats Showcase */
+    .stats-showcase {
+      margin-bottom: 100px;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.12) 0%, rgba(236, 72, 153, 0.08) 100%);
+      padding: 80px 0;
+      border-radius: 24px;
+    }
+
+    .stats-content {
+      text-align: center;
+    }
+
+    .stats-header {
+      margin-bottom: 60px;
+    }
+
+    .stats-header h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .stats-header p {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stat-box {
+      padding: 30px 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(111, 99, 255, 0.15);
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .stat-box:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(111, 99, 255, 0.3);
+    }
+
+    .stat-value {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6f63ff, #66e0d2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .stat-name {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    /* CTA Showcase */
+    .cta-showcase {
+      text-align: center;
+      padding: 80px 60px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%);
+      border: 1px solid rgba(111, 99, 255, 0.2);
+      margin-top: 100px;
+      margin-bottom: 60px;
+    }
+
+    .cta-showcase h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .cta-showcase p {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Light theme adjustments */
+    :root[data-theme='light'] .feature-card {
+      background: linear-gradient(145deg, rgba(245, 248, 255, 0.8), rgba(111, 99, 255, 0.06));
+      border-color: rgba(111, 99, 255, 0.15);
+    }
+
+    :root[data-theme='light'] .feature-card:hover {
+      background: linear-gradient(145deg, rgba(240, 244, 255, 0.9), rgba(111, 99, 255, 0.1));
+      border-color: rgba(111, 99, 255, 0.3);
+    }
+
+    :root[data-theme='light'] .hero-title {
+      color: #1a1f44;
+    }
+
+    :root[data-theme='light'] .redesigned-hero {
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.06) 0%, rgba(236, 72, 153, 0.04) 100%);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .redesigned-hero {
+        padding: 60px 0 80px;
+      }
+
+      .hero-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .cta-showcase {
+        padding: 60px 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .hero-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .cta-showcase {
+        padding: 40px 20px;
+      }
+    }
   </style>
 </head>
 <body data-parallax-preset="medium">
@@ -4629,61 +5120,89 @@
     </div>
 
     <section id="view-landing" class="view active">
-      <div class="container hero">
-        <article class="hero-main glass reveal">
-          <div class="eyebrow"><span class="dot"></span> Premium Digital Agency</div>
-          <h1>We Don't Just Build - <span class="gradient-word">We Create Experiences</span></h1>
-          <p>
-            Omio Studio builds websites, mobile apps, logos, branding kits, cards, and UI systems for ambitious businesses.
-            You get premium output, transparent order tracking, and a modern workflow powered by local-first plus backend persistence.
-          </p>
-          <div class="hero-actions">
-            <button class="brand-btn" onclick="openOrderModal()">Start a Project</button>
-            <button class="ghost-btn" onclick="goTo('#services')">Explore Services</button>
+      <!-- Clean Hero Section -->
+      <div class="container">
+        <div class="redesigned-hero">
+          <div class="hero-content fade-up">
+            <div class="hero-badge">
+              <span class="badge-dot">●</span>
+              Premium Digital Studio
+            </div>
+            <h1 class="hero-title">Design, Build, and Deploy<br><span class="gradient-highlight">Experiences That Matter</span></h1>
+            <p class="hero-subtitle">We craft premium websites, mobile apps, and digital products for ambitious businesses. Transparent workflows. Measurable results. Delivered fast.</p>
+            <div class="hero-ctas">
+              <button class="cta-primary" onclick="openOrderModal()">Start a Project</button>
+              <button class="cta-secondary" onclick="goTo('#features')">See Our Work →</button>
+            </div>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Projects Delivered</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">98%</span>
+                <span class="stat-label">Client Satisfaction</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">3yr+</span>
+                <span class="stat-label">Industry Experience</span>
+              </div>
+            </div>
           </div>
-          <div class="hero-chip-list">
-            <button class="chip-btn">Websites</button>
-            <button class="chip-btn">Apps</button>
-            <button class="chip-btn">Logos</button>
-            <button class="chip-btn">Branding</button>
-            <button class="chip-btn">UI/UX</button>
-          </div>
-        </article>
-
-
-      </div>
-
-      <div class="container section" id="insights">
-        <div class="section-head">
-          <h2 class="reveal">Modern Delivery Stack</h2>
-          <p class="reveal">Top-class execution combines strategy, design systems, and development workflow under one measurable framework.</p>
-        </div>
-        <div class="insight-grid">
-          <article class="insight-card glass reveal">
-            <h3>AI-Assisted Production</h3>
-            <p>Structured prompts, component templates, and QA checklists shorten delivery cycles while preserving premium craft.</p>
-          </article>
-          <article class="insight-card glass reveal">
-            <h3>3D Motion Language</h3>
-            <p>Depth-driven cards and pointer-responsive interaction build a modern interface that feels alive and intentional.</p>
-          </article>
-          <article class="insight-card glass reveal">
-            <h3>Analytics-Ready Foundation</h3>
-            <p>Order, status, and performance data are modeled for growth so client dashboards can evolve into full operational systems.</p>
-          </article>
-        </div>
-        <div class="stat-strip reveal">
-          <div class="stat-tile"><strong>99.9%</strong><span>UI Uptime Target</span></div>
-          <div class="stat-tile"><strong>35%</strong><span>Avg. Retention Lift</span></div>
-          <div class="stat-tile"><strong>72h</strong><span>First Iteration Goal</span></div>
-          <div class="stat-tile"><strong>120+</strong><span>Assets Delivered</span></div>
         </div>
       </div>
 
+      <!-- Features Grid Section (Superlist-inspired) -->
+      <div class="container section" id="features">
+        <div class="section-header fade-up">
+          <h2>What We Deliver</h2>
+          <p>Everything you need to establish a world-class digital presence</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0s;">
+            <div class="feature-icon">🎨</div>
+            <h3>Brand & Design</h3>
+            <p>Logo design, brand guidelines, UI systems, and visual identity that sets you apart.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0.1s;">
+            <div class="feature-icon">🌐</div>
+            <h3>Web Development</h3>
+            <p>Fast, responsive websites built with modern tech. SEO-optimized and production-ready.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0.2s;">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile Apps</h3>
+            <p>Native and cross-platform apps that users love. iOS, Android, and progressive web apps.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0.3s;">
+            <div class="feature-icon">⚡</div>
+            <h3>Performance</h3>
+            <p>Lightning-fast load times, optimal performance, and best practices across all platforms.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0.4s;">
+            <div class="feature-icon">🔒</div>
+            <h3>Security First</h3>
+            <p>Enterprise-grade security, compliance-ready, and protected against modern threats.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+          <div class="feature-card fade-up stagger-item" style="animation-delay: 0.5s;">
+            <div class="feature-icon">🚀</div>
+            <h3>Deployment</h3>
+            <p>Seamless deployment pipelines, continuous integration, and hassle-free scaling.</p>
+            <a href="#" class="feature-link">Explore →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Section -->
       <div class="container section" id="services">
-        <div class="section-head">
-          <h2 class="reveal">Service Modules</h2>
-          <p class="reveal">Each card opens details with description, pricing tiers, demo links, and direct order action.</p>
+        <div class="section-header fade-up">
+          <h2>Service Modules</h2>
+          <p>Choose from our curated service packages or customize your own</p>
         </div>
         <div class="service-controls">
           <input id="serviceSearch" class="input" type="text" placeholder="Search service modules" oninput="setServiceQuery(this.value)" />
@@ -4695,63 +5214,119 @@
             <option value="az">A to Z</option>
           </select>
         </div>
-        <div id="servicesGrid" class="services-grid"></div>
+        <div id="servicesGrid" class="services-grid-redesigned"></div>
       </div>
 
+      <!-- Testimonials Section -->
+      <div class="container section testimonials-section fade-up">
+        <div class="section-header">
+          <h2>Loved by Clients</h2>
+          <p>Real feedback from the teams we've worked with</p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card stagger-item">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Exceptional work quality. The team delivered beyond our expectations and was incredibly responsive throughout the project."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">JD</div>
+              <div>
+                <div class="author-name">Jane Doe</div>
+                <div class="author-role">CEO, TechStart</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card stagger-item">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Professional, creative, and results-driven. They understood our vision and executed it perfectly. Highly recommended!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">MJ</div>
+              <div>
+                <div class="author-name">Mike Johnson</div>
+                <div class="author-role">Founder, Digital Co</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card stagger-item">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Best agency we've worked with. Their attention to detail, communication, and delivery are unmatched in the industry."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">SL</div>
+              <div>
+                <div class="author-name">Sarah Lee</div>
+                <div class="author-role">Product Manager, FinTech</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Process Section -->
+      <div class="container section" id="process">
+        <div class="section-header fade-up">
+          <h2>Our Process</h2>
+          <p>From discovery to launch with transparency at every step</p>
+        </div>
+        <div id="processGrid" class="process-grid"></div>
+      </div>
+
+      <!-- Stats Section (Prometheus-inspired) -->
+      <div class="stats-showcase fade-up">
+        <div class="container">
+          <div class="stats-content">
+            <div class="stats-header">
+              <h2>Proven Results</h2>
+              <p>Numbers that speak for themselves</p>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-value counter" data-count="500">0</div>
+                <div class="stat-name">+ Projects</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value counter" data-count="98">0</div>
+                <div class="stat-name">% Satisfaction</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value counter" data-count="50">0</div>
+                <div class="stat-name">+ Team Members</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">24/7</div>
+                <div class="stat-name">Support</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Services Section -->
       <div class="container section" id="saved-services">
-        <div class="section-head">
-          <h2 class="reveal">Saved Services</h2>
-          <p class="reveal">Bookmark services you like and launch order flow in one click.</p>
+        <div class="section-header fade-up">
+          <h2>Saved Services</h2>
+          <p>Your favorite services all in one place</p>
         </div>
         <div id="savedServices" class="saved-service-grid"></div>
       </div>
 
+      <!-- Website Previews Section -->
       <div class="container section" id="website-previews">
-        <div class="section-head">
-          <h2 class="reveal">Website Preview Gallery</h2>
-          <p class="reveal">Interactive miniature demos in a rounded animated grid. Click any card to open a full on-page demo view for clients.</p>
+        <div class="section-header fade-up">
+          <h2>Website Preview Gallery</h2>
+          <p>See live examples of our recent work</p>
         </div>
         <section class="website-preview-shell reveal">
           <div id="websitePreviewGrid" class="website-preview-grid"></div>
         </section>
       </div>
 
-      <div class="container section" id="process">
-        <div class="section-head">
-          <h2 class="reveal">Build Flow</h2>
-          <p class="reveal">From discovery to launch with revisions and status visibility.</p>
-        </div>
-        <div id="processGrid" class="process-grid"></div>
-      </div>
-
-      <div class="container section" id="testimonials">
-        <div class="section-head">
-          <h2 class="reveal">Client Signals</h2>
-          <p class="reveal">A lightweight slider that cycles social proof.</p>
-        </div>
-        <div class="testi-grid">
-          <article id="testimonialCard" class="testimonial active"></article>
-          <div class="glass testi-info-card">
-            <h3>Why teams keep choosing Omio</h3>
-            <p>
-              Fast communication, transparent revisions, premium design quality, and production-ready implementation.
-              This website is built to reflect the same standard clients receive.
-            </p>
-            <div class="slider-nav">
-              <button onclick="prevTestimonial()">‹</button>
-              <button onclick="nextTestimonial()">›</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <!-- CTA Section -->
       <div class="container">
-        <section class="cta reveal">
-          <h2>Ready To Build A Next-Level Brand Experience?</h2>
-          <p>Login, submit your brief, upload references, and track progress from dashboard. Admin gets centralized control for order lifecycle.</p>
-          <div class="hero-actions">
-            <button class="brand-btn" onclick="openOrderModal()">Create New Order</button>
-            <button class="ghost-btn" onclick="openAuthModal('register')">Create Account</button>
+        <section class="cta-showcase fade-up">
+          <h2>Ready to Create Something Amazing?</h2>
+          <p>Let's discuss your project and turn your ideas into reality</p>
+          <div class="cta-buttons">
+            <button class="cta-primary" onclick="openOrderModal()">Start Your Project</button>
+            <button class="cta-secondary" onclick="openAuthModal('register')">Schedule a Call</button>
           </div>
         </section>
       </div>
