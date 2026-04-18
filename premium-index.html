@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omio Studio – Design the Future | Premium Digital Experiences</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6f63ff;
+      --secondary: #66e0d2;
+      --accent: #ff006e;
+      --orange: #ff8a5b;
+      --bg-dark: #0a0e27;
+      --bg-darker: #050810;
+      --text-light: #ffffff;
+      --text-soft: #b8bfdb;
+      --glass-light: rgba(255, 255, 255, 0.05);
+      --glass-medium: rgba(255, 255, 255, 0.08);
+      --glass-strong: rgba(15, 8, 40, 0.8);
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+      --font-brand: 'DM Serif Display', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+      color: var(--text-light);
+      overflow-x: hidden;
+      background-attachment: fixed;
+    }
+
+    /* Mesh Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(111, 99, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111, 99, 255, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.6;
+    }
+
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(111, 99, 255, 0.4) 0%, transparent 70%);
+      top: 10%;
+      left: 10%;
+    }
+
+    .hero::after {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(102, 224, 210, 0.3) 0%, transparent 70%);
+      bottom: 5%;
+      right: 10%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 900px;
+      padding: 40px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-brand);
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -2px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: var(--text-soft);
+      margin-bottom: 40px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.6;
+      animation: floatUp 2s ease-in-out infinite;
+    }
+
+    .scroll-indicator svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--text-soft);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* Glowing orb animation */
+    .hero-glow {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(111, 99, 255, 0.5) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(40px);
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: orbPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+      50% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+    }
+
+    /* ============================================
+       PINNED SCROLL SECTION
+       ============================================ */
+    .pinned-section {
+      position: relative;
+      height: 300vh;
+      z-index: 2;
+    }
+
+    .pinned-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding: 80px;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, rgba(111, 99, 255, 0.1) 100%);
+      overflow: hidden;
+    }
+
+    .pinned-text h2 {
+      font-family: var(--font-brand);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .pinned-text p {
+      font-size: 1.1rem;
+      color: var(--text-soft);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .pinned-visual {
+      position: relative;
+      height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .visual-card {
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      background: var(--glass-strong);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 30px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(111, 99, 255, 0.2);
+    }
+
+    .visual-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .visual-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--text-light);
+    }
+
+    .visual-card p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       PARALLAX SECTION
+       ============================================ */
+    .parallax-section {
+      position: relative;
+      min-height: 300vh;
+      z-index: 2;
+      background: transparent;
+    }
+
+    .parallax-container {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.05) 0%, rgba(102, 224, 210, 0.05) 100%);
+    }
+
+    .parallax-layer {
+      position: absolute;
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+
+    .layer-bg {
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle at 20% 50%, rgba(111, 99, 255, 0.2) 0%, transparent 50%);
+      top: -25%;
+      left: -25%;
+    }
+
+    .layer-mid {
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-weight: 700;
+      color: rgba(102, 224, 210, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 10px;
+      white-space: nowrap;
+      font-family: var(--font-heading);
+      text-shadow: 0 0 40px rgba(102, 224, 210, 0.2);
+    }
+
+    .layer-fg {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    /* ============================================
+       SERVICES SECTION
+       ============================================ */
+    .services {
+      position: relative;
+      z-index: 2;
+      padding: 100px 40px;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, rgba(111, 99, 255, 0.08) 100%);
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: 80px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .services-header h2 {
+      font-family: var(--font-brand);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .services-header p {
+      font-size: 1.2rem;
+      color: var(--text-soft);
+      font-weight: 300;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .service-card {
+      background: var(--glass-strong);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .service-card:hover::before {
+      left: 100%;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      background: var(--glass-medium);
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 20px 40px rgba(111, 99, 255, 0.2);
+    }
+
+    .service-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .service-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--text-light);
+      font-family: var(--font-heading);
+    }
+
+    .service-card p {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ============================================
+       INTERACTIVE SECTION
+       ============================================ */
+    .interactive {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      background: linear-gradient(135deg, rgba(111, 99, 255, 0.1) 0%, var(--bg-dark) 100%);
+      cursor: none;
+      overflow: hidden;
+    }
+
+    .interactive-content {
+      text-align: center;
+      max-width: 800px;
+      z-index: 3;
+      position: relative;
+    }
+
+    .interactive-content h2 {
+      font-family: var(--font-brand);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, var(--secondary), var(--orange));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .interactive-content p {
+      font-size: 1.2rem;
+      color: var(--text-soft);
+      margin-bottom: 40px;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 15px 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(111, 99, 255, 0.3);
+      text-decoration: none;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(111, 99, 255, 0.4);
+    }
+
+    .cursor-glow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(111, 99, 255, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(40px);
+      display: none;
+    }
+
+    .interactive:hover .cursor-glow {
+      display: block;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    .footer {
+      position: relative;
+      z-index: 2;
+      padding: 80px 40px 40px;
+      background: linear-gradient(135deg, var(--bg-darker) 0%, rgba(111, 99, 255, 0.05) 100%);
+      border-top: 1px solid rgba(139, 92, 246, 0.2);
+      text-align: center;
+      color: var(--text-soft);
+    }
+
+    .footer-content {
+      max-width: 1000px;
+      margin: 0 auto 40px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-brand);
+      font-size: 2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer-text {
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .footer-links a {
+      color: var(--text-soft);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      padding-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* ============================================
+       SCROLL PROGRESS
+       ============================================ */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--orange));
+      z-index: 1000;
+      will-change: width;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .pinned-wrapper {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 20px;
+      }
+
+      .pinned-visual {
+        height: 300px;
+      }
+
+      .visual-card {
+        height: 300px;
+        padding: 30px 20px;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .services {
+        padding: 60px 20px;
+      }
+
+      .interactive {
+        padding: 60px 20px;
+      }
+
+      .footer {
+        padding: 60px 20px 30px;
+      }
+
+      .hero-content {
+        padding: 20px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <h1>Design the Future</h1>
+      <p>Premium Digital Experiences Crafted with Excellence</p>
+    </div>
+    <div class="scroll-indicator">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2v20M5 15l7 7 7-7" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- Pinned Scroll Section -->
+  <section class="pinned-section">
+    <div class="pinned-wrapper">
+      <div class="pinned-text">
+        <h2 id="pinned-title">We Build Brands</h2>
+        <p id="pinned-description">Creating strong brand identities that resonate with your audience and stand the test of time.</p>
+      </div>
+      <div class="pinned-visual">
+        <div class="visual-card">
+          <span class="visual-icon" id="visual-icon">🎨</span>
+          <h3 id="visual-title">Brand Design</h3>
+          <p id="visual-description">Strategic brand positioning and visual identity systems.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parallax Section -->
+  <section class="parallax-section">
+    <div class="parallax-container">
+      <div class="parallax-layer layer-bg" data-speed="0.5"></div>
+      <div class="parallax-layer layer-mid" data-speed="0.3">PREMIUM QUALITY</div>
+      <div class="parallax-layer layer-fg" data-speed="0.1" style="font-size: 100px;">✨</div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services">
+    <div class="services-header">
+      <h2>Our Services</h2>
+      <p>Comprehensive digital solutions tailored to your business needs</p>
+    </div>
+    <div class="services-grid" id="services-grid">
+      <!-- Generated by JavaScript -->
+    </div>
+  </section>
+
+  <!-- Interactive Section -->
+  <section class="interactive">
+    <div class="cursor-glow"></div>
+    <div class="interactive-content">
+      <h2>Ready to Create?</h2>
+      <p>Let's work together to bring your vision to life with cutting-edge design and technology.</p>
+      <button class="cta-button">Start Your Project</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">Omio Studio</div>
+      <div class="footer-text">
+        <p>Crafting premium digital experiences since day one.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="https://instagram.com/omio.studio" target="_blank">Instagram</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Omio Studio. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Register ScrollTrigger plugin
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Demo Data Structure
+    const contentData = {
+      hero: {
+        title: "Design the Future",
+        subtitle: "Premium Digital Experiences Crafted with Excellence"
+      },
+      pinnedSteps: [
+        {
+          title: "We Build Brands",
+          description: "Creating strong brand identities that resonate with your audience and stand the test of time.",
+          icon: "🎨",
+          visualTitle: "Brand Design",
+          visualDescription: "Strategic brand positioning and visual identity systems."
+        },
+        {
+          title: "We Create Experiences",
+          description: "Immersive digital journeys that engage, delight, and convert users into advocates.",
+          icon: "✨",
+          visualTitle: "User Experience",
+          visualDescription: "Intuitive interfaces designed for maximum engagement."
+        },
+        {
+          title: "We Design the Future",
+          description: "Innovating with cutting-edge technology and visionary thinking.",
+          icon: "🚀",
+          visualTitle: "Innovation",
+          visualDescription: "Forward-thinking solutions for tomorrow's challenges."
+        }
+      ],
+      services: [
+        {
+          title: "Branding",
+          description: "We build strong brand identities that tell your story.",
+          icon: "🎯"
+        },
+        {
+          title: "UI/UX Design",
+          description: "User-first modern interfaces that convert.",
+          icon: "🎨"
+        },
+        {
+          title: "Web Development",
+          description: "Fast, scalable, and beautiful websites.",
+          icon: "💻"
+        },
+        {
+          title: "Mobile Apps",
+          description: "Native and cross-platform applications.",
+          icon: "📱"
+        },
+        {
+          title: "AI Solutions",
+          description: "Smart automation systems for your business.",
+          icon: "🤖"
+        },
+        {
+          title: "Digital Strategy",
+          description: "Comprehensive strategies for digital success.",
+          icon: "📊"
+        }
+      ]
+    };
+
+    // ============================================
+    // ANIMATION UTILITIES
+    // ============================================
+
+    /**
+     * Animate element fade-up on scroll
+     */
+    function animateFadeUp(element) {
+      gsap.from(element, {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        scrollTrigger: {
+          trigger: element,
+          start: "top 80%",
+          end: "top 20%",
+          scrub: 0.5,
+          markers: false
+        }
+      });
+    }
+
+    /**
+     * Create stagger animation for grid items
+     */
+    function animateStaggerGrid(selector) {
+      const items = document.querySelectorAll(selector);
+      gsap.from(items, {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: selector,
+          start: "top 80%",
+          end: "top 40%",
+          scrub: 0.5,
+          markers: false
+        }
+      });
+    }
+
+    /**
+     * Initialize parallax layers
+     */
+    function initParallax() {
+      const layers = document.querySelectorAll('.parallax-layer');
+      layers.forEach((layer) => {
+        const speed = parseFloat(layer.dataset.speed) || 0.5;
+        gsap.to(layer, {
+          y: (i) => window.innerHeight * speed,
+          scrollTrigger: {
+            trigger: '.parallax-section',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            markers: false,
+            onUpdate: (self) => {
+              gsap.to(layer, { y: window.innerHeight * speed * self.getVelocity() / 300 });
+            }
+          }
+        });
+      });
+    }
+
+    /**
+     * Create pinned scroll timeline
+     */
+    function createPinnedTimeline() {
+      const steps = contentData.pinnedSteps;
+      let currentStep = 0;
+
+      ScrollTrigger.create({
+        trigger: '.pinned-section',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const stepIndex = Math.floor(progress * steps.length);
+
+          if (stepIndex !== currentStep && stepIndex < steps.length) {
+            currentStep = stepIndex;
+            updatePinnedContent(stepIndex);
+          }
+        },
+        markers: false
+      });
+    }
+
+    /**
+     * Update pinned content
+     */
+    function updatePinnedContent(index) {
+      const step = contentData.pinnedSteps[index];
+      const titleEl = document.getElementById('pinned-title');
+      const descEl = document.getElementById('pinned-description');
+      const iconEl = document.getElementById('visual-icon');
+      const visualTitle = document.getElementById('visual-title');
+      const visualDesc = document.getElementById('visual-description');
+
+      gsap.to([titleEl, descEl], {
+        opacity: 0,
+        y: -20,
+        duration: 0.4,
+        onComplete: () => {
+          titleEl.textContent = step.title;
+          descEl.textContent = step.description;
+          iconEl.textContent = step.icon;
+          visualTitle.textContent = step.visualTitle;
+          visualDesc.textContent = step.visualDescription;
+
+          gsap.to([titleEl, descEl, iconEl], {
+            opacity: 1,
+            y: 0,
+            duration: 0.6
+          });
+        }
+      });
+    }
+
+    /**
+     * Initialize cursor glow follow
+     */
+    function initCursorGlow() {
+      const interactive = document.querySelector('.interactive');
+      const glow = document.querySelector('.cursor-glow');
+
+      if (!interactive || !glow) return;
+
+      let mouseX = 0;
+      let mouseY = 0;
+      let glowX = 0;
+      let glowY = 0;
+
+      interactive.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      gsap.ticker.add(() => {
+        glowX += (mouseX - glowX) * 0.1;
+        glowY += (mouseY - glowY) * 0.1;
+
+        gsap.set(glow, {
+          x: glowX - 150,
+          y: glowY - 150
+        });
+      });
+    }
+
+    /**
+     * Scroll progress bar
+     */
+    function initScrollProgress() {
+      const progressBar = document.querySelector('.scroll-progress');
+
+      gsap.to(progressBar, {
+        width: '100%',
+        scrollTrigger: {
+          trigger: 'body',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            gsap.set(progressBar, {
+              width: self.progress * 100 + '%'
+            });
+          }
+        }
+      });
+    }
+
+    /**
+     * Render services grid from data
+     */
+    function renderServices() {
+      const grid = document.getElementById('services-grid');
+      grid.innerHTML = contentData.services.map(service => `
+        <div class="service-card">
+          <span class="service-icon">${service.icon}</span>
+          <h3>${service.title}</h3>
+          <p>${service.description}</p>
+        </div>
+      `).join('');
+
+      animateStaggerGrid('.service-card');
+    }
+
+    /**
+     * Initialize hero animations
+     */
+    function initHeroAnimations() {
+      gsap.from('.hero-content h1', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.2
+      });
+
+      gsap.from('.hero-content p', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        delay: 0.4
+      });
+    }
+
+    /**
+     * Initialize all animations
+     */
+    function initAllAnimations() {
+      // Hero animations
+      initHeroAnimations();
+
+      // Pinned scroll
+      createPinnedTimeline();
+
+      // Parallax
+      initParallax();
+
+      // Services
+      renderServices();
+
+      // Interactive
+      initCursorGlow();
+
+      // Scroll progress
+      initScrollProgress();
+
+      // Footer fade-in
+      animateFadeUp('.footer');
+
+      // Interactive section
+      gsap.from('.interactive-content', {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        scrollTrigger: {
+          trigger: '.interactive',
+          start: 'top 60%',
+          end: 'top 20%',
+          scrub: 0.5,
+          markers: false
+        }
+      });
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', initAllAnimations);
+
+    // Refresh ScrollTrigger on window resize
+    window.addEventListener('resize', () => {
+      ScrollTrigger.refresh();
+    });
+  </script>
+</body>
+
+</html>
