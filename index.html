@@ -11583,7 +11583,7 @@
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = savedTheme || (systemDark ? 'dark' : 'light');
         this.setTheme(theme);
-        this.createToggle();
+        // this.createToggle(); // Commented out to hide theme toggle button
       },
 
       setTheme(theme) {
