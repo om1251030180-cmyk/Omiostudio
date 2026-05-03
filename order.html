@@ -574,10 +574,6 @@
         font-size: 1.5rem;
       }
 
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
-
       .form-tabs {
         gap: 8px;
       }
@@ -587,6 +583,449 @@
         font-size: 0.85rem;
       }
     }
+
+    /* ================= Beautiful Dynamic Upload Modal ================= */
+    .upload-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 0, 110, 0.25), transparent 55%),
+                  radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.25), transparent 55%),
+                  rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .upload-modal.show {
+      display: flex;
+      opacity: 1;
+      animation: modalFadeIn 0.4s ease forwards;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-content {
+      position: relative;
+      background: linear-gradient(160deg, rgba(26, 26, 26, 0.97), rgba(10, 10, 10, 0.97));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 44px 36px 36px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      animation: modalPop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 80px rgba(255, 0, 110, 0.18);
+      overflow: hidden;
+    }
+
+    /* Animated gradient border glow */
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 24px;
+      padding: 2px;
+      background: linear-gradient(135deg, #ff006e, #00d9ff, #ffd60a, #ff006e);
+      background-size: 300% 300%;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0.55;
+      animation: borderFlow 6s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes borderFlow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* Floating particles backdrop */
+    .modal-content::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 110, 0.12) 0, transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(0, 217, 255, 0.12) 0, transparent 25%);
+      pointer-events: none;
+      animation: driftBg 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftBg {
+      from { transform: translate(0,0); }
+      to   { transform: translate(-10px,-10px); }
+    }
+
+    body[data-theme='light'] .modal-content {
+      background: linear-gradient(160deg, #ffffff, #f7f7f7);
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.2),
+        0 0 80px rgba(255, 0, 110, 0.12);
+    }
+
+    @keyframes modalPop {
+      0%   { opacity: 0; transform: translateY(30px) scale(0.88); }
+      60%  { opacity: 1; transform: translateY(-6px) scale(1.02); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Decorative ring around icon */
+    .modal-icon-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,0,110,0.2), rgba(0,217,255,0.15) 60%, transparent 70%);
+    }
+
+    .modal-icon-wrap::before,
+    .modal-icon-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+
+    .modal-icon-wrap::before {
+      border-top-color: #ff006e;
+      border-right-color: #00d9ff;
+      animation: spin 2s linear infinite;
+    }
+
+    .modal-icon-wrap::after {
+      border-bottom-color: #ffd60a;
+      border-left-color: #00d9ff;
+      animation: spin 3s linear infinite reverse;
+      inset: 8px;
+    }
+
+    .modal-icon-wrap.done::before,
+    .modal-icon-wrap.done::after {
+      animation-play-state: paused;
+      border-color: #50be82 !important;
+      opacity: 0.6;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .modal-icon {
+      position: relative;
+      font-size: 2.8rem;
+      animation: floaty 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(255, 0, 110, 0.45));
+      z-index: 1;
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    .modal-icon.success {
+      animation: successPop 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      font-size: 3.4rem;
+      filter: drop-shadow(0 4px 16px rgba(80, 190, 130, 0.6));
+    }
+
+    @keyframes successPop {
+      0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+      60%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .modal-title {
+      position: relative;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 12px 0 8px;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+      background: linear-gradient(135deg, #ff006e, #00d9ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      z-index: 1;
+    }
+
+    body[data-theme='light'] .modal-title {
+      color: var(--light-text);
+    }
+
+    .modal-subtitle {
+      position: relative;
+      font-size: 0.98rem;
+      color: #c7c7c7;
+      margin: 10px 0 22px;
+      line-height: 1.55;
+      z-index: 1;
+    }
+
+    body[data-theme='light'] .modal-subtitle {
+      color: var(--light-text-soft);
+    }
+
+    /* ========= Progress Bar ========= */
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 18px 0 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 1;
+    }
+
+    body[data-theme='light'] .progress-bar {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .progress-fill {
+      position: relative;
+      height: 100%;
+      background: linear-gradient(90deg, #ff006e, #ffd60a, #00d9ff, #ff006e);
+      background-size: 300% 100%;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      border-radius: 20px;
+      animation: shimmerFlow 2.5s linear infinite;
+      box-shadow: 0 0 16px rgba(255, 0, 110, 0.6);
+    }
+
+    @keyframes shimmerFlow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* Moving shimmer stripe on top of progress */
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%);
+      animation: shimmerGlide 1.8s linear infinite;
+    }
+
+    @keyframes shimmerGlide {
+      from { transform: translateX(-100%); }
+      to   { transform: translateX(100%); }
+    }
+
+    .progress-percent {
+      position: relative;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 4px;
+      z-index: 1;
+      letter-spacing: 0.5px;
+    }
+
+    body[data-theme='light'] .progress-percent {
+      color: var(--light-text);
+    }
+
+    .upload-status {
+      position: relative;
+      font-size: 0.92rem;
+      color: #bfbfbf;
+      margin: 14px 0 6px;
+      font-weight: 600;
+      min-height: 1.3em;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-status .dots::after {
+      content: '';
+      display: inline-block;
+      width: 1em;
+      text-align: left;
+      animation: dotDotDot 1.4s steps(4, end) infinite;
+    }
+
+    @keyframes dotDotDot {
+      0%   { content: ''; }
+      25%  { content: '.'; }
+      50%  { content: '..'; }
+      75%  { content: '...'; }
+      100% { content: ''; }
+    }
+
+    body[data-theme='light'] .upload-status {
+      color: var(--light-text-soft);
+    }
+
+    .file-count {
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(255,0,110,0.2), rgba(0,217,255,0.2));
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin: 8px 0 4px;
+      border: 1px solid rgba(255, 0, 110, 0.3);
+      letter-spacing: 0.3px;
+      z-index: 1;
+    }
+
+    body[data-theme='light'] .file-count {
+      color: var(--light-text);
+    }
+
+    /* ========= Success State ========= */
+    .success-message {
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: fadeSlideUp 0.6s ease;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon {
+      color: #50be82;
+    }
+
+    .success-title-gradient {
+      background: linear-gradient(135deg, #50be82, #00d9ff) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+
+    /* Confetti burst */
+    .confetti {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 8px;
+      height: 14px;
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    .success-message.show .confetti {
+      animation: confettiFall 1.6s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translate(-50%, 0) rotate(0deg); }
+      100% { opacity: 0; transform: translate(var(--tx, 100px), var(--ty, 200px)) rotate(720deg); }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+
+    .modal-btn-primary {
+      background: linear-gradient(135deg, #ff006e, #00d9ff);
+      color: #000;
+      box-shadow: 0 10px 24px rgba(255, 0, 110, 0.35);
+    }
+
+    .modal-btn-primary:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 16px 34px rgba(255, 0, 110, 0.5);
+    }
+
+    .loading-state.hidden { display: none; }
+
+    /* Error state styling */
+    .modal-icon.error {
+      animation: shakeX 0.55s ease;
+      color: #ff4d6d;
+      filter: drop-shadow(0 4px 12px rgba(255, 77, 109, 0.55));
+    }
+
+    @keyframes shakeX {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    .error-title-gradient {
+      background: linear-gradient(135deg, #ff4d6d, #ffd60a) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+
+    /* Next-steps info card */
+    .success-info {
+      background: linear-gradient(135deg, rgba(80, 190, 130, 0.12), rgba(0, 217, 255, 0.08));
+      border: 1px solid rgba(80, 190, 130, 0.32);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 14px 0 4px;
+      text-align: left;
+    }
+
+    .success-info p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: #e0e0e0;
+    }
+
+    body[data-theme='light'] .success-info p { color: #1a1a1a; }
+
 
     /* Theme Switcher */
     .theme-toggle {
@@ -617,6 +1056,64 @@
 
   <!-- Theme Toggle -->
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+
+  <!-- Beautiful Dynamic Upload Modal -->
+  <div class="upload-modal" id="uploadModal">
+    <div class="modal-content">
+      <!-- Confetti elements (hidden until success) -->
+      <div id="confettiContainer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2;"></div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="modal-icon-wrap" id="loadingIconWrap">
+          <div class="modal-icon">📤</div>
+        </div>
+        <h3 class="modal-title" id="loadingTitle">Submitting Your Project</h3>
+        <p class="modal-subtitle" id="loadingSubtitle">Please hold tight while we upload your files and process your brief...</p>
+        <div class="file-count" id="fileCountDisplay">Files: 0</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-percent" id="progressPercent">0%</div>
+        <div class="upload-status" id="uploadStatus">
+          <span class="dots">Initializing</span>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div id="successState" class="success-message">
+        <div class="modal-icon-wrap done">
+          <div class="modal-icon success">✅</div>
+        </div>
+        <h3 class="modal-title success-title-gradient">Upload Successful!</h3>
+        <p class="modal-subtitle">Your project brief has been submitted successfully.<br>Our team will review and contact you shortly.</p>
+        <div class="success-info">
+          <p>
+            <strong>What happens next?</strong><br>
+            ✓ Confirmation email sent to your registered address<br>
+            ✓ Team review within 24-48 business hours<br>
+            ✓ Personal outreach with project timeline & next steps
+          </p>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-primary" onclick="redirectToHome()">🏠 Return to Home</button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="success-message">
+        <div class="modal-icon-wrap done">
+          <div class="modal-icon error">⚠️</div>
+        </div>
+        <h3 class="modal-title error-title-gradient" id="errorTitle">Submission Failed</h3>
+        <p class="modal-subtitle" id="errorSubtitle">Something went wrong while uploading. Please try again.</p>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-primary" onclick="hideUploadModal()" style="background: linear-gradient(135deg, #ff4d6d, #ffd60a);">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <div class="container">
     <!-- Header -->
@@ -656,17 +1153,7 @@
       <button class="tab-btn" onclick="switchTab('review')">Review & Submit</button>
     </div>
 
-    <!-- Tab 1: Services Grid -->
-    <div class="form-section active" id="services-section">
-      <h2>Choose Your Service</h2>
-      <div class="services-grid" id="servicesGrid">
-        <!-- Services will be populated here -->
-      </div>
-      <div class="form-actions">
-        <button class="btn-secondary" onclick="showSection('services')">Back</button>
-        <button class="btn-primary" onclick="nextStep()" id="nextBtn" disabled>Next Step</button>
-      </div>
-    </div>
+
 
     <!-- Tab 2: Details -->
     <div class="form-section" id="details-section">
@@ -976,8 +1463,11 @@
     }
 
     function submitProject() {
-      alert('✓ Project submitted successfully! We will review it and get back to you soon.');
-      window.location.href = 'index.html';
+      if (typeof submitBrief === 'function') {
+        submitBrief();
+        return;
+      }
+      alert('Please complete the full brief form to submit a real order.');
     }
 
     function toggleTheme() {
@@ -1131,9 +1621,34 @@
       border-color: rgba(145, 173, 255, 0.34);
     }
 
+    .select option {
+      background: #ffffff;
+      color: #111a2f;
+    }
+
+    :root[data-theme='dark'] .select option {
+      background: #ffffff;
+      color: #111a2f;
+    }
+
     :root[data-theme='dark'] .input::placeholder,
     :root[data-theme='dark'] .textarea::placeholder {
       color: #8ea2d1;
+    }
+
+    :root[data-theme='dark'] .input:-webkit-autofill,
+    :root[data-theme='dark'] .input:-webkit-autofill:hover,
+    :root[data-theme='dark'] .input:-webkit-autofill:focus,
+    :root[data-theme='dark'] .textarea:-webkit-autofill,
+    :root[data-theme='dark'] .textarea:-webkit-autofill:hover,
+    :root[data-theme='dark'] .textarea:-webkit-autofill:focus,
+    :root[data-theme='dark'] .select:-webkit-autofill,
+    :root[data-theme='dark'] .select:-webkit-autofill:hover,
+    :root[data-theme='dark'] .select:-webkit-autofill:focus {
+      -webkit-text-fill-color: #f0f6ff;
+      -webkit-box-shadow: 0 0 0 1000px #111a2f inset;
+      transition: background-color 9999s ease-out 0s;
+      caret-color: #f0f6ff;
     }
 
     :root[data-theme='dark'] .input:focus,
@@ -1276,7 +1791,7 @@
       </div>
     </section>
 
-    <form id="briefForm" class="card" onsubmit="event.preventDefault(); submitBrief();">
+    <form id="briefForm" class="card" novalidate>
       <div id="formNotice" class="notice"></div>
 
       <section class="card">
@@ -1287,13 +1802,33 @@
             <select id="serviceType" class="select" required onchange="onServiceChange()"></select>
           </div>
           <div class="field">
-            <label>Package</label>
-            <select id="packageTier" class="select">
-              <option value="basic">Basic</option>
-              <option value="standard">Standard</option>
-              <option value="premium">Premium</option>
-              <option value="custom">Custom</option>
+            <label>📦 Package Tier</label>
+            <select id="packageTier" class="select" onchange="updatePricing()">
+              <option value="starter">⭐ Starter (₹15,000)</option>
+              <option value="professional" selected>⭐⭐ Professional (₹35,000)</option>
+              <option value="premium">⭐⭐⭐ Premium (₹60,000)</option>
+              <option value="enterprise">⭐⭐⭐⭐ Enterprise (Custom)</option>
             </select>
+          </div>
+          <div class="field">
+            <label>💰 Estimated Price</label>
+            <input id="estimatedPrice" class="input" type="text" readonly style="background: rgba(255, 214, 10, 0.1); font-weight: bold; color: #ffd60a;" />
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field">
+            <label>🏷️ Discount / Special Offer</label>
+            <select id="discountType" class="select" onchange="updatePricing()">
+              <option value="none">No Discount</option>
+              <option value="10">10% Off</option>
+              <option value="15">15% Off (Early Bird)</option>
+              <option value="20">20% Off (Limited Time)</option>
+              <option value="custom">Custom Discount</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Final Price After Discount</label>
+            <input id="finalPrice" class="input" type="text" readonly style="background: rgba(0, 217, 255, 0.1); font-weight: bold; color: #00d9ff; font-size: 1.1rem;" />
           </div>
           <div class="field">
             <label>Industry / Niche</label>
@@ -1303,6 +1838,10 @@
         <div class="field" id="customServiceWrap" style="display:none;">
           <label>Custom Service Name</label>
           <input id="customService" class="input" placeholder="Describe custom service" />
+        </div>
+        <div style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 12px; padding: 16px; margin-top: 16px;">
+          <h4 style="margin: 0 0 12px 0; color: #7c3aed;">💡 Package Details</h4>
+          <div id="packageDetails" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);"></div>
         </div>
       </section>
 
@@ -1394,18 +1933,20 @@
 
       <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
         <button class="btn-ghost" type="button" onclick="window.location.href='index.html'">Cancel</button>
-        <button class="btn" type="submit">Submit Full Brief</button>
+        <button class="btn" id="submitBriefBtn" type="submit">Submit Full Brief</button>
       </div>
     </form>
   </div>
 
   <script>
-    const API = `${window.location.origin}/api`;
+    const DEFAULT_API = `${window.location.origin}/api`;
+    const API_FALLBACK_BASES = ['http://localhost:4000/api', 'http://127.0.0.1:4000/api'];
+    let API = DEFAULT_API;
     const TOKEN_KEY = 'omio_token';
     const USER_KEY = 'omio_user';
     const THEME_KEY = 'omio_theme';
 
-    const services = [
+    const briefServices = [
       ['web_basic', 'Website Development - Basic'],
       ['web_business', 'Website Development - Business'],
       ['web_ecommerce', 'Website Development - E-Commerce'],
@@ -1449,6 +1990,41 @@
     function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
     function getUser() { try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { return null; } }
 
+    function getApiCandidates() {
+      const list = [];
+      if (window.location.protocol !== 'file:' && window.location.origin && window.location.origin !== 'null') {
+        list.push(DEFAULT_API);
+      }
+      API_FALLBACK_BASES.forEach((base) => {
+        if (!list.includes(base)) list.push(base);
+      });
+      return list;
+    }
+
+    async function probeApiBase(base) {
+      try {
+        const res = await fetch(`${base}/health`, { method: 'GET' });
+        if (!res.ok) return false;
+        const isJson = (res.headers.get('content-type') || '').includes('application/json');
+        if (!isJson) return false;
+        const data = await res.json();
+        return !!data;
+      } catch {
+        return false;
+      }
+    }
+
+    async function resolveApiBase() {
+      const candidates = getApiCandidates();
+      for (const base of candidates) {
+        if (await probeApiBase(base)) {
+          API = base;
+          return;
+        }
+      }
+      API = DEFAULT_API;
+    }
+
     async function req(path, opts = {}) {
       const headers = opts.headers || {};
       const t = getToken();
@@ -1470,11 +2046,63 @@
 
     function initForm() {
       const service = document.getElementById('serviceType');
-      service.innerHTML = '<option value="">Select service</option>' + services.map((s) => `<option value="${s[0]}">${s[1]}</option>`).join('');
+      service.innerHTML = '<option value="">Select service</option>' + briefServices.map((s) => `<option value="${s[0]}">${s[1]}</option>`).join('');
       const params = new URLSearchParams(window.location.search);
       const pre = params.get('service') || '';
       if (pre) service.value = pre;
       onServiceChange();
+      updatePricing(); // Initialize pricing
+    }
+
+    // Pricing system with package tiers
+    const pricingTiers = {
+      starter: { base: 15000, desc: 'Perfect for startups & MVPs' },
+      professional: { base: 35000, desc: 'Complete professional solution' },
+      premium: { base: 60000, desc: 'Enterprise-grade features' },
+      enterprise: { base: 0, desc: 'Custom quote based on requirements' }
+    };
+
+    function updatePricing() {
+      const tier = document.getElementById('packageTier')?.value || 'professional';
+      const discountType = document.getElementById('discountType')?.value || 'none';
+      
+      const tierData = pricingTiers[tier];
+      if (!tierData) return;
+      
+      let basePrice = tierData.base;
+      let discountPercent = discountType === 'none' ? 0 : parseInt(discountType);
+      let discountAmount = Math.round((basePrice * discountPercent) / 100);
+      let finalPrice = basePrice - discountAmount;
+      
+      // Update display fields
+      if (document.getElementById('estimatedPrice')) {
+        document.getElementById('estimatedPrice').value = `₹${basePrice.toLocaleString('en-IN')}`;
+      }
+      
+      if (document.getElementById('finalPrice')) {
+        let display = `₹${finalPrice.toLocaleString('en-IN')}`;
+        if (discountPercent > 0) {
+          display += ` (Save ₹${discountAmount.toLocaleString('en-IN')})`;
+        }
+        document.getElementById('finalPrice').value = display;
+      }
+      
+      // Update budget field with final price
+      if (document.getElementById('budget')) {
+        document.getElementById('budget').value = finalPrice > 0 ? finalPrice.toString() : '';
+      }
+      
+      // Update package details
+      const packageDetails = document.getElementById('packageDetails');
+      if (packageDetails) {
+        const tiers = {
+          starter: '✓ 5 Pages | ✓ Responsive Design | ✓ Basic SEO | ✓ Email Support',
+          professional: '✓ 15 Pages | ✓ Full CMS | ✓ Advanced SEO | ✓ Analytics | ✓ Phone Support | ✓ 2 Revisions',
+          premium: '✓ Unlimited Pages | ✓ Advanced Features | ✓ Priority Support | ✓ Monthly Updates | ✓ Unlimited Revisions',
+          enterprise: 'Custom scope - Contact us for detailed specifications'
+        };
+        packageDetails.innerHTML = tiers[tier] || '';
+      }
     }
 
     async function ensureClientAccess() {
@@ -1559,31 +2187,225 @@
       displaySelectedFiles();
     }
 
+    // ===== Modal Functions =====
+    function showUploadModal() {
+      const modal = document.getElementById('uploadModal');
+      if (!modal) return;
+      modal.classList.add('show');
+
+      // Reset to loading state
+      const loadingState = document.getElementById('loadingState');
+      const successState = document.getElementById('successState');
+      const errorState = document.getElementById('errorState');
+
+      if (loadingState) loadingState.classList.remove('hidden');
+      if (loadingState) loadingState.style.display = 'block';
+      if (successState) successState.classList.remove('show');
+      if (errorState) errorState.classList.remove('show');
+
+      // Reset progress
+      const progressFill = document.getElementById('progressFill');
+      const progressPercent = document.getElementById('progressPercent');
+      if (progressFill) progressFill.style.width = '0%';
+      if (progressPercent) progressPercent.textContent = '0%';
+
+      // Reset confetti
+      const confettiContainer = document.getElementById('confettiContainer');
+      if (confettiContainer) confettiContainer.innerHTML = '';
+
+      // Spinning icon
+      const loadingIconWrap = document.getElementById('loadingIconWrap');
+      if (loadingIconWrap) loadingIconWrap.classList.remove('done');
+    }
+
+    function hideUploadModal() {
+      const modal = document.getElementById('uploadModal');
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+          // Reset states after fade out
+          const loadingState = document.getElementById('loadingState');
+          const successState = document.getElementById('successState');
+          const errorState = document.getElementById('errorState');
+          if (loadingState) loadingState.classList.remove('hidden');
+          if (loadingState) loadingState.style.display = 'block';
+          if (successState) successState.classList.remove('show');
+          if (errorState) errorState.classList.remove('show');
+        }, 350);
+      }
+    }
+
+    function updateUploadProgress(current, total, stepText) {
+      const progressFill = document.getElementById('progressFill');
+      const progressPercent = document.getElementById('progressPercent');
+      const uploadStatus = document.getElementById('uploadStatus');
+      const fileCountDisplay = document.getElementById('fileCountDisplay');
+      const loadingTitle = document.getElementById('loadingTitle');
+      const loadingSubtitle = document.getElementById('loadingSubtitle');
+
+      const percent = Math.min(Math.round((current / total) * 100), 95);
+
+      if (progressFill) progressFill.style.width = percent + '%';
+      if (progressPercent) progressPercent.textContent = percent + '%';
+
+      if (uploadStatus) {
+        uploadStatus.innerHTML = stepText
+          ? `<span class="dots">${stepText}</span>`
+          : `<span class="dots">Uploading ${current} of ${total} files</span>`;
+      }
+
+      if (fileCountDisplay) {
+        const totalFiles = document.getElementById('files')?.files?.length || 0;
+        if (totalFiles > 0) {
+          fileCountDisplay.textContent = `Files: ${current}/${totalFiles}`;
+        } else {
+          fileCountDisplay.textContent = 'No files attached';
+        }
+      }
+
+      if (loadingTitle && stepText) {
+        if (current >= total) {
+          loadingTitle.textContent = 'Almost Done!';
+          loadingSubtitle.textContent = 'Just finishing up...';
+        }
+      }
+    }
+
+    function burstConfetti() {
+      const container = document.getElementById('confettiContainer');
+      if (!container) return;
+      const colors = ['#ff006e', '#00d9ff', '#ffd60a', '#50be82', '#ff4d6d', '#7c3aed'];
+      for (let i = 0; i < 24; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        el.style.left = '50%';
+        el.style.top = '20%';
+        el.style.width = (4 + Math.random() * 6) + 'px';
+        el.style.height = (8 + Math.random() * 10) + 'px';
+        const angle = Math.random() * 360;
+        const distance = 80 + Math.random() * 180;
+        const tx = Math.cos(angle * Math.PI / 180) * distance;
+        const ty = Math.sin(angle * Math.PI / 180) * distance - 80;
+        el.style.setProperty('--tx', tx + 'px');
+        el.style.setProperty('--ty', ty + 'px');
+        el.style.animationDelay = (Math.random() * 0.4) + 's';
+        container.appendChild(el);
+      }
+    }
+
+    function showSuccessModal() {
+      // Fill progress to 100
+      const progressFill = document.getElementById('progressFill');
+      const progressPercent = document.getElementById('progressPercent');
+      if (progressFill) progressFill.style.width = '100%';
+      if (progressPercent) progressPercent.textContent = '100%';
+
+      // Stop spinning icon and show green
+      const loadingIconWrap = document.getElementById('loadingIconWrap');
+      if (loadingIconWrap) loadingIconWrap.classList.add('done');
+
+      // Switch states
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('successState').classList.add('show');
+
+      // Confetti burst
+      burstConfetti();
+
+      // Auto-redirect after 4 seconds
+      setTimeout(() => {
+        redirectToHome();
+      }, 4000);
+    }
+
+    function showErrorModal(message) {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('loadingState').style.display = 'none';
+      const errorState = document.getElementById('errorState');
+      const errorSubtitle = document.getElementById('errorSubtitle');
+      errorState.classList.add('show');
+      if (errorSubtitle && message) errorSubtitle.textContent = message;
+    }
+
+    function redirectToHome() {
+      window.location.href = 'index.html';
+    }
+
+
+    let briefSubmitting = false;
+
+    function validateBriefForm() {
+      const requiredFields = [
+        { id: 'serviceType', label: 'Service' },
+        { id: 'title', label: 'Project title' },
+        { id: 'description', label: 'Detailed description' },
+        { id: 'industry', label: 'Industry / Niche' },
+        { id: 'businessName', label: 'Business name' },
+        { id: 'objective', label: 'Main objective' }
+      ];
+
+      for (const field of requiredFields) {
+        const el = document.getElementById(field.id);
+        const value = (el?.value || '').trim();
+        if (!value) {
+          showNotice('err', `${field.label} is required.`);
+          el?.focus();
+          return false;
+        }
+      }
+
+      const terms = document.getElementById('terms');
+      if (!terms?.checked) {
+        showNotice('err', 'Please accept the confirmation checkbox.');
+        terms?.focus();
+        return false;
+      }
+
+      return true;
+    }
+
     async function submitBrief() {
+      if (briefSubmitting) return;
+      console.log('🔷 SUBMIT BRIEF STARTED');
+
+      if (!validateBriefForm()) return;
+
       const serviceType = document.getElementById('serviceType').value;
       const serviceLabel = document.getElementById('serviceType').selectedOptions[0]?.text || '';
       const customService = document.getElementById('customService').value.trim();
       const title = document.getElementById('title').value.trim();
       const description = document.getElementById('description').value.trim();
-      const budget = document.getElementById('budget').value.trim();
+      const budgetInput = document.getElementById('budget').value.trim();
       const deadline = document.getElementById('deadline').value;
       const references = document.getElementById('references').value.trim();
+      const packageTier = document.getElementById('packageTier')?.value || 'professional';
 
-      if (!serviceType || !title || !description) {
-        showNotice('err', 'Service, title and description are required.');
-        return;
-      }
+      console.log('📋 Form Data:', { serviceType, title, description, budget: budgetInput });
+
       if (serviceType === 'custom' && !customService) {
         showNotice('err', 'Please enter custom service name.');
         return;
       }
-      if (!document.getElementById('terms').checked) {
-        showNotice('err', 'Please accept the confirmation checkbox.');
-        return;
+
+      const submitBtn = document.getElementById('submitBriefBtn');
+      briefSubmitting = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading...';
+      }
+
+      // Show upload modal
+      showUploadModal();
+
+      // Parse budget as number
+      let budget = 0;
+      if (budgetInput) {
+        budget = parseInt(budgetInput.replace(/[^0-9]/g, '')) || 0;
       }
 
       const brief = {
-        packageTier: document.getElementById('packageTier').value,
+        packageTier,
         industry: document.getElementById('industry').value.trim(),
         businessName: document.getElementById('businessName').value.trim(),
         objective: document.getElementById('objective').value.trim(),
@@ -1599,6 +2421,7 @@
         supportNeed: document.getElementById('supportNeed').value,
         notes: document.getElementById('notes').value.trim(),
         customService,
+        estimatedPrice: budget,
       };
 
       try {
@@ -1608,7 +2431,8 @@
         form.append('customService', customService);
         form.append('title', title);
         form.append('description', description);
-        form.append('budget', budget);
+        form.append('budget', budget.toString());
+        form.append('estimatedPrice', budget.toString());
         form.append('deadline', deadline);
         form.append('references', references);
         form.append('brief', JSON.stringify(brief));
@@ -1616,19 +2440,82 @@
         form.append('clientContactTime', document.getElementById('contactTime').value.trim());
 
         const files = document.getElementById('files').files || [];
-        [...files].forEach((f) => form.append('files', f));
+        const fileArray = [...files];
+        const totalFiles = fileArray.length;
+        
+        // Update file count in modal
+        if (totalFiles > 0) {
+          updateUploadProgress(0, totalFiles);
+        }
 
-        await req('/orders', { method: 'POST', body: form });
-        showNotice('ok', 'Full brief submitted successfully. Redirecting to dashboard...');
-        setTimeout(() => { window.location.href = 'index.html'; }, 900);
+        // Append files and track progress
+        fileArray.forEach((f, index) => {
+          form.append('files', f);
+          // Simulate progress for each file
+          setTimeout(() => {
+            updateUploadProgress(index + 1, totalFiles);
+          }, (index + 1) * 300);
+        });
+
+        console.log('📤 SUBMITTING ORDER TO:', `${API}/orders`);
+        const token = getToken();
+        console.log('🔑 Auth Token Present:', !!token);
+
+        // Manual fetch with detailed error logging
+        const response = await fetch(`${API}/orders`, {
+          method: 'POST',
+          body: form,
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        console.log('📡 Server Response Status:', response.status);
+        
+        const responseData = await response.json();
+        console.log('📡 Server Response Data:', responseData);
+
+        if (!response.ok) {
+          throw new Error(responseData?.error || `Request failed with status ${response.status}`);
+        }
+
+        console.log('✅ Order submitted successfully:', responseData);
+        
+        // Show success modal after a short delay
+        setTimeout(() => {
+          showSuccessModal();
+        }, 500);
+
+        // Redirect after showing success message
+        setTimeout(() => {
+          redirectToHome();
+        }, 4000);
       } catch (e) {
-        showNotice('err', e.message || 'Unable to submit brief.');
+        console.error('❌ ORDER SUBMISSION FAILED:', e.message);
+        console.error('Stack:', e.stack);
+        showErrorModal(e.message || 'Something went wrong. Please check your connection and try again.');
+        showNotice('err', `❌ Error: ${e.message}`);
+      } finally {
+
+        briefSubmitting = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Full Brief';
+        }
       }
     }
 
-    initTheme();
-    initForm();
-    ensureClientAccess();
+    (async () => {
+      initTheme();
+      initForm();
+      await resolveApiBase();
+      await ensureClientAccess();
+    })();
+
+    document.getElementById('briefForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitBrief();
+    });
 
     // File input change listener
     document.getElementById('files')?.addEventListener('change', displaySelectedFiles);

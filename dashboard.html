@@ -500,10 +500,12 @@
   </div>
 
   <script>
-    const API_BASE = 'http://localhost:4006/api';
+    // Auto-detect API from current origin (same port as website)
+    const API_BASE = window.location.origin + '/api';
     let state = {
       user: null,
       token: '',
+      orders: [],
       messages: []
     };
 
@@ -511,8 +513,11 @@
     document.addEventListener('DOMContentLoaded', async () => {
       ensureUserLoggedIn();
       await loadDashboardData();
-      loadMessages();
+      await loadMessages();
       loadProfile();
+      // Auto-refresh orders every 10 seconds
+      setInterval(loadDashboardData, 10000);
+      setInterval(loadMessages, 10000);
     });
 
     // Check if user is logged in
@@ -528,7 +533,7 @@
       try {
         state.user = JSON.parse(user);
         state.token = token;
-        console.log('✅ User logged in:', state.user.email);
+        console.log('✅ User logged in:', state.user.email, 'ID:', state.user.id);
       } catch (e) {
         console.error('❌ Failed to parse user:', e);
         window.location.href = 'index.html';
@@ -538,11 +543,13 @@
     // Load dashboard data
     async function loadDashboardData() {
       try {
-        const res = await fetch(`${API_BASE}/auth/me`, {
+        console.log('📡 Fetching orders for user:', state.user.id);
+        const res = await fetch(`${API_BASE}/users/${state.user.id}/complete`, {
           headers: { Authorization: `Bearer ${state.token}` }
         });
 
         if (!res.ok) {
+          console.error('❌ API Error:', res.status, res.statusText);
           if (res.status === 401) {
             window.location.href = 'index.html';
           }
@@ -550,22 +557,24 @@
         }
 
         const data = await res.json();
-        state.user = data;
-        localStorage.setItem('omio_user', JSON.stringify(data));
+        console.log('✅ Data received:', data);
+        
+        state.orders = data.orders || [];
+        state.user = data.user || state.user;
+        localStorage.setItem('omio_user', JSON.stringify(state.user));
 
         // Update stats
-        updateStats(data);
-        renderRecentOrders(data);
-        renderAllOrders(data);
-        renderDeliveredWorks(data);
+        updateStats(state.orders);
+        renderRecentOrders(state.orders);
+        renderAllOrders(state.orders);
+        renderDeliveredWorks(state.orders);
       } catch (error) {
         console.error('❌ Error loading dashboard:', error);
       }
     }
 
     // Update statistics
-    function updateStats(user) {
-      const orders = user.orders || [];
+    function updateStats(orders) {
       const pending = orders.filter(o => o.status === 'pending').length;
       const progress = orders.filter(o => o.status === 'in_progress').length;
       const completed = orders.filter(o => o.status === 'completed').length;
@@ -574,11 +583,13 @@
       document.getElementById('pending-orders').textContent = pending;
       document.getElementById('in-progress-orders').textContent = progress;
       document.getElementById('completed-orders').textContent = completed;
+      
+      console.log('📊 Stats updated:', { total: orders.length, pending, progress, completed });
     }
 
     // Render recent orders
-    function renderRecentOrders(user) {
-      const orders = (user.orders || []).slice(0, 5);
+    function renderRecentOrders(orders) {
+      const recentOrders = orders.slice(-5).reverse();
       const container = document.getElementById('recent-orders-list');
 
       if (orders.length === 0) {
@@ -586,65 +597,96 @@
         return;
       }
 
-      container.innerHTML = orders.map(order => `
+      container.innerHTML = recentOrders.map(order => `
         <div style="padding: 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid var(--stroke); border-radius: 8px; margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 600;">${order.service || 'Project'}</span>
-            <span class="status-badge status-${order.status}">${order.status}</span>
+            <span style="font-weight: 600;">${order.serviceLabel || order.serviceType || order.title || 'Project'}</span>
+            <span class="status-badge status-${order.status}">${formatStatus(order.status)}</span>
           </div>
-          <p style="font-size: 0.85rem; color: var(--ink-soft); margin: 0;">Order ID: ${order._id?.slice(-8) || 'N/A'}</p>
+          <p style="font-size: 0.85rem; color: var(--ink-soft); margin: 0;">Order ID: ${(order._id || order.id || '').toString().slice(-8) || 'N/A'}</p>
           <p style="font-size: 0.85rem; color: var(--ink-soft); margin: 0;">Created: ${new Date(order.createdAt).toLocaleDateString()}</p>
         </div>
       `).join('');
     }
 
     // Render all orders table
-    function renderAllOrders(user) {
-      const orders = user.orders || [];
+    function renderAllOrders(orders) {
       const container = document.getElementById('orders-list');
 
       if (orders.length === 0) {
-        container.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--ink-soft);">No orders yet.</td></tr>';
+        container.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--ink-soft); padding: 40px;">No orders yet. Create your first order to get started!</td></tr>';
         return;
       }
 
       container.innerHTML = orders.map(order => `
         <tr>
-          <td>${order._id?.slice(-6) || 'N/A'}</td>
-          <td>${order.service || 'Service'}</td>
-          <td><span class="status-badge status-${order.status}">${order.status}</span></td>
+          <td>${(order._id || order.id || '').toString().slice(-6) || 'N/A'}</td>
+          <td>${order.serviceLabel || order.serviceType || order.title || 'Service'}</td>
+          <td><span class="status-badge status-${order.status}">${formatStatus(order.status)}</span></td>
           <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-          <td>$${order.amount || '0'}</td>
+          <td>Rs ${order.estimatedPrice || order.budget || 0}</td>
         </tr>
       `).join('');
     }
 
     // Render delivered works
-    function renderDeliveredWorks(user) {
-      const works = user.works || [];
+    function renderDeliveredWorks(orders) {
+      const completed = orders.filter(o => o.status === 'completed');
       const container = document.getElementById('delivered-works-list');
 
-      if (works.length === 0) {
+      if (completed.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>No delivered works yet. Completed orders will appear here.</p></div>';
         return;
       }
 
-      container.innerHTML = works.map(work => `
+      container.innerHTML = completed.map(order => `
         <div style="padding: 16px; background: var(--card); border: 1px solid var(--stroke); border-radius: var(--radius);">
-          <div style="font-weight: 600; margin-bottom: 8px;">${work.title || 'Work Item'}</div>
-          <p style="color: var(--ink-soft); margin: 0; font-size: 0.9rem;">${work.description || 'Delivered work'}</p>
+          <div style="font-weight: 600; margin-bottom: 8px;">${order.serviceLabel || order.serviceType || order.title || 'Work Item'}</div>
+          <p style="color: var(--ink-soft); margin: 0; font-size: 0.9rem;">Order ID: ${(order._id || order.id || '').toString().slice(-8) || 'N/A'} | Amount: Rs ${order.estimatedPrice || order.budget || 0}</p>
+          <p style="color: var(--ink-soft); margin: 8px 0 0 0; font-size: 0.85rem;">Completed: ${new Date(order.completedAt || order.createdAt).toLocaleDateString()}</p>
           <div style="margin-top: 12px; display: flex; gap: 8px;">
-            ${work.url ? `<a href="${work.url}" target="_blank" class="btn btn-secondary" style="flex: 1; text-align: center; text-decoration: none;">View</a>` : ''}
+            <button onclick="viewOrderDetails('${(order._id || order.id).toString().replace(/'/g, "\\'")}')" class="btn btn-secondary" style="flex: 1; text-decoration: none;">View Details</button>
           </div>
         </div>
       `).join('');
     }
 
+    // Helper function to format status text
+    function formatStatus(status) {
+      const statusMap = {
+        'pending': 'Pending',
+        'in_progress': 'In Progress',
+        'completed': 'Completed',
+        'cancelled': 'Cancelled'
+      };
+      return statusMap[status] || status;
+    }
+
+    // View order details
+    function viewOrderDetails(orderId) {
+      const order = state.orders.find(o => (o._id || o.id) === orderId);
+      if (order) {
+        alert(`Order Details:\n\nID: ${order._id || order.id}\nService: ${order.serviceLabel || order.serviceType || order.title || '-'}\nStatus: ${formatStatus(order.status)}\nAmount: Rs ${order.estimatedPrice || order.budget || 0}\nCreated: ${new Date(order.createdAt).toLocaleString()}`);
+      }
+    }
+
     // Load messages
-    function loadMessages() {
-      const messages = JSON.parse(localStorage.getItem('omio_messages') || '[]');
-      state.messages = messages;
-      renderMessages();
+    async function loadMessages() {
+      try {
+        const res = await fetch(`${API_BASE}/messages`, {
+          headers: { Authorization: `Bearer ${state.token}` }
+        });
+
+        if (!res.ok) {
+          return;
+        }
+
+        const messages = await res.json();
+        state.messages = Array.isArray(messages) ? messages : [];
+        renderMessages();
+      } catch (err) {
+        console.error('❌ Failed to load messages:', err);
+      }
     }
 
     // Render messages
@@ -657,9 +699,9 @@
       }
 
       container.innerHTML = state.messages.map(msg => `
-        <div class="message ${msg.from === 'client' ? 'from-client' : 'from-studio'}">
-          <div class="message-bubble">${msg.text}</div>
-          <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+        <div class="message ${msg.senderRole === 'client' ? 'from-client' : 'from-studio'}">
+          <div class="message-bubble">${msg.message || ''}</div>
+          <div class="message-time">${new Date(msg.createdAt || msg.timestamp).toLocaleTimeString()}</div>
         </div>
       `).join('');
 
@@ -668,23 +710,32 @@
     }
 
     // Send message
-    function sendMessage() {
+    async function sendMessage() {
       const input = document.getElementById('message-input');
       const text = input.value.trim();
 
       if (!text) return;
 
-      const message = {
-        id: Date.now(),
-        text: text,
-        from: 'client',
-        timestamp: new Date()
-      };
+      try {
+        const res = await fetch(`${API_BASE}/messages`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text, type: 'text' })
+        });
 
-      state.messages.push(message);
-      localStorage.setItem('omio_messages', JSON.stringify(state.messages));
-      input.value = '';
-      renderMessages();
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to send message');
+        }
+
+        input.value = '';
+        await loadMessages();
+      } catch (err) {
+        alert(err.message || 'Failed to send message');
+      }
     }
 
     // Load profile
@@ -723,7 +774,6 @@
       localStorage.removeItem('omio_user');
       localStorage.removeItem('omio_token');
       localStorage.removeItem('omio_remember');
-      localStorage.removeItem('omio_messages');
       
       state.user = null;
       state.token = '';

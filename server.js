@@ -24,6 +24,17 @@ try {
   console.log('⚠️  Twilio not installed. SMS/WhatsApp features unavailable. Run: npm install twilio');
 }
 
+// Notification Service (Email + SMS + WhatsApp)
+const NotificationService = require('./notification-service');
+
+// Excel Sync Module (if available)
+let ExcelSync = null;
+try {
+  ExcelSync = require('./excel-sync');
+} catch (e) {
+  console.log('⚠️  Excel sync not installed. Run: npm install exceljs node-schedule');
+}
+
 const app  = express();
 let PORT = Number(process.env.PORT) || 4000;
 const MAX_PORT_ATTEMPTS = 10;
@@ -333,6 +344,7 @@ function getDB() {
       sessions: [],
       works: [],
       messages: [],
+      activities: [],
       settings: {}
     }, null, 2));
   }
@@ -344,6 +356,7 @@ function getDB() {
   if (!Array.isArray(data.sessions)) data.sessions = [];
   if (!Array.isArray(data.works)) data.works = [];
   if (!Array.isArray(data.messages)) data.messages = [];
+  if (!Array.isArray(data.activities)) data.activities = [];
   return data;
 }
 function saveDB(data) {
@@ -975,6 +988,7 @@ app.post('/api/auth/register', async (req, res) => {
       await sendMail(email, 'Welcome to Omio Studio! ✦',
         `<div style="font-family:sans-serif;padding:40px;background:#0a0a1a;color:#f0eeff;border-radius:16px"><h1 style="color:#a78bfa">Welcome, ${name}! ✦</h1><p style="color:rgba(240,238,255,0.7)">Your Omio Studio account is ready. Start your first project today!</p></div>`);
 
+      global.excelSync?.triggerSync();
       return res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     }
 
@@ -985,6 +999,7 @@ app.post('/api/auth/register', async (req, res) => {
     db.users.push(newUser);
     saveDB(db);
     const token = jwt.sign({ id: newUser.id, email: newUser.email, role: newUser.role, name: newUser.name }, process.env.JWT_SECRET || 'omio_secret_2024', { expiresIn: '7d' });
+    global.excelSync?.triggerSync();
     res.json({ token, user: { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role } });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -1043,10 +1058,19 @@ app.get('/api/auth/me', auth, async (req, res) => {
 // Get complete user profile with all data
 app.get('/api/users/:userId/complete', auth, async (req, res) => {
   try {
+    const requestedUserId = String(req.params.userId || '');
+    const requesterId = String(req.user.id || '');
+    const isSelf = requestedUserId === requesterId;
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isSelf && !isAdmin) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
     if (isMongoConnected()) {
-      const user = await User.findById(req.params.userId).select('-password');
-      const orders = await Order.find({ userId: req.params.userId });
-      const invoices = await Invoice.find({ userId: req.params.userId });
+      const user = await User.findById(requestedUserId).select('-password');
+      const orders = await Order.find({ userId: requestedUserId }).sort({ createdAt: -1 });
+      const invoices = await Invoice.find({ userId: requestedUserId });
       
       if (!user) return res.status(404).json({ error: 'User not found' });
       
@@ -1063,11 +1087,11 @@ app.get('/api/users/:userId/complete', auth, async (req, res) => {
     }
     
     const db = getDB();
-    const user = db.users.find(u => u.id === req.params.userId);
+    const user = db.users.find(u => u.id === requestedUserId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     const { password: _, ...safeUser } = user;
-    const orders = (db.orders || []).filter(o => o.userId === req.params.userId);
-    const invoices = (db.invoices || []).filter(i => i.userId === req.params.userId);
+    const orders = (db.orders || []).filter(o => o.userId === requestedUserId).map((o) => ensureOrderWorkflow(o)).reverse();
+    const invoices = (db.invoices || []).filter(i => i.userId === requestedUserId);
     
     res.json({
       user: safeUser,
@@ -1092,6 +1116,7 @@ app.put('/api/auth/profile', auth, async (req, res) => {
         { name, phone, company, address, city, country, website, avatar, lastLogin: new Date() },
         { new: true }
       ).select('-password');
+      global.excelSync?.triggerSync();
       return res.json(user);
     }
     const db = getDB();
@@ -1111,6 +1136,7 @@ app.put('/api/auth/profile', auth, async (req, res) => {
         updatedAt: new Date().toISOString()
       };
       saveDB(db);
+      global.excelSync?.triggerSync();
       const { password: _, ...safe } = db.users[idx];
       return res.json(safe);
     }
@@ -1279,6 +1305,11 @@ app.post('/api/auth/reset-password', async (req, res) => {
 // Create order
 app.post('/api/orders', auth, upload.array('files', 10), async (req, res) => {
   try {
+    console.log('📝 ORDER SUBMISSION RECEIVED');
+    console.log('  User:', req.user.email);
+    console.log('  Body Keys:', Object.keys(req.body));
+    console.log('  Files Uploaded:', req.files ? req.files.length : 0);
+    
     const {
       serviceType,
       serviceLabel,
@@ -1333,21 +1364,99 @@ app.post('/api/orders', auth, upload.array('files', 10), async (req, res) => {
 
     let savedOrder;
     if (isMongoConnected()) {
+      console.log('💾 Saving to MongoDB...');
       savedOrder = await Order.create(orderData);
+      console.log('✅ MongoDB save successful:', savedOrder.id || savedOrder._id);
     } else {
+      console.log('💾 Saving to JSON file (MongoDB unavailable)...');
       const db = getDB();
-      savedOrder = { ...orderData, id: `ORD-${Date.now()}`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      
+      // Ensure orders array exists
+      if (!Array.isArray(db.orders)) {
+        db.orders = [];
+        console.log('📝 Created orders array in db');
+      }
+      
+      // Create order with unique ID
+      const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      savedOrder = { 
+        ...orderData, 
+        id: orderId, 
+        _id: orderId, 
+        createdAt: new Date().toISOString(), 
+        updatedAt: new Date().toISOString() 
+      };
+      
       db.orders.push(savedOrder);
-      saveDB(db);
+      console.log('✅ Order added to memory:', orderId);
+      console.log('📊 Total orders in memory:', db.orders.length);
+      
+      // Log activity
+      const activity = {
+        userId: req.user.id,
+        userEmail: req.user.email,
+        userName: req.user.name,
+        activityType: 'order_create',
+        description: `Order created: ${title} (₹${budget || 'TBD'})`,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        status: 'success',
+        createdAt: new Date().toISOString()
+      };
+      if (!Array.isArray(db.activities)) db.activities = [];
+      db.activities.push(activity);
+      
+      // CRITICAL: Save to file with error handling
+      try {
+        console.log('💾 WRITING TO db.json...');
+        saveDB(db);
+        console.log('✅ DATABASE SAVED SUCCESSFULLY TO db.json');
+        
+        // Verify save
+        const verify = getDB();
+        const savedCount = verify.orders ? verify.orders.length : 0;
+        console.log(`✅ VERIFICATION: ${savedCount} orders now in database`);
+      } catch (saveErr) {
+        console.error('❌ CRITICAL: Failed to save database:', saveErr.message);
+        throw new Error(`Database save failed: ${saveErr.message}`);
+      }
     }
 
-    // Email notifications
+    // Email notifications (Legacy)
     const adminEmail = getCompanyLeaderEmail();
     await sendMail(adminEmail, `🚀 New Order: ${title} from ${req.user.name}`, newOrderEmailHtml(savedOrder, req.user));
     await sendMail(req.user.email, `✅ Order Confirmed — ${title}`, orderConfirmHtml(savedOrder));
 
-    res.status(201).json({ success: true, order: savedOrder, message: 'Order submitted! You will receive a confirmation email shortly.' });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+    // Multi-channel Notifications (Email + SMS + WhatsApp)
+    try {
+      const adminPhone = process.env.ADMIN_PHONE || '';
+      const adminWhatsApp = process.env.ADMIN_WHATSAPP || '';
+      const clientPhone = req.user.phone || '';
+      const clientWhatsApp = req.body.clientWhatsApp || '';
+
+      const notificationResults = await NotificationService.notifyOrderPlaced(
+        savedOrder,
+        req.user,
+        adminPhone,
+        clientPhone,
+        adminWhatsApp,
+        clientWhatsApp
+      );
+      
+      console.log('📢 Notification Results:', notificationResults);
+    } catch (notifyErr) {
+      console.error('⚠️  Notification service error:', notifyErr.message);
+      // Don't fail the order creation if notifications fail
+    }
+
+    console.log(`✓ Order created: ${savedOrder.id || savedOrder._id} for user ${req.user.email}`);
+    global.excelSync?.triggerSync();
+    res.status(201).json({ success: true, order: savedOrder, message: 'Order submitted! You will receive notifications via email, SMS, and WhatsApp.' });
+  } catch(e) { 
+    console.error('❌ ORDER CREATION ERROR:', e.message);
+    console.error('   Stack:', e.stack);
+    res.status(500).json({ error: e.message }); 
+  }
 });
 
 // Get my orders
@@ -1390,6 +1499,7 @@ app.delete('/api/orders/:id', auth, async (req, res) => {
         return res.status(403).json({ error: 'Forbidden' });
       }
       await Order.findByIdAndDelete(req.params.id);
+      global.excelSync?.triggerSync();
       return res.json({ success: true });
     }
 
@@ -1402,8 +1512,184 @@ app.delete('/api/orders/:id', auth, async (req, res) => {
     }
     db.orders.splice(idx, 1);
     saveDB(db);
+    global.excelSync?.triggerSync();
     res.json({ success: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Client decision on order (accept/reject)
+app.put('/api/orders/:id/client-decision', auth, async (req, res) => {
+  try {
+    if (req.user.role === 'admin') {
+      return res.status(403).json({ error: 'Only clients can perform this action' });
+    }
+
+    const decisionRaw = String(req.body.decision || '').toLowerCase();
+    const decision = ['accept', 'reject'].includes(decisionRaw) ? decisionRaw : '';
+    const note = sanitizeText(req.body.note || '', 900);
+    if (!decision) {
+      return res.status(400).json({ error: 'Decision must be accept or reject' });
+    }
+
+    let updatedOrder = null;
+    const statusLabels = { pending:'Pending',in_progress:'In Progress',review:'Under Review',completed:'Completed',cancelled:'Cancelled' };
+
+    if (isMongoConnected()) {
+      const orderDoc = await Order.findById(req.params.id);
+      if (!orderDoc) return res.status(404).json({ error: 'Order not found' });
+      if (String(orderDoc.userId) !== String(req.user.id)) return res.status(403).json({ error: 'Forbidden' });
+
+      let safe = ensureOrderWorkflow(orderDoc.toObject());
+      if (['completed', 'cancelled'].includes(safe.status)) {
+        return res.status(400).json({ error: 'This order can no longer be modified by client decision' });
+      }
+
+      if (decision === 'accept') {
+        safe.companyAccepted = true;
+        safe.workflowStage = 'client_accepted';
+        safe.acceptance = {
+          ...safe.acceptance,
+          acceptedAt: nowIso(),
+          acceptedBy: req.user.name || 'Client',
+          terms: 'accepted_by_client',
+          notes: note || safe.acceptance?.notes || ''
+        };
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          'client_accepted',
+          'Client Accepted Proposal',
+          note || 'Client accepted the current scope and quotation.',
+          req.user.name || 'Client',
+          'client'
+        ));
+      } else {
+        safe.companyAccepted = false;
+        safe.status = 'cancelled';
+        safe.workflowStage = 'client_rejected';
+        safe.acceptance = {
+          ...safe.acceptance,
+          acceptedAt: '',
+          acceptedBy: req.user.name || 'Client',
+          terms: 'rejected_by_client',
+          notes: note || safe.acceptance?.notes || ''
+        };
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          'client_rejected',
+          'Client Rejected Proposal',
+          note || 'Client rejected the current scope/proposal.',
+          req.user.name || 'Client',
+          'client'
+        ));
+      }
+
+      orderDoc.set({
+        status: safe.status,
+        workflowStage: safe.workflowStage,
+        companyAccepted: safe.companyAccepted,
+        acceptance: safe.acceptance,
+        tracking: safe.tracking,
+        updatedAt: nowIso()
+      });
+      orderDoc.markModified('acceptance');
+      orderDoc.markModified('tracking');
+      await orderDoc.save();
+      updatedOrder = ensureOrderWorkflow(orderDoc.toObject());
+    } else {
+      const db = getDB();
+      const idx = db.orders.findIndex((o) => String(o.id) === String(req.params.id));
+      if (idx === -1) return res.status(404).json({ error: 'Order not found' });
+      if (String(db.orders[idx].userId) !== String(req.user.id)) return res.status(403).json({ error: 'Forbidden' });
+
+      let safe = ensureOrderWorkflow(db.orders[idx]);
+      if (['completed', 'cancelled'].includes(safe.status)) {
+        return res.status(400).json({ error: 'This order can no longer be modified by client decision' });
+      }
+
+      if (decision === 'accept') {
+        safe.companyAccepted = true;
+        safe.workflowStage = 'client_accepted';
+        safe.acceptance = {
+          ...safe.acceptance,
+          acceptedAt: nowIso(),
+          acceptedBy: req.user.name || 'Client',
+          terms: 'accepted_by_client',
+          notes: note || safe.acceptance?.notes || ''
+        };
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          'client_accepted',
+          'Client Accepted Proposal',
+          note || 'Client accepted the current scope and quotation.',
+          req.user.name || 'Client',
+          'client'
+        ));
+      } else {
+        safe.companyAccepted = false;
+        safe.status = 'cancelled';
+        safe.workflowStage = 'client_rejected';
+        safe.acceptance = {
+          ...safe.acceptance,
+          acceptedAt: '',
+          acceptedBy: req.user.name || 'Client',
+          terms: 'rejected_by_client',
+          notes: note || safe.acceptance?.notes || ''
+        };
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          'client_rejected',
+          'Client Rejected Proposal',
+          note || 'Client rejected the current scope/proposal.',
+          req.user.name || 'Client',
+          'client'
+        ));
+      }
+
+      safe.updatedAt = nowIso();
+      db.orders[idx] = safe;
+      saveDB(db);
+      updatedOrder = safe;
+    }
+
+    const statusLabel = statusLabels[updatedOrder.status] || updatedOrder.status;
+    await sendMail(
+      getCompanyLeaderEmail(),
+      `📌 Client ${decision === 'accept' ? 'Accepted' : 'Rejected'} — ${updatedOrder.title || updatedOrder.id || updatedOrder._id}`,
+      simpleNoticeEmailHtml({
+        title: `Client ${decision === 'accept' ? 'Accepted' : 'Rejected'} Order Decision`,
+        body: `
+          <p><strong>Client:</strong> ${req.user.name} (${req.user.email})</p>
+          <p><strong>Order:</strong> ${updatedOrder.title || '-'}</p>
+          <p><strong>Current Status:</strong> ${statusLabel}</p>
+          <p><strong>Decision:</strong> ${decision.toUpperCase()}</p>
+          ${note ? `<p><strong>Client Note:</strong> ${note}</p>` : ''}
+        `
+      })
+    );
+
+    await sendMail(
+      updatedOrder.userEmail,
+      `✅ Your Decision Was Recorded — ${updatedOrder.title || 'Order'}`,
+      simpleNoticeEmailHtml({
+        title: 'Order Decision Updated',
+        body: `
+          <p>Your decision has been recorded successfully.</p>
+          <p><strong>Order:</strong> ${updatedOrder.title || '-'}</p>
+          <p><strong>Decision:</strong> ${decision.toUpperCase()}</p>
+          <p><strong>Status:</strong> ${statusLabel}</p>
+        `
+      })
+    );
+
+    await NotificationService.notifyOrderStatusUpdate(
+      updatedOrder,
+      updatedOrder.status,
+      updatedOrder.userEmail,
+      updatedOrder.userPhone || '',
+      ''
+    );
+
+    global.excelSync?.triggerSync();
+    res.json({ success: true, order: updatedOrder, decision });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 /* ─── CLIENT WORK ROUTES ─── */
@@ -1571,6 +1857,8 @@ app.post('/api/messages', auth, async (req, res) => {
       saveDB(db);
     }
 
+    global.excelSync?.triggerSync();
+
     const leaderEmail = getCompanyLeaderEmail();
     if (req.user.role === 'admin') {
       const targetClient = await getClientContactById(payload.clientId);
@@ -1659,75 +1947,74 @@ app.get('/api/admin/orders', adminAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Update order status
+// Update order status and details
 app.put('/api/admin/orders/:id', adminAuth, async (req, res) => {
   try {
-    const { status, adminNotes, estimatedPrice } = req.body;
+    const payload = req.body || {};
     let updatedOrder = null;
+    const allowedStatuses = ['pending', 'in_progress', 'review', 'completed', 'cancelled'];
     const statusLabels = { pending:'Pending',in_progress:'In Progress',review:'Under Review',completed:'Completed',cancelled:'Cancelled' };
 
-    if (isMongoConnected()) {
-      const orderDoc = await Order.findById(req.params.id);
-      if (!orderDoc) return res.status(404).json({ error: 'Order not found' });
+    const normalizeStatus = (value, current) => {
+      const next = String(value || '').trim();
+      return allowedStatuses.includes(next) ? next : current;
+    };
 
-      let safe = ensureOrderWorkflow(orderDoc.toObject());
-      const nextStatus = status || safe.status;
+    const parseBriefPayload = (value, fallback) => {
+      if (value == null || value === '') return fallback;
+      if (typeof value === 'object') return value;
+      try {
+        return JSON.parse(String(value));
+      } catch {
+        return fallback;
+      }
+    };
+
+    const applyEdits = (inputOrder) => {
+      let safe = ensureOrderWorkflow(inputOrder);
+      const previousStatus = safe.status;
+      const nextStatus = normalizeStatus(payload.status, safe.status);
       if (nextStatus === 'in_progress' && safe.payment.advancePaidAmount < safe.payment.advanceRequiredAmount) {
-        return res.status(400).json({ error: 'Cannot start work before 50% advance payment is received.' });
+        throw new Error('Cannot start work before 50% advance payment is received.');
       }
 
       safe.status = nextStatus;
-      safe.adminNotes = sanitizeText(adminNotes || safe.adminNotes || '', 900);
-      safe.estimatedPrice = estimatedPrice || safe.estimatedPrice;
-      const quoted = deriveQuotedTotal({ ...safe, estimatedPrice: safe.estimatedPrice });
+      safe.title = sanitizeText(payload.title ?? safe.title, 140);
+      safe.description = sanitizeText(payload.description ?? safe.description, 3000);
+      safe.serviceType = sanitizeText(payload.serviceType ?? safe.serviceType, 120);
+      safe.serviceLabel = sanitizeText(payload.serviceLabel ?? safe.serviceLabel, 180);
+      safe.customService = sanitizeText(payload.customService ?? safe.customService, 220);
+      safe.references = sanitizeText(payload.references ?? safe.references, 2000);
+      safe.clientContactMethod = sanitizeText(payload.clientContactMethod ?? safe.clientContactMethod, 40);
+      safe.clientContactTime = sanitizeText(payload.clientContactTime ?? safe.clientContactTime, 120);
+      safe.adminNotes = sanitizeText(payload.adminNotes ?? safe.adminNotes, 900);
+
+      if (payload.deadline !== undefined) {
+        const parsedDeadline = payload.deadline ? new Date(payload.deadline) : null;
+        safe.deadline = parsedDeadline && !Number.isNaN(parsedDeadline.getTime()) ? parsedDeadline.toISOString() : '';
+      }
+      if (payload.budget !== undefined) safe.budget = toMoney(payload.budget);
+      if (payload.estimatedPrice !== undefined) safe.estimatedPrice = toMoney(payload.estimatedPrice);
+      if (payload.brief !== undefined) safe.brief = parseBriefPayload(payload.brief, safe.brief || {});
+
+      if (payload.requestClientAcceptance === true) {
+        safe.companyAccepted = false;
+        safe.workflowStage = 'awaiting_client_acceptance';
+        safe = pushOrderTracking(safe, makeTrackingEvent(
+          'awaiting_client_acceptance',
+          'Awaiting Client Acceptance',
+          safe.adminNotes || 'Company updated quote/scope and is awaiting client confirmation.',
+          req.user.name,
+          'admin'
+        ));
+      }
+
+      const quoted = deriveQuotedTotal({ ...safe, estimatedPrice: safe.estimatedPrice, budget: safe.budget });
       safe.payment.quotedTotal = quoted;
       safe.payment.advanceRequiredAmount = Math.round(quoted * 0.5 * 100) / 100;
       safe.payment.remainingAmount = Math.max(0, Math.round((quoted - safe.payment.remainingPaidAmount) * 100) / 100);
 
-      safe = pushOrderTracking(safe, makeTrackingEvent(
-        `status_${nextStatus}`,
-        `Status Changed: ${statusLabels[nextStatus] || nextStatus}`,
-        safe.adminNotes || 'Status updated by company team.',
-        req.user.name,
-        'admin'
-      ));
-
-      orderDoc.set({
-        status: safe.status,
-        adminNotes: safe.adminNotes,
-        estimatedPrice: safe.estimatedPrice,
-        workflowStage: safe.workflowStage,
-        workflowRules: safe.workflowRules,
-        companyAccepted: safe.companyAccepted,
-        acceptance: safe.acceptance,
-        payment: safe.payment,
-        revisionPolicy: safe.revisionPolicy,
-        tracking: safe.tracking,
-        updatedAt: nowIso()
-      });
-      orderDoc.markModified('payment');
-      orderDoc.markModified('acceptance');
-      orderDoc.markModified('revisionPolicy');
-      orderDoc.markModified('tracking');
-      await orderDoc.save();
-      updatedOrder = orderDoc.toObject();
-    } else {
-      const db = getDB();
-      const idx = db.orders.findIndex(o => o.id === req.params.id);
-      if (idx > -1) {
-        let safe = ensureOrderWorkflow(db.orders[idx]);
-        const nextStatus = status || safe.status;
-        if (nextStatus === 'in_progress' && safe.payment.advancePaidAmount < safe.payment.advanceRequiredAmount) {
-          return res.status(400).json({ error: 'Cannot start work before 50% advance payment is received.' });
-        }
-
-        safe.status = nextStatus;
-        safe.adminNotes = sanitizeText(adminNotes || safe.adminNotes || '', 900);
-        safe.estimatedPrice = estimatedPrice || safe.estimatedPrice;
-        const quoted = deriveQuotedTotal({ ...safe, estimatedPrice: safe.estimatedPrice });
-        safe.payment.quotedTotal = quoted;
-        safe.payment.advanceRequiredAmount = Math.round(quoted * 0.5 * 100) / 100;
-        safe.payment.remainingAmount = Math.max(0, Math.round((quoted - safe.payment.remainingPaidAmount) * 100) / 100);
+      if (nextStatus !== previousStatus) {
         safe = pushOrderTracking(safe, makeTrackingEvent(
           `status_${nextStatus}`,
           `Status Changed: ${statusLabels[nextStatus] || nextStatus}`,
@@ -1735,30 +2022,107 @@ app.put('/api/admin/orders/:id', adminAuth, async (req, res) => {
           req.user.name,
           'admin'
         ));
-        safe.updatedAt = nowIso();
-        db.orders[idx] = safe;
-        saveDB(db);
-        updatedOrder = safe;
       }
+
+      safe.updatedAt = nowIso();
+      return safe;
+    };
+
+    if (isMongoConnected()) {
+      const orderDoc = await Order.findById(req.params.id);
+      if (!orderDoc) return res.status(404).json({ error: 'Order not found' });
+
+      const safe = applyEdits(orderDoc.toObject());
+      orderDoc.set({
+        status: safe.status,
+        title: safe.title,
+        description: safe.description,
+        serviceType: safe.serviceType,
+        serviceLabel: safe.serviceLabel,
+        customService: safe.customService,
+        references: safe.references,
+        deadline: safe.deadline || null,
+        budget: safe.budget,
+        estimatedPrice: safe.estimatedPrice,
+        adminNotes: safe.adminNotes,
+        brief: safe.brief,
+        clientContactMethod: safe.clientContactMethod,
+        clientContactTime: safe.clientContactTime,
+        workflowStage: safe.workflowStage,
+        workflowRules: safe.workflowRules,
+        companyAccepted: safe.companyAccepted,
+        acceptance: safe.acceptance,
+        payment: safe.payment,
+        revisionPolicy: safe.revisionPolicy,
+        tracking: safe.tracking,
+        updatedAt: safe.updatedAt
+      });
+      orderDoc.markModified('brief');
+      orderDoc.markModified('payment');
+      orderDoc.markModified('acceptance');
+      orderDoc.markModified('revisionPolicy');
+      orderDoc.markModified('tracking');
+      await orderDoc.save();
+      updatedOrder = ensureOrderWorkflow(orderDoc.toObject());
+    } else {
+      const db = getDB();
+      const idx = db.orders.findIndex((o) => String(o.id) === String(req.params.id));
+      if (idx === -1) return res.status(404).json({ error: 'Order not found' });
+
+      const safe = applyEdits(db.orders[idx]);
+      db.orders[idx] = safe;
+      saveDB(db);
+      updatedOrder = safe;
     }
 
-    if (updatedOrder) {
-      await sendMail(updatedOrder.userEmail, `📬 Order Update — ${statusLabels[status]||status}`,
-        `<div style="font-family:sans-serif;padding:40px;background:#0a0a1a;color:#f0eeff;border-radius:16px">
-          <h1 style="color:#a78bfa">Order Status Updated</h1>
-          <p>Your order "<strong>${updatedOrder.title}</strong>" has been updated.</p>
-          <div style="background:rgba(124,58,237,0.15);border-radius:12px;padding:20px;margin:20px 0">
-            <div style="font-size:13px;color:rgba(240,238,255,0.5);margin-bottom:6px">New Status</div>
-            <div style="font-size:20px;font-weight:700">${statusLabels[status]||status}</div>
-          </div>
-          ${adminNotes ? `<div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:20px"><div style="font-size:12px;color:rgba(240,238,255,0.4);margin-bottom:8px">MESSAGE FROM STUDIO</div><p>${adminNotes}</p></div>` : ''}
-          <p style="font-size:12px;color:rgba(240,238,255,0.3);margin-top:32px">Omio Studio — hello@omio.studio</p>
-        </div>`
-      );
-    }
+    const statusLabel = statusLabels[updatedOrder.status] || updatedOrder.status;
+    await sendMail(updatedOrder.userEmail, `📬 Order Update — ${statusLabel}`,
+      `<div style="font-family:sans-serif;padding:40px;background:#0a0a1a;color:#f0eeff;border-radius:16px">
+        <h1 style="color:#a78bfa">Order Updated</h1>
+        <p>Your order "<strong>${updatedOrder.title}</strong>" has been updated by Omio Studio.</p>
+        <div style="background:rgba(124,58,237,0.15);border-radius:12px;padding:20px;margin:20px 0">
+          <div style="font-size:13px;color:rgba(240,238,255,0.5);margin-bottom:6px">Current Status</div>
+          <div style="font-size:20px;font-weight:700">${statusLabel}</div>
+        </div>
+        ${updatedOrder.adminNotes ? `<div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:20px"><div style="font-size:12px;color:rgba(240,238,255,0.4);margin-bottom:8px">MESSAGE FROM STUDIO</div><p>${updatedOrder.adminNotes}</p></div>` : ''}
+        <p style="font-size:12px;color:rgba(240,238,255,0.3);margin-top:32px">Omio Studio — hello@omio.studio</p>
+      </div>`
+    );
 
+    await NotificationService.notifyOrderStatusUpdate(
+      updatedOrder,
+      updatedOrder.status,
+      updatedOrder.userEmail,
+      updatedOrder.userPhone || '',
+      ''
+    );
+
+    global.excelSync?.triggerSync();
     res.json({ success: true, order: updatedOrder });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) {
+    if (String(e.message || '').includes('Cannot start work before 50% advance payment is received.')) {
+      return res.status(400).json({ error: e.message });
+    }
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get single order for admin (normalized)
+app.get('/api/admin/orders/:id', adminAuth, async (req, res) => {
+  try {
+    if (isMongoConnected()) {
+      const order = await Order.findById(req.params.id).populate('userId', 'name email company phone');
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+      return res.json(ensureOrderWorkflow(order.toObject ? order.toObject() : order));
+    }
+
+    const db = getDB();
+    const order = (db.orders || []).find((o) => String(o.id) === String(req.params.id));
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json(ensureOrderWorkflow(order));
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.put('/api/admin/orders/:id/assignment', adminAuth, async (req, res) => {
@@ -1786,6 +2150,8 @@ app.put('/api/admin/orders/:id/assignment', adminAuth, async (req, res) => {
         saveDB(db);
       }
     }
+
+    global.excelSync?.triggerSync();
 
     if (!updatedOrder) return res.status(404).json({ error: 'Order not found' });
 
@@ -1819,6 +2185,7 @@ app.put('/api/admin/orders/:id/assignment', adminAuth, async (req, res) => {
       })
     );
 
+    global.excelSync?.triggerSync();
     res.json({ success: true, order: updatedOrder });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -1835,6 +2202,7 @@ app.delete('/api/admin/orders/:id', adminAuth, async (req, res) => {
       db.orders = db.orders.filter(o => o.id !== req.params.id);
       saveDB(db);
     }
+    global.excelSync?.triggerSync();
     res.json({ success: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -1882,6 +2250,7 @@ app.put('/api/admin/users/:id/status', adminAuth, async (req, res) => {
         })
       );
 
+      global.excelSync?.triggerSync();
       return res.json({ success: true, user });
     }
 
@@ -1915,6 +2284,7 @@ app.put('/api/admin/users/:id/status', adminAuth, async (req, res) => {
       })
     );
 
+    global.excelSync?.triggerSync();
     res.json({ success: true, user: safe });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -1973,33 +2343,6 @@ app.get('/api/admin/clients', adminAuth, async (req, res) => {
       return safe;
     });
     res.json(clients);
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
-
-// Get all orders
-app.get('/api/admin/orders', adminAuth, async (req, res) => {
-  try {
-    if (isMongoConnected()) {
-      const orders = await Order.find().sort({ createdAt: -1 }).populate('userId', 'name email company');
-      return res.json(orders);
-    }
-    const db = getDB();
-    res.json(db.orders || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
-
-// Get single order
-app.get('/api/admin/orders/:id', adminAuth, async (req, res) => {
-  try {
-    if (isMongoConnected()) {
-      const order = await Order.findById(req.params.id).populate('userId', 'name email company phone');
-      if (!order) return res.status(404).json({ error: 'Order not found' });
-      return res.json(order);
-    }
-    const db = getDB();
-    const order = (db.orders || []).find(o => o.id === req.params.id);
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    res.json(order);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -2222,6 +2565,54 @@ app.get('/api/admin/export-data', adminAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// Download Excel sync file
+app.get('/api/admin/download-excel', adminAuth, (req, res) => {
+  try {
+    if (!global.excelSync) {
+      return res.status(400).json({ error: 'Excel sync not available. Please ensure exceljs and node-schedule are installed.' });
+    }
+    
+    const excelPath = global.excelSync.getFilePath();
+    if (!fs.existsSync(excelPath)) {
+      return res.status(404).json({ error: 'Excel file not generated yet. Please try again in a moment.' });
+    }
+    
+    res.download(excelPath, 'omio-studio-database-sync.xlsx', (err) => {
+      if (err) console.error('Download error:', err.message);
+    });
+  } catch(e) { 
+    res.status(500).json({ error: e.message }); 
+  }
+});
+
+// Get Excel sync status
+app.get('/api/admin/excel-status', adminAuth, (req, res) => {
+  try {
+    if (!global.excelSync) {
+      return res.json({
+        enabled: false,
+        message: 'Excel sync not available'
+      });
+    }
+    
+    const excelPath = global.excelSync.getFilePath();
+    const exists = fs.existsSync(excelPath);
+    const fileStats = exists ? fs.statSync(excelPath) : null;
+    
+    res.json({
+      enabled: true,
+      fileExists: exists,
+      filePath: exists ? excelPath : 'not generated',
+      lastModified: exists ? fileStats.mtime.toISOString() : null,
+      fileSize: exists ? fileStats.size : 0,
+      updateInterval: '5 minutes',
+      sheets: ['Dashboard', 'Users', 'Orders', 'Invoices', 'Activities', 'Sessions', 'Messages', 'WorkItems']
+    });
+  } catch(e) { 
+    res.status(500).json({ error: e.message }); 
+  }
+});
+
 // Get user with all related data
 app.get('/api/admin/users/:userId', adminAuth, async (req, res) => {
   try {
@@ -2316,6 +2707,17 @@ const printStartupInfo = (activePort) => {
 const startServer = (attempt = 0) => {
   const server = app.listen(PORT, () => {
     printStartupInfo(PORT);
+    
+    // Initialize Excel Sync
+    if (ExcelSync) {
+      const excelSync = new ExcelSync(getDB);
+      excelSync.initialize().catch(err => {
+        console.error('❌ Excel sync initialization failed:', err.message);
+      });
+      
+      // Store instance globally for use in API routes
+      global.excelSync = excelSync;
+    }
   });
 
   server.on('error', (err) => {

@@ -7255,7 +7255,7 @@
   </div>
 
   <div class="modal-layer" id="orderDetailsLayer">
-    <div class="modal small">
+    <div class="modal">
       <button class="modal-close" onclick="closeModal('orderDetailsLayer')">x</button>
       <div id="orderDetailBox"></div>
     </div>
@@ -7369,6 +7369,7 @@
 
   <script>
     const API_BASE = `${window.location.origin}/api`;
+    const API_FALLBACK_BASES = ['http://localhost:4000/api', 'http://127.0.0.1:4000/api'];
     const TOKEN_KEY = 'omio_token';
     const USER_KEY = 'omio_user';
     const USERS_KEY = 'omio_local_users';
@@ -7383,6 +7384,7 @@
 
     const state = {
       apiReady: false,
+      apiBase: API_BASE,
       user: null,
       serviceFilter: 'all',
       serviceQuery: '',
@@ -7414,6 +7416,34 @@
         theme: 'light'
       }
     };
+
+    function getApiCandidates() {
+      const fromOrigin = `${window.location.origin}/api`;
+      const list = [];
+
+      if (window.location.protocol !== 'file:' && window.location.origin && window.location.origin !== 'null') {
+        list.push(fromOrigin);
+      }
+
+      API_FALLBACK_BASES.forEach((base) => {
+        if (!list.includes(base)) list.push(base);
+      });
+
+      return list;
+    }
+
+    async function probeApiBase(base) {
+      try {
+        const res = await fetch(`${base}/health`, { method: 'GET' });
+        if (!res.ok) return false;
+        const isJson = (res.headers.get('content-type') || '').includes('application/json');
+        if (!isJson) return false;
+        const data = await res.json();
+        return !!data;
+      } catch {
+        return false;
+      }
+    }
 
     const services = [
       {
@@ -8237,12 +8267,13 @@
     }
 
     function isUserLoggedIn() {
-      return localStorage.getItem('omio_session') !== null || sessionStorage.getItem('omio_session') !== null;
+      // Single source of truth: check if state.user exists
+      return !!state.user;
     }
 
     function getUserSession() {
-      const session = localStorage.getItem('omio_session') || sessionStorage.getItem('omio_session');
-      return session ? JSON.parse(session) : null;
+      // Single source of truth: return state.user
+      return state.user || null;
     }
 
     function updateNavigation() {
@@ -8277,6 +8308,23 @@
       state.token = '';
       // Update navigation - this will refresh the page
       window.location.href = 'index.html';
+    }
+
+    function updateWelcomeBanner() {
+      // Use state.user as single source of truth
+      const welcomeBanner = document.getElementById('welcomeBanner');
+      const welcomeText = document.getElementById('welcomeText');
+
+      if (state.user && welcomeBanner && welcomeText) {
+        welcomeText.textContent = `Welcome, ${state.user.name}!`;
+        welcomeBanner.style.display = 'block';
+        console.log('✅ Welcome banner shown for:', state.user.name);
+      } else {
+        if (welcomeBanner) {
+          welcomeBanner.style.display = 'none';
+          console.log('✅ Welcome banner hidden - not logged in');
+        }
+      }
     }
 
     function openAuthModal(tab = 'login') {
@@ -8598,7 +8646,8 @@
       if (token) headers.Authorization = `Bearer ${token}`;
       options.headers = headers;
 
-      const res = await fetch(`${API_BASE}${path}`, options);
+      const activeApiBase = state.apiBase || API_BASE;
+      const res = await fetch(`${activeApiBase}${path}`, options);
       const isJson = res.headers.get('content-type')?.includes('application/json');
       const data = isJson ? await res.json() : null;
       if (!res.ok) throw new Error(data?.error || 'Request failed');
@@ -8606,11 +8655,14 @@
     }
 
     async function detectApiMode() {
-      try {
-        const d = await apiRequest('/health');
-        state.apiReady = !!d;
-      } catch {
-        state.apiReady = false;
+      state.apiReady = false;
+      const candidates = getApiCandidates();
+      for (const base of candidates) {
+        if (await probeApiBase(base)) {
+          state.apiReady = true;
+          state.apiBase = base;
+          break;
+        }
       }
       const label = state.apiReady ? 'API Mode: Backend' : 'API Mode: Local fallback';
       const badges = [document.getElementById('apiModeBadge'), document.getElementById('apiModeBadgeAdmin')];
@@ -10729,31 +10781,511 @@
       return allLocal.find((o) => safeOrderId(o) === id);
     }
 
-    function openOrderDetails(orderId) {
-      const order = getOrderById(orderId);
-      if (!order) {
-        toast('err', 'Order not found.');
-        return;
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function normalizeOrderForView(order = {}) {
+      return {
+        ...order,
+        _id: order._id || order.id,
+        id: order.id || order._id,
+        budget: Number(order.budget || 0),
+        estimatedPrice: Number(order.estimatedPrice || 0),
+        files: Array.isArray(order.files) ? order.files : [],
+        deliveryFiles: Array.isArray(order.deliveryFiles) ? order.deliveryFiles : [],
+        tracking: Array.isArray(order.tracking) ? order.tracking : []
+      };
+    }
+
+    async function fetchOrderDetails(orderId) {
+      if (!state.apiReady) return normalizeOrderForView(getOrderById(orderId));
+      const path = state.user?.role === 'admin' ? `/admin/orders/${orderId}/complete` : `/orders/${orderId}`;
+      const data = await apiRequest(path);
+      if (state.user?.role === 'admin') {
+        return normalizeOrderForView(data?.order || data);
       }
-      const box = document.getElementById('orderDetailBox');
-      box.innerHTML = `
+      return normalizeOrderForView(data);
+    }
+
+    function renderAdminOrderEditView(order) {
+      const statusOptions = ['pending', 'in_progress', 'review', 'on_hold', 'completed', 'cancelled'];
+      const brief = order.brief ? (typeof order.brief === 'string' ? JSON.parse(order.brief) : order.brief) : {};
+      const safeId = escapeHtml(safeOrderId(order));
+
+      // Status timeline steps
+      const stepMap = { pending: 1, review: 2, in_progress: 3, on_hold: 3, delivery: 4, completed: 5, cancelled: 0 };
+      const currentStep = stepMap[order.status] || 0;
+      const steps = [
+        { label: 'Submitted', num: 1 },
+        { label: 'Review', num: 2 },
+        { label: 'In Progress', num: 3 },
+        { label: 'Delivery', num: 4 },
+        { label: 'Complete', num: 5 }
+      ];
+      const timelineHtml = `
+        <div style="display:flex;align-items:center;gap:0;margin:18px 0 22px;">
+          ${steps.map((s, i) => {
+            const completed = i < currentStep;
+            const active = i === currentStep;
+            const dotStyle = completed || active
+              ? 'background:linear-gradient(135deg,#6366f1,#ec4899);border-color:transparent;color:#fff;'
+              : 'background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.25);color:var(--ink-soft);';
+            const activeGlow = active ? 'box-shadow:0 0 14px rgba(99,102,241,0.55);' : '';
+            const lineStyle = i < steps.length - 1
+              ? (i < currentStep ? 'background:linear-gradient(90deg,#6366f1,#ec4899);' : 'background:rgba(99,102,241,0.15);')
+              : '';
+            return `
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;">
+                ${i < steps.length - 1 ? `<div style="position:absolute;top:14px;left:50%;width:100%;height:2px;${lineStyle}z-index:0;"></div>` : ''}
+                <div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;z-index:1;${dotStyle}${activeGlow}">${completed ? '✓' : s.num}</div>
+                <div style="font-size:0.68rem;font-weight:700;color:${completed || active ? 'var(--ink)' : 'var(--ink-soft)'};text-align:center;">${s.label}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      // Tab nav
+      const tabNav = `
+        <div style="display:flex;gap:4px;margin-bottom:18px;padding:4px;background:rgba(0,0,0,0.22);border-radius:12px;border:1px solid rgba(99,102,241,0.1);overflow-x:auto;">
+          <button type="button" class="od-tab active" data-tab="overview" onclick="switchOdTab(this,'overview')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">📊 Overview</button>
+          <button type="button" class="od-tab" data-tab="client" onclick="switchOdTab(this,'client')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">👤 Client</button>
+          <button type="button" class="od-tab" data-tab="project" onclick="switchOdTab(this,'project')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">📝 Project</button>
+          <button type="button" class="od-tab" data-tab="actions" onclick="switchOdTab(this,'actions')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">⚡ Actions</button>
+          <button type="button" class="od-tab" data-tab="documents" onclick="switchOdTab(this,'documents')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">📄 Documents</button>
+          <button type="button" class="od-tab" data-tab="timeline" onclick="switchOdTab(this,'timeline')" style="padding:8px 14px;border:none;background:transparent;color:var(--ink-soft);font-size:0.82rem;font-weight:700;cursor:pointer;border-radius:8px;white-space:nowrap;font-family:inherit;transition:all .2s;">📅 Timeline</button>
+        </div>
+      `;
+
+      const card = (title, content) => `
+        <div style="background:rgba(15,23,42,0.45);border:1px solid rgba(99,102,241,0.12);border-radius:14px;padding:18px;margin-bottom:14px;">
+          <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#a5b4fc;margin-bottom:14px;display:flex;align-items:center;gap:8px;">${title}</div>
+          ${content}
+        </div>
+      `;
+
+      // Overview panel
+      const overviewPanel = `
+        <div class="od-panel active" data-panel="overview">
+          ${card('📋 Order Summary', `
+            <div class="form-grid">
+              <div class="field"><label>Order ID</label><div style="font-weight:700;font-size:1rem;">${safeId}</div></div>
+              <div class="field"><label>Current Status</label><div><span class="badge ${badgeClass(order.status)}">${statusLabel(order.status)}</span></div></div>
+            </div>
+            <div class="form-grid">
+              <div class="field"><label>Service Type</label><div style="color:var(--ink-soft);">${escapeHtml(order.serviceLabel || order.serviceType || '-')}</div></div>
+              <div class="field"><label>Package Tier</label><div style="color:var(--ink-soft);">${escapeHtml(brief.packageTier || 'Professional')}</div></div>
+            </div>
+            <div class="form-grid">
+              <div class="field"><label>Priority</label><div style="color:var(--ink-soft);">${escapeHtml((order.priority || 'medium').charAt(0).toUpperCase() + (order.priority || 'medium').slice(1))}</div></div>
+              <div class="field"><label>Submitted On</label><div style="color:var(--ink-soft);">${new Date(order.createdAt).toLocaleString()}</div></div>
+            </div>
+          `)}
+          ${card('💰 Pricing & Budget', `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(99,102,241,0.08);">
+              <span style="font-size:0.85rem;color:var(--ink-soft);">Estimated Price</span>
+              <span style="font-weight:700;">${formatINR(order.estimatedPrice || order.budget || 0)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(99,102,241,0.08);">
+              <span style="font-size:0.85rem;color:var(--ink-soft);">Discount Applied</span>
+              <span style="font-weight:700;">${brief.discountType && brief.discountType !== 'none' ? brief.discountType + '%' : 'None'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(99,102,241,0.08);">
+              <span style="font-size:0.85rem;color:var(--ink-soft);">Budget Confirmed</span>
+              <span style="font-weight:700;">${formatINR(order.budget || order.estimatedPrice || 0)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(236,72,153,0.06));border-radius:10px;margin-top:10px;">
+              <span style="font-weight:800;font-size:0.95rem;">Total Payable</span>
+              <span style="font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#fff,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${formatINR(order.estimatedPrice || order.budget || 0)}</span>
+            </div>
+          `)}
+          ${card('🗒️ Admin Notes (Internal)', `
+            <textarea id="odAdminNotes" class="textarea" style="min-height:100px;" placeholder="Add internal notes, reminders, or special instructions for this order...">${escapeHtml(order.adminNotes || '')}</textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+              <button class="status-btn" onclick="saveAdminOrderEdits('${safeId}')" style="background:linear-gradient(135deg,#6366f1,#ec4899);">💾 Save Notes</button>
+            </div>
+          `)}
+        </div>
+      `;
+
+      // Client panel
+      const clientPanel = `
+        <div class="od-panel" data-panel="client" style="display:none;">
+          <div style="display:flex;align-items:center;gap:16px;padding:18px;background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(236,72,153,0.05));border:1px solid rgba(99,102,241,0.15);border-radius:14px;margin-bottom:14px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff;flex-shrink:0;">${(order.userName || '?').charAt(0).toUpperCase()}</div>
+            <div>
+              <div style="font-size:1.05rem;font-weight:800;margin-bottom:4px;">${escapeHtml(order.userName || '-')}</div>
+              <div style="font-size:0.8rem;color:var(--ink-soft);">${escapeHtml(order.userEmail || order.email || '-')}</div>
+            </div>
+          </div>
+          ${card('📇 Contact Details', `
+            <div class="form-grid">
+              <div class="field"><label>Full Name</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(order.userName || '-')}</div></div>
+              <div class="field"><label>Email</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(order.userEmail || order.email || '-')}</div></div>
+            </div>
+            <div class="form-grid">
+              <div class="field"><label>Phone</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(order.userPhone || order.phone || '-')}</div></div>
+              <div class="field"><label>Company / Business</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(brief.businessName || order.company || '-')}</div></div>
+            </div>
+            <div class="form-grid">
+              <div class="field"><label>Preferred Contact</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml((order.clientContactMethod || 'Email').charAt(0).toUpperCase() + (order.clientContactMethod || 'email').slice(1))}</div></div>
+              <div class="field"><label>Best Time to Reach</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(order.clientContactTime || 'Not specified')}</div></div>
+            </div>
+          `)}
+          ${card('📨 Send Message to Client', `
+            <textarea class="textarea" style="min-height:100px;" placeholder="Type a message to send directly to the client..."></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+              <button class="status-btn" onclick="toast('ok','Message sent to client')" style="background:linear-gradient(135deg,#6366f1,#ec4899);">📨 Send Message</button>
+            </div>
+          `)}
+        </div>
+      `;
+
+      // Project panel
+      const projectPanel = `
+        <div class="od-panel" data-panel="project" style="display:none;">
+          ${card('🎯 Project Objective', `<div style="line-height:1.7;color:var(--ink-soft);font-weight:600;">${escapeHtml(brief.objective || order.objective || 'No objective provided')}</div>`)}
+          ${card('📝 Detailed Description', `<div style="line-height:1.7;color:var(--ink-soft);font-weight:600;white-space:pre-wrap;">${escapeHtml(order.description || 'No description provided')}</div>`)}
+          ${card('🔧 Features & Requirements', `<div style="line-height:1.7;color:var(--ink-soft);font-weight:600;">${brief.features && brief.features.length ? escapeHtml(brief.features.join(', ')) : 'No specific features listed'}</div>`)}
+          <div class="form-grid" style="margin-top:0;">
+            ${card('📎 Attachments', `
+              ${order.files && order.files.length ? order.files.map(f => `
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.15);border:1px solid rgba(99,102,241,0.08);border-radius:8px;margin-bottom:6px;">
+                  <span style="font-size:1.1rem;">📎</span>
+                  <span style="font-size:0.85rem;font-weight:600;flex:1;word-break:break-word;">${escapeHtml(typeof f === 'string' ? f : (f.name || 'File'))}</span>
+                </div>
+              `).join('') : '<div style="color:var(--ink-soft);font-size:0.85rem;">No files attached</div>'}
+            `)}
+            ${card('📅 Deadline & Timeline', `
+              <div class="field" style="margin-bottom:10px;"><label>Deadline</label><div style="color:var(--ink-soft);font-weight:600;">${order.deadline ? new Date(order.deadline).toLocaleDateString() : 'No deadline set'}</div></div>
+              <div class="field"><label>Timeline Flexibility</label><div style="color:var(--ink-soft);font-weight:600;">${escapeHtml(brief.timelineFlexibility ? brief.timelineFlexibility.charAt(0).toUpperCase() + brief.timelineFlexibility.slice(1) : 'Moderate')}</div></div>
+            `)}
+          </div>
+        </div>
+      `;
+
+      // Actions panel
+      const actionsPanel = `
+        <div class="od-panel" data-panel="actions" style="display:none;">
+          ${card('⚡ Quick Actions', `
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','accept')" style="background:linear-gradient(135deg,#10b981,#059669);">✅ Accept Order</button>
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','start')" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">▶️ Start Work</button>
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','review')" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">🔍 Mark Review</button>
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','hold')" style="background:linear-gradient(135deg,#f59e0b,#d97706);">⏸️ Place On Hold</button>
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','complete')" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🏁 Complete</button>
+              <button class="status-btn" onclick="quickOrderAction('${safeId}','reject')" style="background:linear-gradient(135deg,#ef4444,#dc2626);">❌ Reject Order</button>
+            </div>
+          `)}
+          ${card('🚦 Change Order Status', `
+            <div style="display:flex;gap:10px;align-items:center;">
+              <select id="odStatus" class="select" style="flex:1;">
+                ${statusOptions.map((s) => `<option value="${s}" ${order.status === s ? 'selected' : ''}>${statusLabel(s)}</option>`).join('')}
+              </select>
+              <button class="status-btn" onclick="saveAdminOrderEdits('${safeId}')" style="background:linear-gradient(135deg,#6366f1,#ec4899);">Update Status</button>
+            </div>
+          `)}
+          ${card('🎯 Set Priority Level', `
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="priority-btn" data-p="high" onclick="setOrderPriority('${safeId}','high')" style="padding:8px 16px;border:1px solid rgba(239,68,68,0.3);border-radius:20px;background:rgba(239,68,68,0.1);color:#ef4444;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;${(order.priority || 'medium') === 'high' ? 'box-shadow:0 0 12px rgba(239,68,68,0.25);border-color:rgba(239,68,68,0.6);' : ''}">🔴 High</button>
+              <button type="button" class="priority-btn" data-p="medium" onclick="setOrderPriority('${safeId}','medium')" style="padding:8px 16px;border:1px solid rgba(245,158,11,0.3);border-radius:20px;background:rgba(245,158,11,0.1);color:#f59e0b;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;${(order.priority || 'medium') === 'medium' ? 'box-shadow:0 0 12px rgba(245,158,11,0.25);border-color:rgba(245,158,11,0.6);' : ''}">🟡 Medium</button>
+              <button type="button" class="priority-btn" data-p="low" onclick="setOrderPriority('${safeId}','low')" style="padding:8px 16px;border:1px solid rgba(16,185,129,0.3);border-radius:20px;background:rgba(16,185,129,0.1);color:#10b981;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;${(order.priority || 'medium') === 'low' ? 'box-shadow:0 0 12px rgba(16,185,129,0.25);border-color:rgba(16,185,129,0.6);' : ''}">🟢 Low</button>
+            </div>
+          `)}
+          ${card('📨 Send Note to Client', `
+            <textarea class="textarea" style="min-height:100px;" placeholder="Write a note or update to send to the client..."></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+              <button class="status-btn" onclick="toast('ok','Update sent to client')" style="background:linear-gradient(135deg,#6366f1,#ec4899);">📨 Send Update</button>
+            </div>
+          `)}
+        </div>
+      `;
+
+      // Documents panel
+      const documentsPanel = `
+        <div class="od-panel" data-panel="documents" style="display:none;">
+          ${card('📄 Legal & Agreements', `
+            <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:10px;margin-bottom:10px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(236,72,153,0.12));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">📋</div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:2px;">Service Agreement</div>
+                <div style="font-size:0.78rem;color:var(--ink-soft);">Standard terms of service, deliverables scope, and revision policy.</div>
+              </div>
+              <button class="tiny-btn" onclick="toast('info','Downloading Service Agreement...')">Download</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:10px;margin-bottom:10px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(236,72,153,0.12));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🔒</div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:2px;">NDA / Confidentiality</div>
+                <div style="font-size:0.78rem;color:var(--ink-soft);">Non-disclosure agreement for sensitive project information.</div>
+              </div>
+              <button class="tiny-btn" onclick="toast('info','Downloading NDA...')">Download</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:10px;margin-bottom:10px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(236,72,153,0.12));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">💰</div>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:2px;">Payment Terms & Invoice</div>
+                <div style="font-size:0.78rem;color:var(--ink-soft);">Billing schedule, milestone payments, and final invoice.</div>
+              </div>
+              <button class="tiny-btn" onclick="toast('info','Opening Invoice...')">View Invoice</button>
+            </div>
+            <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;margin-top:12px;cursor:pointer;">
+              <input type="checkbox" id="odRequestClientAcceptance" ${order.companyAccepted ? 'checked' : ''} style="width:18px;height:18px;accent-color:#10b981;cursor:pointer;" />
+              <span style="font-size:0.85rem;font-weight:700;color:#10b981;cursor:pointer;">I confirm all legal documents have been reviewed and this order is authorized to proceed.</span>
+            </label>
+          `)}
+          ${card('📎 Order Attachments', `
+            ${order.files && order.files.length ? order.files.map(f => `
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.12);border:1px solid rgba(99,102,241,0.06);border-radius:8px;margin-bottom:6px;">
+                <span style="font-size:1.1rem;">📎</span>
+                <span style="font-size:0.85rem;font-weight:600;flex:1;word-break:break-word;">${escapeHtml(typeof f === 'string' ? f : (f.name || 'File'))}</span>
+                <button class="tiny-btn">Download</button>
+              </div>
+            `).join('') : '<div style="color:var(--ink-soft);font-size:0.85rem;">No attachments</div>'}
+          `)}
+        </div>
+      `;
+
+      // Timeline panel
+      const trackingList = order.tracking && order.tracking.length
+        ? order.tracking.slice().reverse().map((t) => `
+          <div style="position:relative;padding:12px 0 12px 24px;">
+            <div style="position:absolute;left:0;top:16px;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);border:2px solid var(--bg);z-index:1;"></div>
+            <div style="font-size:0.7rem;color:var(--ink-soft);font-weight:700;">${new Date(t.timestamp || Date.now()).toLocaleString()}</div>
+            <div style="font-size:0.88rem;color:var(--ink);margin-top:2px;font-weight:600;">${escapeHtml(t.label || t.stage || 'Update')}</div>
+            ${t.note ? `<div style="font-size:0.8rem;color:var(--ink-soft);margin-top:2px;">${escapeHtml(t.note)}</div>` : ''}
+            <div style="font-size:0.72rem;color:var(--ink-soft);margin-top:2px;">${escapeHtml(t.actorName || 'System')}</div>
+          </div>
+        `).join('')
+        : '<div style="color:var(--ink-soft);font-size:0.85rem;">No tracking events yet</div>';
+
+      const timelinePanel = `
+        <div class="od-panel" data-panel="timeline" style="display:none;">
+          ${card('📅 Order Activity Timeline', `
+            <div style="position:relative;padding-left:20px;">
+              <div style="position:absolute;left:4px;top:4px;bottom:4px;width:2px;background:linear-gradient(180deg,#6366f1,#ec4899);border-radius:2px;"></div>
+              <div style="position:relative;padding:12px 0 12px 20px;">
+                <div style="position:absolute;left:-20px;top:16px;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);border:2px solid var(--bg);"></div>
+                <div style="font-size:0.7rem;color:var(--ink-soft);font-weight:700;">${new Date(order.createdAt).toLocaleString()}</div>
+                <div style="font-size:0.88rem;color:var(--ink);margin-top:2px;font-weight:600;">Order submitted by client</div>
+              </div>
+              ${trackingList}
+            </div>
+          `)}
+        </div>
+      `;
+
+      return `
         <div class="modal-head">
-          <h3>Order ${safeOrderId(order)}</h3>
-          <p>${order.title || ''}</p>
+          <h3>📋 Order Management — ${safeId}</h3>
+          <p style="color:var(--ink-soft);">${escapeHtml(order.userName || 'Unknown Client')} · ${escapeHtml(order.serviceLabel || order.serviceType || 'Service')}</p>
+        </div>
+        ${timelineHtml}
+        ${tabNav}
+        ${overviewPanel}
+        ${clientPanel}
+        ${projectPanel}
+        ${actionsPanel}
+        ${documentsPanel}
+        ${timelinePanel}
+        <div class="hero-actions" style="justify-content:flex-end; margin-top:12px; gap:8px;">
+          <button class="status-btn" onclick="saveAdminOrderEdits('${safeId}')">💾 Save All Changes</button>
+          <button class="ghost-btn" onclick="closeModal('orderDetailsLayer')">Close</button>
+        </div>
+        <style>
+          .od-tab.active { background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(236,72,153,0.18)) !important; color: #fff !important; box-shadow: 0 2px 8px rgba(99,102,241,0.15); }
+          .od-tab:hover:not(.active) { color: var(--ink) !important; background: rgba(99,102,241,0.08); }
+        </style>
+      `;
+    }
+
+
+    function renderClientOrderView(order) {
+      const canDecide = !['completed', 'cancelled'].includes(order.status);
+      const decisionLabel = order.acceptance?.terms === 'accepted_by_client'
+        ? 'Accepted by you'
+        : order.acceptance?.terms === 'rejected_by_client'
+          ? 'Rejected by you'
+          : 'Pending your decision';
+
+      return `
+        <div class="modal-head">
+          <h3>Order ${escapeHtml(safeOrderId(order))}</h3>
+          <p>${escapeHtml(order.title || '')}</p>
         </div>
         <div class="field"><label>Status</label><div><span class="badge ${badgeClass(order.status)}">${statusLabel(order.status)}</span></div></div>
-        <div class="field"><label>Description</label><div style="font-size:0.86rem;color:var(--ink-soft);line-height:1.55;">${order.description || '-'}</div></div>
+        <div class="field"><label>Decision</label><div style="font-size:0.86rem;color:var(--ink-soft);">${escapeHtml(decisionLabel)}</div></div>
+        <div class="field"><label>Description</label><div style="font-size:0.86rem;color:var(--ink-soft);line-height:1.55;">${escapeHtml(order.description || '-')}</div></div>
         <div class="form-grid">
-          <div class="field"><label>Budget</label><div>${order.budget || 'TBD'}</div></div>
-          <div class="field"><label>Deadline</label><div>${order.deadline || '-'}</div></div>
+          <div class="field"><label>Budget</label><div>${order.budget ? formatINR(order.budget) : 'TBD'}</div></div>
+          <div class="field"><label>Estimated Price</label><div>${order.estimatedPrice ? formatINR(order.estimatedPrice) : 'TBD'}</div></div>
         </div>
-        <div class="field"><label>References</label><div style="font-size:0.84rem;color:var(--ink-soft);">${order.references || '-'}</div></div>
-        <div class="field"><label>Custom Service</label><div style="font-size:0.84rem;color:var(--ink-soft);">${order.customService || '-'}</div></div>
-        <div class="field"><label>Management Plan</label><div style="font-size:0.84rem;color:var(--ink-soft);">${order.managementRequired ? `${order.managementMonths || 1} month(s) · ${order.managementAmount || formatINR((Number(order.managementMonthlyFee || 0) * Number(order.managementMonths || 1)))}` : 'Not selected'}</div></div>
-        <div class="field"><label>Files</label><div style="font-size:0.84rem;color:var(--ink-soft);">${(order.files || []).join(', ') || 'No files'}</div></div>
-        <div class="field"><label>Admin Notes</label><div style="font-size:0.84rem;color:var(--ink-soft);">${order.adminNotes || '-'}</div></div>
+        <div class="form-grid">
+          <div class="field"><label>Deadline</label><div>${order.deadline ? new Date(order.deadline).toLocaleDateString() : '-'}</div></div>
+          <div class="field"><label>Service</label><div>${escapeHtml(order.serviceLabel || order.serviceType || '-')}</div></div>
+        </div>
+        <div class="field"><label>Studio Notes</label><div style="font-size:0.84rem;color:var(--ink-soft);">${escapeHtml(order.adminNotes || '-')}</div></div>
+        <div class="field"><label>Your Response Note (optional)</label><textarea id="odClientDecisionNote" class="textarea" style="min-height:80px;" placeholder="Add note for accept/reject decision"></textarea></div>
+        ${canDecide ? `
+          <div class="hero-actions" style="justify-content:flex-end; margin-top:12px;">
+            <button class="status-btn" onclick="submitClientOrderDecision('${escapeHtml(safeOrderId(order))}', 'accept')">Accept Order</button>
+            <button class="status-btn" style="background:#a72649" onclick="submitClientOrderDecision('${escapeHtml(safeOrderId(order))}', 'reject')">Reject Order</button>
+          </div>
+        ` : ''}
       `;
-      openModal('orderDetailsLayer');
+    }
+
+    function switchOdTab(btn, tabName) {
+      document.querySelectorAll('.od-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.od-panel').forEach(p => p.style.display = 'none');
+      btn.classList.add('active');
+      const panel = document.querySelector('.od-panel[data-panel="' + tabName + '"]');
+      if (panel) panel.style.display = 'block';
+    }
+
+    async function quickOrderAction(orderId, action) {
+      const statusMap = { accept: 'in_progress', start: 'in_progress', review: 'review', hold: 'on_hold', complete: 'completed', reject: 'cancelled' };
+      const newStatus = statusMap[action];
+      if (!newStatus) return;
+      const confirmMsg = { accept: 'Accept this order?', start: 'Start work on this order?', review: 'Mark for review?', hold: 'Place on hold?', complete: 'Mark as completed?', reject: 'Reject this order?' };
+      if (action !== 'start' && !confirm(confirmMsg[action] || 'Proceed?')) return;
+      await adminUpdateStatus(orderId, newStatus);
+      await openOrderDetails(orderId);
+    }
+
+    async function setOrderPriority(orderId, priority) {
+      const order = getOrderById(orderId);
+      if (!order) return;
+      try {
+        if (state.apiReady) {
+          await apiRequest('/admin/orders/' + orderId, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ priority })
+          });
+        }
+        const local = getLocalOrders();
+        const idx = local.findIndex(o => safeOrderId(o) === orderId);
+        if (idx > -1) { local[idx].priority = priority; setLocalOrders(local); }
+        toast('ok', 'Priority set to ' + priority);
+        await openOrderDetails(orderId);
+      } catch (e) { toast('err', e.message || 'Failed to set priority'); }
+    }
+
+    async function openOrderDetails(orderId) {
+
+      try {
+        const order = await fetchOrderDetails(orderId);
+        if (!order) {
+          toast('err', 'Order not found.');
+          return;
+        }
+        const box = document.getElementById('orderDetailBox');
+        box.innerHTML = state.user?.role === 'admin'
+          ? renderAdminOrderEditView(order)
+          : renderClientOrderView(order);
+        openModal('orderDetailsLayer');
+      } catch (e) {
+        toast('err', e.message || 'Unable to load order details.');
+      }
+    }
+
+    async function saveAdminOrderEdits(orderId) {
+      if (!state.user || state.user.role !== 'admin') {
+        toast('err', 'Admin access required.');
+        return;
+      }
+
+      const payload = {
+        status: document.getElementById('odStatus')?.value || 'pending',
+        title: document.getElementById('odTitle')?.value || '',
+        description: document.getElementById('odDescription')?.value || '',
+        serviceType: document.getElementById('odServiceType')?.value || '',
+        serviceLabel: document.getElementById('odServiceLabel')?.value || '',
+        customService: document.getElementById('odCustomService')?.value || '',
+        budget: Number(document.getElementById('odBudget')?.value || 0),
+        estimatedPrice: Number(document.getElementById('odEstimatedPrice')?.value || 0),
+        deadline: document.getElementById('odDeadline')?.value || '',
+        references: document.getElementById('odReferences')?.value || '',
+        adminNotes: document.getElementById('odAdminNotes')?.value || '',
+        requestClientAcceptance: !!document.getElementById('odRequestClientAcceptance')?.checked
+      };
+
+      try {
+        if (state.apiReady) {
+          await apiRequest(`/admin/orders/${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const local = getLocalOrders();
+        const idx = local.findIndex((o) => safeOrderId(o) === orderId);
+        if (idx > -1) {
+          local[idx] = {
+            ...local[idx],
+            ...payload,
+            updatedAt: new Date().toISOString(),
+            companyAccepted: payload.requestClientAcceptance ? false : local[idx].companyAccepted,
+            workflowStage: payload.requestClientAcceptance ? 'awaiting_client_acceptance' : local[idx].workflowStage
+          };
+          setLocalOrders(local);
+        }
+
+        toast('ok', `Order ${orderId} updated.`);
+        await loadAdmin();
+        await openOrderDetails(orderId);
+      } catch (e) {
+        toast('err', e.message || 'Unable to update order.');
+      }
+    }
+
+    async function submitClientOrderDecision(orderId, decision) {
+      if (!state.user || state.user.role === 'admin') {
+        toast('err', 'Only clients can do this action.');
+        return;
+      }
+
+      const note = document.getElementById('odClientDecisionNote')?.value || '';
+      try {
+        if (state.apiReady) {
+          await apiRequest(`/orders/${orderId}/client-decision`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ decision, note })
+          });
+        }
+
+        const local = getLocalOrders();
+        const idx = local.findIndex((o) => safeOrderId(o) === orderId);
+        if (idx > -1) {
+          local[idx].companyAccepted = decision === 'accept';
+          local[idx].workflowStage = decision === 'accept' ? 'client_accepted' : 'client_rejected';
+          local[idx].acceptance = {
+            ...(local[idx].acceptance || {}),
+            acceptedAt: new Date().toISOString(),
+            acceptedBy: state.user.name || 'Client',
+            terms: decision === 'accept' ? 'accepted_by_client' : 'rejected_by_client',
+            notes: note
+          };
+          if (decision === 'reject') local[idx].status = 'cancelled';
+          local[idx].updatedAt = new Date().toISOString();
+          setLocalOrders(local);
+        }
+
+        toast('ok', `Order ${decision === 'accept' ? 'accepted' : 'rejected'} successfully.`);
+        await loadClientData();
+        await openOrderDetails(orderId);
+      } catch (e) {
+        toast('err', e.message || 'Unable to submit decision.');
+      }
     }
 
     function openDeleteConfirm(orderId, orderTitle) {
@@ -11154,11 +11686,12 @@
 
     async function adminUpdateStatus(orderId, status) {
       try {
+        const existing = getOrderById(orderId) || {};
         if (state.apiReady) {
           await apiRequest(`/admin/orders/${orderId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status, adminNotes: '' })
+            body: JSON.stringify({ status, adminNotes: existing.adminNotes || '' })
           });
         }
 
@@ -11166,6 +11699,7 @@
         const idx = local.findIndex((o) => safeOrderId(o) === orderId);
         if (idx > -1) {
           local[idx].status = status;
+          local[idx].adminNotes = existing.adminNotes || local[idx].adminNotes || '';
           local[idx].updatedAt = new Date().toISOString();
           setLocalOrders(local);
         }
@@ -11301,7 +11835,17 @@
 
     async function boot() {
       initTheme();
-      updateNavigation();
+      
+      // STEP 1: Restore user session from localStorage FIRST
+      const storedUser = getStoredUser();
+      if (storedUser) {
+        state.user = storedUser;
+        console.log('✅ User session restored from localStorage:', storedUser.email);
+      } else {
+        console.log('⚠️ No stored user found - user is logged out');
+        state.user = null;
+      }
+      
       seedLocalAdminIfNeeded();
       loadManagementPricing();
       syncRoleAccessUI();
@@ -11325,10 +11869,19 @@
       startWebsitePreviewSpotlight();
       autoTestimonial();
 
+      // STEP 2: Render navbar with current user state (before API calls)
+      renderNav();
+      
+      // STEP 3: Update welcome banner
+      updateWelcomeBanner();
+
       await detectApiMode();
       await pullManagementPricingFromApi();
+      
+      // STEP 4: Verify session with API and sync if needed
       await ensureSessionUser();
 
+      // STEP 5: Re-render nav in case API found different user
       renderNav();
       initAnimations();
       wireLandingSectionTracking();

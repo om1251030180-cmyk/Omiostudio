@@ -639,6 +639,13 @@
         <p class="signup-link">
           Don't have an account? <a href="signup.html">Sign up</a>
         </p>
+
+        <!-- Test Credentials (For Demo) -->
+        <div style="margin-top: 20px; padding: 12px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3); font-size: 0.85rem; color: var(--dark-text-soft);">
+          <strong style="color: var(--dark-text);">🔓 Test Credentials:</strong><br>
+          Email: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">admin@omio.studio</code><br>
+          Password: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">admin123</code>
+        </div>
       </div>
     </div>
 
@@ -706,48 +713,54 @@
 
     function handleLogin(event) {
       event.preventDefault();
-      const email = document.getElementById('loginEmail').value;
+      const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
       const rememberMe = document.getElementById('rememberMe').checked;
 
+      console.log('🔐 Login attempt:', { email, password: '***', rememberMe });
+
       // Validation
       if (!validateEmail(email)) {
+        console.error('❌ Invalid email format');
         showError('loginEmail', 'Please enter a valid email');
         return;
       }
 
       if (!password) {
+        console.error('❌ Password is empty');
         showError('loginPassword', 'Password is required');
         return;
       }
 
       // Call API
+      console.log('📡 Sending login request to /api/auth/login');
       fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       })
-      .then(res => res.json())
+      .then(res => {
+        console.log('📡 Response status:', res.status);
+        return res.json();
+      })
       .then(data => {
+        console.log('📡 Response data:', data);
+        
         if (data.error) {
+          console.error('❌ Login error:', data.error);
           showError('loginPassword', data.error);
           return;
         }
 
-        // Store session
-        const sessionData = {
-          userId: data.user.id,
-          name: data.user.name,
-          email: data.user.email,
-          role: data.user.role,
-          phone: data.user.phone || '',
-          company: data.user.company || '',
-          loginTime: new Date().toISOString()
-        };
+        if (!data.token || !data.user) {
+          console.error('❌ Invalid response - missing token or user');
+          showError('loginPassword', 'Invalid response from server');
+          return;
+        }
 
-        // Store as omio_user for consistency with index.html
+        // Store session - consistent with index.html
         const userData = {
-          id: data.user.id,
+          id: data.user.id || data.user._id,
           name: data.user.name,
           email: data.user.email,
           role: data.user.role,
@@ -755,26 +768,29 @@
           company: data.user.company || ''
         };
 
+        console.log('✅ Storing user data:', userData);
+
         if (rememberMe) {
-          localStorage.setItem('omio_session', JSON.stringify(sessionData));
           localStorage.setItem('omio_user', JSON.stringify(userData));
           localStorage.setItem('omio_remember', 'true');
+          console.log('✅ Remember me enabled');
         } else {
-          sessionStorage.setItem('omio_session', JSON.stringify(sessionData));
           localStorage.setItem('omio_user', JSON.stringify(userData));
           localStorage.removeItem('omio_remember');
+          console.log('✅ Remember me disabled');
         }
 
         // Store token
         localStorage.setItem('omio_token', data.token);
+        console.log('✅ Token stored');
 
         // Success
-        alert('Login successful!');
+        console.log('✅ Login successful! Redirecting...');
         window.location.href = 'index.html';
       })
       .catch(err => {
+        console.error('❌ Network error:', err);
         showError('loginPassword', 'Connection error. Try again.');
-        console.error('Login error:', err);
       });
     }
 
@@ -807,8 +823,8 @@
     }
 
     function checkUserAlreadyLoggedIn() {
-      const session = localStorage.getItem('omio_session') || sessionStorage.getItem('omio_session');
-      if (session) {
+      const user = localStorage.getItem('omio_user');
+      if (user) {
         window.location.href = 'index.html';
       }
     }

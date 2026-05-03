@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omio Studio - Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --dark-bg: #0f172a;
+      --dark-card: #1e293b;
+      --dark-border: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 70px 1fr;
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--dark-card);
+      border-bottom: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .logo-circle {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), #ec4899);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    nav button:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+
+    nav button.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .header-right button {
+      background: transparent;
+      border: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .header-right button:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    /* METRICS */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .metric:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    /* TABLE */
+    .table-wrapper {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: rgba(99, 102, 241, 0.05);
+      border-bottom: 2px solid var(--dark-border);
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+    }
+
+    tbody tr:hover {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+    }
+
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .badge-info {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 8px 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #4f46e5;
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 0.7rem;
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    /* LOG */
+    #activityLog {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+
+    .log-entry {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+      color: var(--text-muted);
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 28px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .client-info {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-btn {
+      padding: 10px 14px;
+      border: 1px solid var(--dark-border);
+      background: rgba(99, 102, 241, 0.05);
+      color: var(--primary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .action-btn.danger {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .action-btn.danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .action-btn.success {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .action-btn.success:hover {
+      background: var(--success);
+      color: white;
+    }
+
+    .orders-section {
+      margin-top: 20px;
+    }
+
+    .orders-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    /* ACTIVITY TABLE */
+    .activity-table {
+      width: 100%;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    .activity-table thead {
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .activity-table th {
+      padding: 10px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .activity-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .activity-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    .activity-login {
+      background: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+    }
+
+    .activity-logout {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+
+    .activity-reset {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* CLIENT-WISE ACTIVITY */
+    .client-activity-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .client-activity-header {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid var(--dark-border);
+      transition: background 0.2s;
+    }
+
+    .client-activity-header:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.15));
+    }
+
+    .client-activity-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .client-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), #ec4899);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: white;
+    }
+
+    .client-activity-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .client-activity-name {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .client-activity-email {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .activity-count {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+
+    .expand-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .client-activity-list {
+      display: none;
+      padding: 12px;
+    }
+
+    .client-activity-list.expanded {
+      display: block;
+    }
+
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      background: rgba(99, 102, 241, 0.05);
+      border-left: 3px solid var(--primary);
+      border-radius: 3px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
+
+    .activity-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .activity-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .activity-item-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: right;
+    }
+
+    .copy-token-btn {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.65rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: monospace;
+    }
+
+    .copy-token-btn:hover {
+      background: rgba(99, 102, 241, 0.4);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .copy-token-btn.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #86efac;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 16px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      nav button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      th, td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="header-logo">
+        <div class="logo-circle">A</div>
+        <span>Admin Dashboard</span>
+      </div>
+      
+      <nav>
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="clients">Clients</button>
+        <button class="nav-btn" data-tab="orders">Orders</button>
+        <button class="nav-btn" data-tab="invoices">Invoices</button>
+        <button class="nav-btn" data-tab="documents">Documents</button>
+        <button class="nav-btn" data-tab="database">Database</button>
+        <button class="nav-btn" data-tab="activity">Activity</button>
+      </nav>
+
+      <div class="header-right">
+        <button onclick="reloadData()" title="Refresh">↻</button>
+        <button onclick="logout()" title="Logout">⬅</button>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <!-- DASHBOARD TAB -->
+      <section class="section active" id="dashboard">
+        <h1>Dashboard</h1>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Clients</div>
+            <div class="metric-value" id="totalClients">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Active Orders</div>
+            <div class="metric-value" id="activeOrders">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total Revenue</div>
+            <div class="metric-value" id="totalRevenue">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Invoices</div>
+            <div class="metric-value" id="totalInvoices">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Completed</div>
+            <div class="metric-value" id="completedOrders">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Pending</div>
+            <div class="metric-value" id="pendingOrders">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIENTS TAB -->
+      <section class="section" id="clients">
+        <h1>Clients</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTable">
+              <tr><td colspan="6" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ORDERS TAB -->
+      <section class="section" id="orders">
+        <h1>Orders</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr><td colspan="7" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- INVOICES TAB -->
+      <section class="section" id="invoices">
+        <h1>Invoices</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Due Date</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTable">
+              <tr><td colspan="6" class="empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS TAB -->
+      <section class="section" id="documents">
+        <h1>Documents</h1>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Type</th>
+                <th>Filename</th>
+                <th>Uploaded</th>
+              </tr>
+            </thead>
+            <tbody id="documentsTable">
+              <tr><td colspan="4" class="empty">No documents uploaded yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DATABASE TAB -->
+      <section class="section" id="database">
+        <h1>Database & Activity Tracking</h1>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Users</div>
+            <div class="metric-value" id="dbUsers">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-value" id="dbOrders">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Database</div>
+            <div class="metric-value" id="dbType">JSON</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Last Update</div>
+            <div class="metric-value" style="font-size: 1rem;" id="dbTime">--:--:--</div>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 24px; margin-bottom: 12px;">Client-Wise Activity</h2>
+        <div id="clientActivityContainer" style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="text-align: center; color: var(--text-muted);">Loading activities...</div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY TAB -->
+      <section class="section" id="activity">
+        <h1>Activity Log</h1>
+        <div id="activityLog"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- CLIENT DETAIL MODAL -->
+  <div class="modal" id="clientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Client Details</div>
+        <button class="close-btn" onclick="closeClientModal()">✕</button>
+      </div>
+
+      <div class="client-info">
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Name</div>
+            <div class="info-value" id="modalName">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value" id="modalEmail">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Phone</div>
+            <div class="info-value" id="modalPhone">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Company</div>
+            <div class="info-value" id="modalCompany">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Address</div>
+            <div class="info-value" id="modalAddress">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">City</div>
+            <div class="info-value" id="modalCity">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Member Since</div>
+            <div class="info-value" id="modalCreatedAt">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Total Orders</div>
+            <div class="info-value" id="modalOrdersCount">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin-bottom: 12px;">Quick Actions</h3>
+        <div class="actions-grid">
+          <button class="action-btn" onclick="sendMessage()">📨 Send Message</button>
+          <button class="action-btn" onclick="initiateCall()">📞 Call</button>
+          <button class="action-btn" onclick="scheduleVideo()">📹 Video Appointment</button>
+          <button class="action-btn" onclick="sendOrder()">📦 Send Order</button>
+          <button class="action-btn" onclick="giveMeeting()">📅 Schedule Meeting</button>
+          <button class="action-btn" onclick="sendNotification()">🔔 Send Notification</button>
+          <button class="action-btn success" onclick="giveDecision()">✓ Give Decision</button>
+          <button class="action-btn danger" onclick="banClient()">🔒 Ban</button>
+          <button class="action-btn success" onclick="unbanClient()">🔓 Unban</button>
+          <button class="action-btn danger" onclick="deleteClient()">🗑 Delete</button>
+        </div>
+      </div>
+
+      <div class="orders-section">
+        <h3>Client Orders</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="modalOrdersTable">
+              <tr><td colspan="5" class="empty">No orders yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER DETAIL MODAL -->
+  <div class="modal" id="orderModal">
+    <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div class="modal-title">Order Details & Management</div>
+        <button class="close-btn" onclick="closeOrderModal()">✕</button>
+      </div>
+
+      <div class="client-info">
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Order ID</div>
+            <div class="info-value" id="orderModalId">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Status</div>
+            <div class="info-value" id="orderModalStatus">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Client Name</div>
+            <div class="info-value" id="orderModalClient">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Service</div>
+            <div class="info-value" id="orderModalService">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <div class="info-label">Amount</div>
+            <div class="info-value" id="orderModalAmount">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Date</div>
+            <div class="info-value" id="orderModalDate">-</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-item" style="grid-column: 1/-1;">
+            <div class="info-label">Description</div>
+            <div class="info-value" id="orderModalDescription" style="white-space: pre-wrap; max-height: 150px; overflow-y: auto;">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin: 20px 0; padding: 20px; background: rgba(99, 102, 241, 0.08); border-radius: 8px; border: 1px solid var(--dark-border);">
+        <h3 style="margin-bottom: 16px;">Order Management</h3>
+        
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600;">Set Priority</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-small" style="background: var(--danger);" onclick="updateOrderPriority('high')">🔴 High</button>
+            <button class="btn btn-small" style="background: var(--warning);" onclick="updateOrderPriority('medium')">🟡 Medium</button>
+            <button class="btn btn-small" style="background: var(--success);" onclick="updateOrderPriority('low')">🟢 Low</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600;">Admin Notes</label>
+          <textarea id="orderModalNotes" style="width: 100%; padding: 8px; border: 1px solid var(--dark-border); border-radius: 6px; background: rgba(0,0,0,0.3); color: var(--text-primary); font-family: inherit; resize: vertical; height: 100px;\" placeholder="Add notes for your team...\" ></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn" style="background: var(--success);" onclick="acceptOrder()">✓ Accept Order</button>
+          <button class="btn" style="background: var(--danger);" onclick="rejectOrder()">✕ Reject Order</button>
+          <button class="btn btn-small" onclick="startWork()">▶ Start Work</button>
+          <button class="btn btn-small" onclick="completeOrder()">✓ Mark Complete</button>
+          <button class="btn btn-small" onclick="saveOrderNotes()">💾 Save Notes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:4000/api';
+    const TOKEN_KEY = 'omio_token';
+    const USER_KEY = 'omio_user';
+    let currentClient = null;
+    let currentOrder = null;
+    let activityLog = [];
+    let allOrders = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      log('Admin Dashboard Started');
+      checkAuth();
+      setupNav();
+      loadData();
+      setInterval(loadData, 15000); // Auto-refresh every 15 seconds
+    });
+
+    function checkAuth() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const user = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+
+      if (!token || !user || user.role !== 'admin') {
+        window.location.href = 'index.html';
+        return;
+      }
+      log('Admin authenticated');
+    }
+
+    function setupNav() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const tab = btn.dataset.tab;
+          document.getElementById(tab).classList.add('active');
+          
+          if (tab === 'database') {
+            loadActivityLog();
+          }
+          
+          log('Switched to: ' + tab);
+        });
+      });
+    }
+
+    async function loadData() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      
+      try {
+        // Load stats
+        const statsRes = await fetch(`${API_BASE}/admin/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          document.getElementById('totalClients').textContent = stats.totalUsers || 0;
+          document.getElementById('activeOrders').textContent = stats.pending || 0;
+          document.getElementById('completedOrders').textContent = stats.completed || 0;
+          document.getElementById('pendingOrders').textContent = stats.inProgress || 0;
+          document.getElementById('dbUsers').textContent = stats.totalUsers || 0;
+          document.getElementById('dbOrders').textContent = stats.totalOrders || 0;
+        }
+
+        // Load revenue
+        const revRes = await fetch(`${API_BASE}/admin/revenue`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (revRes.ok) {
+          const rev = await revRes.json();
+          document.getElementById('totalRevenue').textContent = 'Rs ' + (rev.totalRevenue || 0);
+          document.getElementById('totalInvoices').textContent = rev.totalInvoices || 0;
+        }
+
+        // Load clients
+        const clientRes = await fetch(`${API_BASE}/admin/clients`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (clientRes.ok) {
+          const clients = await clientRes.json();
+          const tbody = document.getElementById('clientsTable');
+          
+          if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty">No clients yet</td></tr>';
+          } else {
+            tbody.innerHTML = clients.map((c, idx) => `
+              <tr>
+                <td>${c.name || 'N/A'}</td>
+                <td>${c.email || 'N/A'}</td>
+                <td>${c.phone || 'N/A'}</td>
+                <td>${c.company || 'N/A'}</td>
+                <td><span class="badge badge-success">${c.isActive !== false ? 'Active' : 'Inactive'}</span></td>
+                <td><button class="btn btn-small" onclick="viewClient('${c._id || c.id || idx}', '${(c.name || '').replace(/'/g, "\\'")}', '${c.email || ''}', '${c.phone || ''}', '${c.company || ''}', '${c.address || ''}', '${c.city || ''}', '${c.createdAt || ''}')">View</button></td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        // Load orders
+        const ordRes = await fetch(`${API_BASE}/admin/orders`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (ordRes.ok) {
+          allOrders = await ordRes.json();
+          const tbody = document.getElementById('ordersTable');
+          
+          if (allOrders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">No orders yet</td></tr>';
+          } else {
+            tbody.innerHTML = allOrders.slice(0, 10).map((o, idx) => `
+              <tr>
+                <td>${(o._id || o.id || '').slice(0, 12)}</td>
+                <td>${o.userName || 'Unknown'}</td>
+                <td>${o.serviceLabel || o.serviceType || 'Service'}</td>
+                <td>Rs ${o.estimatedPrice || o.budget || 0}</td>
+                <td><span class="badge badge-info">${(o.status || 'pending').toUpperCase()}</span></td>
+                <td>${new Date(o.createdAt || Date.now()).toLocaleDateString()}</td>
+                <td><button class="btn btn-small" onclick="viewOrderDetails('${(o._id || o.id || idx).toString().replace(/'/g, "\\'")}')">View</button></td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        document.getElementById('dbTime').textContent = new Date().toLocaleTimeString();
+        log('Data loaded successfully');
+      } catch (err) {
+        log('Error: ' + err.message);
+      }
+    }
+
+    function reloadData() {
+      log('Reloading data...');
+      loadData();
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function log(msg) {
+      const el = document.getElementById('activityLog');
+      if (!el) return;
+      
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const time = new Date().toLocaleTimeString();
+      entry.textContent = `[${time}] ${msg}`;
+      el.insertBefore(entry, el.firstChild);
+      
+      while (el.children.length > 50) {
+        el.removeChild(el.lastChild);
+      }
+    }
+
+    // CLIENT MODAL FUNCTIONS
+    function viewClient(id, name, email, phone, company, address, city, createdAt) {
+      currentClient = { id, name, email, phone, company, address, city, createdAt };
+      
+      document.getElementById('modalName').textContent = name || 'N/A';
+      document.getElementById('modalEmail').textContent = email || 'N/A';
+      document.getElementById('modalPhone').textContent = phone || 'N/A';
+      document.getElementById('modalCompany').textContent = company || 'N/A';
+      document.getElementById('modalAddress').textContent = address || 'N/A';
+      document.getElementById('modalCity').textContent = city || 'N/A';
+      document.getElementById('modalCreatedAt').textContent = new Date(createdAt).toLocaleDateString() || 'N/A';
+      document.getElementById('modalOrdersCount').textContent = '0';
+      
+      document.getElementById('clientModal').classList.add('active');
+      log(`Viewing client: ${name}`);
+    }
+
+    function closeClientModal() {
+      document.getElementById('clientModal').classList.remove('active');
+      currentClient = null;
+    }
+
+    // CLIENT ACTIONS
+    function sendMessage() {
+      if (!currentClient) return;
+      const msg = prompt(`Send message to ${currentClient.name}:`, '');
+      if (msg) {
+        log(`Message sent to ${currentClient.name}: "${msg}"`);
+        alert('Message sent successfully!');
+      }
+    }
+
+    function initiateCall() {
+      if (!currentClient) return;
+      log(`Call initiated with ${currentClient.name} (${currentClient.phone})`);
+      alert(`Calling ${currentClient.name} at ${currentClient.phone}`);
+    }
+
+    function scheduleVideo() {
+      if (!currentClient) return;
+      const date = prompt(`Schedule video appointment with ${currentClient.name}:`, '');
+      if (date) {
+        log(`Video appointment scheduled with ${currentClient.name} for ${date}`);
+        alert('Video appointment scheduled!');
+      }
+    }
+
+    function sendOrder() {
+      if (!currentClient) return;
+      const orderId = prompt(`Enter Order ID to send to ${currentClient.name}:`, 'ORD-001');
+      if (orderId) {
+        log(`Order ${orderId} sent to ${currentClient.name}`);
+        alert(`Order ${orderId} sent to ${currentClient.name}`);
+      }
+    }
+
+    function giveMeeting() {
+      if (!currentClient) return;
+      const date = prompt(`Schedule meeting with ${currentClient.name}:`, new Date().toISOString().slice(0, 10));
+      if (date) {
+        log(`Meeting scheduled with ${currentClient.name} on ${date}`);
+        alert(`Meeting scheduled on ${date}`);
+      }
+    }
+
+    function sendNotification() {
+      if (!currentClient) return;
+      const msg = prompt(`Send notification to ${currentClient.name}:`, '');
+      if (msg) {
+        log(`Notification sent to ${currentClient.name}: "${msg}"`);
+        alert('Notification sent!');
+      }
+    }
+
+    function giveDecision() {
+      if (!currentClient) return;
+      const decision = prompt(`Provide decision for ${currentClient.name}:`, 'Approved');
+      if (decision) {
+        log(`Decision given to ${currentClient.name}: ${decision}`);
+        alert(`Decision: ${decision}`);
+      }
+    }
+
+    function banClient() {
+      if (!currentClient) return;
+      if (confirm(`Ban client ${currentClient.name}? They won't be able to access their account.`)) {
+        log(`Client BANNED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been banned`);
+      }
+    }
+
+    function unbanClient() {
+      if (!currentClient) return;
+      if (confirm(`Unban client ${currentClient.name}?`)) {
+        log(`Client UNBANNED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been unbanned`);
+      }
+    }
+
+    function deleteClient() {
+      if (!currentClient) return;
+      if (confirm(`PERMANENTLY DELETE client ${currentClient.name}? This cannot be undone.`)) {
+        log(`Client DELETED: ${currentClient.name} (${currentClient.email})`);
+        alert(`${currentClient.name} has been deleted`);
+        closeClientModal();
+        loadData();
+      }
+    }
+
+    // ===== ORDER MANAGEMENT FUNCTIONS =====
+    function viewOrderDetails(orderId) {
+      const order = allOrders.find(o => (o._id || o.id) === orderId);
+      if (!order) {
+        alert('Order not found');
+        return;
+      }
+      
+      currentOrder = order;
+      document.getElementById('orderModalId').textContent = (order._id || order.id || '').slice(0, 12);
+      document.getElementById('orderModalStatus').textContent = (order.status || 'pending').toUpperCase();
+      document.getElementById('orderModalClient').textContent = order.userName || 'Unknown';
+      document.getElementById('orderModalService').textContent = order.serviceLabel || order.serviceType || 'Service';
+      document.getElementById('orderModalAmount').textContent = `Rs ${order.estimatedPrice || order.budget || 0}`;
+      document.getElementById('orderModalDate').textContent = new Date(order.createdAt).toLocaleString();
+      document.getElementById('orderModalDescription').textContent = order.description || order.serviceDetails || 'No description provided';
+      document.getElementById('orderModalNotes').value = order.adminNotes || '';
+      
+      document.getElementById('orderModal').classList.add('active');
+      log(`Viewing order: ${(order._id || order.id || '').slice(0, 12)}`);
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('active');
+      currentOrder = null;
+    }
+
+    async function acceptOrder() {
+      if (!currentOrder) return;
+      if (!confirm('Accept this order?')) return;
+
+      const token = localStorage.getItem(TOKEN_KEY);
+      const notes = document.getElementById('orderModalNotes').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/orders/${currentOrder._id || currentOrder.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            status: 'in_progress',
+            adminNotes: notes,
+            priority: currentOrder.priority || 'medium'
+          })
+        });
+
+        if (res.ok) {
+          log(`✓ Order ${(currentOrder._id || currentOrder.id).slice(0, 12)} ACCEPTED and moved to In Progress`);
+          alert('Order accepted! Client will be notified.');
+          closeOrderModal();
+          loadData();
+        } else {
+          alert('Failed to accept order');
+        }
+      } catch (err) {
+        console.error('Error accepting order:', err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function rejectOrder() {
+      if (!currentOrder) return;
+      const reason = prompt('Reason for rejection:', '');
+      if (reason === null) return;
+
+      const token = localStorage.getItem(TOKEN_KEY);
+      const notes = reason || 'Order rejected by admin';
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/orders/${currentOrder._id || currentOrder.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            status: 'cancelled',
+            adminNotes: notes
+          })
+        });
+
+        if (res.ok) {
+          log(`✗ Order ${(currentOrder._id || currentOrder.id).slice(0, 12)} REJECTED`);
+          alert('Order rejected! Client will be notified.');
+          closeOrderModal();
+          loadData();
+        } else {
+          alert('Failed to reject order');
+        }
+      } catch (err) {
+        console.error('Error rejecting order:', err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function startWork() {
+      if (!currentOrder) return;
+      if (!confirm('Mark this order as In Progress?')) return;
+
+      const token = localStorage.getItem(TOKEN_KEY);
+      
+      try {
+        const res = await fetch(`${API_BASE}/admin/orders/${currentOrder._id || currentOrder.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            status: 'in_progress',
+            adminNotes: document.getElementById('orderModalNotes').value
+          })
+        });
+
+        if (res.ok) {
+          log(`▶ Order ${(currentOrder._id || currentOrder.id).slice(0, 12)} - Work Started`);
+          alert('Order moved to In Progress!');
+          closeOrderModal();
+          loadData();
+        } else {
+          alert('Failed to update order');
+        }
+      } catch (err) {
+        console.error('Error updating order:', err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function completeOrder() {
+      if (!currentOrder) return;
+      if (!confirm('Mark this order as Completed?')) return;
+
+      const token = localStorage.getItem(TOKEN_KEY);
+      
+      try {
+        const res = await fetch(`${API_BASE}/admin/orders/${currentOrder._id || currentOrder.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            status: 'completed',
+            adminNotes: document.getElementById('orderModalNotes').value
+          })
+        });
+
+        if (res.ok) {
+          log(`✓ Order ${(currentOrder._id || currentOrder.id).slice(0, 12)} - COMPLETED`);
+          alert('Order marked as completed! Invoice will be generated.');
+          closeOrderModal();
+          loadData();
+        } else {
+          alert('Failed to complete order');
+        }
+      } catch (err) {
+        console.error('Error completing order:', err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function updateOrderPriority(priority) {
+      if (!currentOrder) return;
+      currentOrder.priority = priority;
+      log(`Order priority set to: ${priority}`);
+      alert(`Priority set to ${priority.toUpperCase()}`);
+    }
+
+    async function saveOrderNotes() {
+      if (!currentOrder) return;
+      
+      const token = localStorage.getItem(TOKEN_KEY);
+      const notes = document.getElementById('orderModalNotes').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/orders/${currentOrder._id || currentOrder.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            adminNotes: notes
+          })
+        });
+
+        if (res.ok) {
+          log(`Notes saved for order ${(currentOrder._id || currentOrder.id).slice(0, 12)}`);
+          alert('Notes saved successfully!');
+        } else {
+          alert('Failed to save notes');
+        }
+      } catch (err) {
+        console.error('Error saving notes:', err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // COPY TOKEN TO CLIPBOARD
+    function copyTokenToClipboard(element, fullToken) {
+      navigator.clipboard.writeText(fullToken).then(() => {
+        const originalText = element.textContent;
+        element.textContent = 'Copied!';
+        element.classList.add('copied');
+        
+        setTimeout(() => {
+          element.textContent = originalText;
+          element.classList.remove('copied');
+        }, 2000);
+        
+        log('Token copied to clipboard');
+      }).catch(() => {
+        alert('Failed to copy token');
+      });
+    }
+
+    // ACTIVITY LOG LOADING
+    async function loadActivityLog() {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const container = document.getElementById('clientActivityContainer');
+      
+      try {
+        // Fetch real activities from the backend
+        const activitiesRes = await fetch(`${API_BASE}/admin/activities`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!activitiesRes.ok) {
+          container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Error loading activities</div>';
+          return;
+        }
+
+        const allActivities = await activitiesRes.json();
+        
+        if (allActivities.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No activities recorded yet</div>';
+          return;
+        }
+
+        // Group activities by user
+        const activitiesByUser = {};
+        allActivities.forEach(activity => {
+          const userId = activity.userId || activity.userEmail;
+          if (!activitiesByUser[userId]) {
+            activitiesByUser[userId] = {
+              userName: activity.userName || 'Unknown',
+              userEmail: activity.userEmail || 'N/A',
+              activities: []
+            };
+          }
+          activitiesByUser[userId].activities.push(activity);
+        });
+
+        // Build HTML
+        let html = '';
+        Object.values(activitiesByUser).forEach(userGroup => {
+          const avatar = (userGroup.userName || 'U').charAt(0).toUpperCase();
+          const activityCount = userGroup.activities.length;
+
+          html += `
+            <div class="client-activity-card">
+              <div class="client-activity-header" onclick="this.parentElement.querySelector('.client-activity-list').classList.toggle('expanded'); this.querySelector('.expand-icon').classList.toggle('expanded');">
+                <div class="client-activity-info">
+                  <div class="client-avatar">${avatar}</div>
+                  <div class="client-activity-details">
+                    <div class="client-activity-name">${userGroup.userName}</div>
+                    <div class="client-activity-email">${userGroup.userEmail}</div>
+                  </div>
+                </div>
+                <div class="activity-count">${activityCount} Activities</div>
+                <div class="expand-icon">▼</div>
+              </div>
+              <div class="client-activity-list">
+                ${userGroup.activities.map(a => {
+                  const actType = a.activityType || 'other';
+                  const badgeClass = actType === 'login' ? 'activity-login' : actType === 'password_reset' ? 'activity-reset' : 'activity-login';
+                  const displayType = actType === 'login' ? 'Login' : actType === 'password_reset' ? 'Password Reset' : actType === 'password_change' ? 'Password Changed' : actType.replace(/_/g, ' ').toUpperCase();
+                  
+                  return `
+                    <div class="activity-item">
+                      <div class="activity-item-left">
+                        <span class="activity-badge ${badgeClass}">${displayType}</span>
+                        <span style="color: var(--text-muted);">${new Date(a.createdAt).toLocaleString()}</span>
+                      </div>
+                      <div class="activity-item-right">
+                        <code style="font-size: 0.65rem; background: rgba(99, 102, 241, 0.1); padding: 2px 4px; border-radius: 2px;" title="Session ID">${(a._id || a.id || 'local').slice(0, 8)}...</code>
+                        <button class="copy-token-btn" onclick="copyTokenToClipboard(this, '${a._id || a.id || 'local'}')">Copy</button>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">${a.ipAddress || 'Web'}</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      } catch (err) {
+        log('Error loading activities: ' + err.message);
+        container.innerHTML = '<div style="text-align: center; color: var(--danger); padding: 20px;">Error loading activities</div>';
+      }
+    }
+  </script>
+</body>
+</html>
