@@ -62,7 +62,8 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       background: var(--dark-bg);
       color: var(--dark-text);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body[data-theme='light'] {
@@ -73,7 +74,7 @@
     .login-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      height: 100vh;
+      min-height: 100dvh;
       position: relative;
       overflow: hidden;
     }
@@ -85,6 +86,7 @@
       justify-content: center;
       align-items: center;
       padding: 60px 40px;
+      min-height: 100dvh;
       background: var(--dark-surface);
       position: relative;
       z-index: 10;
@@ -497,6 +499,8 @@
     @media (max-width: 1050px) {
       .login-container {
         grid-template-columns: 1fr;
+        min-height: 100dvh;
+        overflow: visible;
       }
 
       .brand-panel {
@@ -505,6 +509,7 @@
 
       .login-panel {
         padding: 40px 20px;
+        min-height: auto;
       }
 
       .login-content {
@@ -517,6 +522,11 @@
         padding: 30px 20px;
         justify-content: flex-start;
         padding-top: 60px;
+      }
+
+      .theme-toggle {
+        top: 12px;
+        right: 12px;
       }
 
       .login-title {

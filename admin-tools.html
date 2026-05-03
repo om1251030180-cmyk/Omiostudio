@@ -325,6 +325,7 @@
 
     .card-body {
       padding: 24px;
+      overflow-x: auto;
     }
 
     .form-group {
@@ -444,6 +445,7 @@
 
     table {
       width: 100%;
+      min-width: 620px;
       border-collapse: collapse;
       font-size: 0.95rem;
     }
@@ -550,10 +552,21 @@
       .header {
         flex-direction: column;
         align-items: flex-start;
+        padding: 14px 16px;
+      }
+
+      .header-actions {
+        width: 100%;
       }
 
       .tools-grid {
         grid-template-columns: 1fr;
+      }
+
+      .card-header,
+      .card-body,
+      .content {
+        padding: 14px;
       }
     }
   </style>

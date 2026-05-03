@@ -2137,3 +2137,49 @@ body::before {
     transition: none !important;
   }
 }
+
+@media (max-width: 860px) {
+  .topbar,
+  .main {
+    width: calc(100% - 18px);
+  }
+
+  .topbar-inner {
+    min-height: auto;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .pill {
+    font-size: 0.68rem;
+    padding: 7px 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar,
+  .main {
+    width: calc(100% - 12px);
+  }
+
+  .topbar {
+    margin-top: 10px;
+  }
+
+  .topbar-inner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .search.active {
+    width: 100%;
+  }
+
+  .grid {
+    gap: 10px;
+  }
+}

@@ -69,6 +69,7 @@
     .container {
       max-width: 1400px;
       margin: 0 auto;
+      width: 100%;
     }
 
     /* Header */
@@ -563,6 +564,14 @@
       .btn-secondary {
         width: 100%;
       }
+
+      .timeline {
+        gap: 4px;
+      }
+
+      .timeline-label {
+        font-size: 0.72rem;
+      }
     }
 
     @media (max-width: 420px) {
@@ -581,6 +590,19 @@
       .tab-btn {
         padding: 8px 16px;
         font-size: 0.85rem;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-dot {
+        width: 32px;
+        height: 32px;
+      }
+
+      .timeline-item:not(:last-child)::after {
+        top: 16px;
       }
     }
 
@@ -640,6 +662,7 @@
       background: linear-gradient(135deg, #ff006e, #00d9ff, #ffd60a, #ff006e);
       background-size: 300% 300%;
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
               mask-composite: exclude;
       opacity: 0.55;
@@ -927,6 +950,7 @@
     .success-title-gradient {
       background: linear-gradient(135deg, #50be82, #00d9ff) !important;
       -webkit-background-clip: text !important;
+      background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
     }
 
@@ -1004,6 +1028,7 @@
     .error-title-gradient {
       background: linear-gradient(135deg, #ff4d6d, #ffd60a) !important;
       -webkit-background-clip: text !important;
+      background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
     }
 

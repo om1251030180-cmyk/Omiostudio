@@ -76,7 +76,7 @@
       grid-template-columns: 1fr 1fr;
       min-height: 100vh;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
 
     /* Left Panel - Form */
@@ -90,8 +90,8 @@
       position: relative;
       z-index: 10;
       overflow-y: auto;
-      max-height: 100vh;
-      height: 100vh;
+      max-height: none;
+      min-height: 100dvh;
       flex-shrink: 0;
     }
 
@@ -531,6 +531,7 @@
     @media (max-width: 1050px) {
       .signup-container {
         grid-template-columns: 1fr;
+        overflow: visible;
       }
 
       .brand-panel {
@@ -541,6 +542,7 @@
         padding: 30px 24px;
         justify-content: flex-start;
         padding-top: 40px;
+        min-height: auto;
       }
 
       .signup-content {
